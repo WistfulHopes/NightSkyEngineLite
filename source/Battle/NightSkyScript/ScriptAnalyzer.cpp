@@ -102,6 +102,23 @@ void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* St
         case AddStateCondition: break;
         case IsFollowupMove: break;
         case SetStateObjectID: break;
+        case SetPosX: break;
+        case AddPosX: break;
+        case AddPosXRaw: break;
+        case SetPosY: break;
+        case AddPosY: break;
+        case SetSpeedX: break;
+        case AddSpeedX: break;
+        case SetSpeedY: break;
+        case AddSpeedY: break;
+        case SetSpeedXPercent: break;
+        case SetSpeedXPercentPerFrame: break;
+        case EnableState: break;
+        case DisableState: break;
+        case EnableAll: break;
+        case DisableAll: break;
+        case EnableFlip: break;
+        case ForceEnableFarNormal: break;
         default:
             break;
         }
@@ -230,7 +247,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
         case IsFollowupMove:
             if (StateToModify)
             {
-                StateToModify->IsFollowupState = *(bool*)(Addr + 4);
+                StateToModify->IsFollowupState = *reinterpret_cast<bool*>(Addr + 4);
             }
             break;
         case SetStateObjectID:
@@ -264,6 +281,65 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
         case GotoLabelIf: break;
         case GotoLabelIfOperation: break;
         case GotoLabelIfNot: break;
+        case SetPosX: 
+            Actor->SetPosX(*reinterpret_cast<int32_t*>(Addr + 4));
+        case AddPosX: 
+            Actor->AddPosX(*reinterpret_cast<int32_t*>(Addr + 4));
+        case AddPosXRaw:
+            Actor->AddPosXRaw(*reinterpret_cast<int32_t*>(Addr + 4));
+        case SetPosY: 
+            Actor->SetPosY(*reinterpret_cast<int32_t*>(Addr + 4));
+        case AddPosY: 
+            Actor->AddPosY(*reinterpret_cast<int32_t*>(Addr + 4));
+        case SetSpeedX: 
+            Actor->SetSpeedX(*reinterpret_cast<int32_t*>(Addr + 4));
+        case AddSpeedX: 
+            Actor->AddSpeedX(*reinterpret_cast<int32_t*>(Addr + 4));
+        case SetSpeedY: 
+            Actor->SetSpeedY(*reinterpret_cast<int32_t*>(Addr + 4));
+        case AddSpeedY:
+            Actor->AddSpeedY(*reinterpret_cast<int32_t*>(Addr + 4));
+        case SetSpeedXPercent:
+            Actor->SetSpeedXPercent(*reinterpret_cast<int32_t*>(Addr + 4));
+        case SetSpeedXPercentPerFrame:
+            Actor->SetSpeedXPercentPerFrame(*reinterpret_cast<int32_t*>(Addr + 4));
+        case EnableState:
+            {
+                if (Actor->IsPlayer)
+                {
+                    Actor->Player->EnableState(*reinterpret_cast<EnableFlags*>(Addr + 4));
+                }
+            }
+        case DisableState: 
+            {
+                if (Actor->IsPlayer)
+                {
+                    Actor->Player->DisableState(*reinterpret_cast<EnableFlags*>(Addr + 4));
+                }
+            }
+        case EnableAll: 
+            {
+                if (Actor->IsPlayer)
+                {
+                    Actor->Player->EnableAll();
+                }
+            }
+        case DisableAll: 
+            {
+                if (Actor->IsPlayer)
+                {
+                    Actor->Player->DisableAll();
+                }
+            }
+        case EnableFlip:
+            Actor->EnableFlip(*reinterpret_cast<bool*>(Addr + 4));
+        case ForceEnableFarNormal:
+            {
+                if (Actor->IsPlayer)
+                {
+                    Actor->Player->ForceEnableFarNormal(*reinterpret_cast<bool*>(Addr + 4));
+                }
+            }
         default:
             break;
         }
@@ -319,6 +395,23 @@ bool ScriptAnalyzer::FindNextCel(char** Addr)
         case AddStateCondition: break;
         case IsFollowupMove: break;
         case SetStateObjectID: break;
+        case SetPosX: break;
+        case AddPosX: break;
+        case AddPosXRaw: break;
+        case SetPosY: break;
+        case AddPosY: break;
+        case SetSpeedX: break;
+        case AddSpeedX: break;
+        case SetSpeedY: break;
+        case AddSpeedY: break;
+        case SetSpeedXPercent: break;
+        case SetSpeedXPercentPerFrame: break;
+        case EnableState: break;
+        case DisableState: break;
+        case EnableAll: break;
+        case DisableAll: break;
+        case EnableFlip: break;
+        case ForceEnableFarNormal: break;
         default:
             break;
         }
@@ -382,6 +475,23 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
         case AddStateCondition: break;
         case IsFollowupMove: break;
         case SetStateObjectID: break;
+        case SetPosX: break;
+        case AddPosX: break;
+        case AddPosXRaw: break;
+        case SetPosY: break;
+        case AddPosY: break;
+        case SetSpeedX: break;
+        case AddSpeedX: break;
+        case SetSpeedY: break;
+        case AddSpeedY: break;
+        case SetSpeedXPercent: break;
+        case SetSpeedXPercentPerFrame: break;
+        case EnableState: break;
+        case DisableState: break;
+        case EnableAll: break;
+        case DisableAll: break;
+        case EnableFlip: break;
+        case ForceEnableFarNormal: break;
         default:
             break;
         }
