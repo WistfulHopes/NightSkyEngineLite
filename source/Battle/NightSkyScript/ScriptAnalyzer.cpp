@@ -134,7 +134,6 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 }
                 else if (Actor->AnimTime > AnimTime)
                 {
-                    Addr += InstructionSizes[code];
                     FindNextCel(Addr);
                     break;
                 }
@@ -177,7 +176,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 {
                     if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
                     {   
-                        Addr = reinterpret_cast<char*>(Label.OffsetAddress);
+                        Addr = ScriptAddress + Label.OffsetAddress;
                         if (FindNextCel(Addr))
                         {
                             Actor->AnimTime = *reinterpret_cast<int32_t*>(Addr + 68) - 1;
@@ -341,7 +340,7 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
                 LabelName.SetString(Addr + 4);
                 StateAddress Label;
                 Label.Name = LabelName;
-                Label.OffsetAddress = reinterpret_cast<uint64_t>(Addr);
+                Label.OffsetAddress = Addr - ScriptAddress;
                 Labels->push_back(Label);
                 break;
             }
