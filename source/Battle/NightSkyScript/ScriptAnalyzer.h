@@ -61,7 +61,7 @@ constexpr int InstructionSizes[] = {
     0,
     0,
     68,
-    4,
+    8,
     68,
     12,
     4,

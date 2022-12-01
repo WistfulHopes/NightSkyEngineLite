@@ -105,35 +105,10 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                     Addr += InstructionSizes[code];
                     if (FindNextCel(Addr))
                         break;
-                    else
-                    {
-                        if (!Actor->IsPlayer)
-                        {
-                            Actor->DeactivateObject();
-                        }
-                        else
-                        {
-                            switch(Actor->Player->CurrentActionFlags)
-                            {
-                            case ACT_Standing:
-                                Actor->Player->JumpToState("Stand");
-                                break;
-                            case ACT_Crouching:
-                                Actor->Player->JumpToState("Crouch");
-                                break;
-                            case ACT_Jumping:
-                                Actor->Player->JumpToState("VJump");
-                                break;
-                            }
-                        }
-                        break;
-                    }
+                    return;
                 }
-                else
-                {
-                    Actor->SetCelName(Addr + 4);
-                    CelExecuted = true;
-                }
+                Actor->SetCelName(Addr + 4);
+                CelExecuted = true;
                 break;
             }
         case OpCodes::CallSubroutine:
@@ -142,6 +117,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 break;
             }
         case OpCodes::ExitState:
+        case OpCodes::EndBlock:
             {
                 if (!Actor->IsPlayer)
                 {
@@ -162,7 +138,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                         break;
                     }
                 }
-                break;
+                return;
             }
         case OpCodes::GotoLabel:
             {
@@ -183,8 +159,12 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 break;
             }
         case OpCodes::EndLabel:
-            CelExecuted = true;
-            break;
+            {
+                int32_t AnimTime = *(int32_t*)(Addr + 4);
+                if (Actor->AnimTime < AnimTime)
+                    return;
+                break;
+            }
         case OpCodes::BeginStateDefine:
             {
                 CString<64> StateName;
@@ -249,7 +229,6 @@ bool ScriptAnalyzer::FindNextCel(char* Addr)
         case OpCodes::SetCel:
             return true;
         case OpCodes::ExitState:
-            return false;
         case OpCodes::EndBlock:
             return false;
         default:
@@ -272,11 +251,11 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
                 LabelName.SetString(Addr + 4);
                 StateAddress Label;
                 Label.Name = LabelName;
-                Label.OffsetAddress = (uint32_t)Addr;
+                Label.OffsetAddress = (uint64_t)Addr;
                 Labels->push_back(Label);
+                break;
             }
         case OpCodes::ExitState:
-            return;
         case OpCodes::EndBlock:
             return;
         default:
