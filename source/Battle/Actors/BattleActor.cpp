@@ -1358,7 +1358,7 @@ void BattleActor::HandleHitEffect(PlayerCharacter* OtherChar, HitEffect InHitEff
 	}
 	else if (ObjectState != nullptr)
 	{
-		if (ObjectState->StateType == StateType::SpecialAttack || ObjectState->StateType == StateType::SuperAttack)
+		if (ObjectState->Type == StateType::SpecialAttack || ObjectState->Type == StateType::SuperAttack)
 		{
 			CreateCommonParticle("cmn_hit_sp", POS_Hit, Vector(0, 0), -InHitEffect.HitAngle);
 			if (InHitEffect.AttackLevel < 1)
@@ -1500,7 +1500,7 @@ void BattleActor::HandleHitEffect(PlayerCharacter* OtherChar, HitEffect InHitEff
 	}
 	else if (IsPlayer)
 	{
-		if (Player->StateMachine.CurrentState->StateType == StateType::SpecialAttack || Player->StateMachine.CurrentState->StateType == StateType::SuperAttack)
+		if (Player->StateMachine.CurrentState->Type == StateType::SpecialAttack || Player->StateMachine.CurrentState->Type == StateType::SuperAttack)
 		{
 			CreateCommonParticle("cmn_hit_sp", POS_Hit, Vector(0, 0), -InHitEffect.HitAngle);
 			if (InHitEffect.AttackLevel < 1)

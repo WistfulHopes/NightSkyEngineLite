@@ -156,13 +156,13 @@ void PlayerCharacter::Update()
 	if (ComboCounter > 0)
 		ComboTimer++;
 		
-	if (StateMachine.CurrentState->StateType == StateType::ForwardWalk)
+	if (StateMachine.CurrentState->Type == StateType::ForwardWalk)
 		AddMeter(ForwardWalkMeterGain);
-	else if (StateMachine.CurrentState->StateType == StateType::ForwardJump)
+	else if (StateMachine.CurrentState->Type == StateType::ForwardJump)
 		AddMeter(ForwardJumpMeterGain);
-	if (StateMachine.CurrentState->StateType == StateType::ForwardDash)
+	if (StateMachine.CurrentState->Type == StateType::ForwardDash)
 		AddMeter(ForwardDashMeterGain);
-	else if (StateMachine.CurrentState->StateType == StateType::ForwardAirDash)
+	else if (StateMachine.CurrentState->Type == StateType::ForwardAirDash)
 		AddMeter(ForwardAirDashMeterGain);
 	MeterCooldownTimer--;
 	
@@ -198,14 +198,14 @@ void PlayerCharacter::Update()
 	if (Untech == 0 && !IsKnockedDown && !IsDead)
 		EnableState(ENB_Tech);
 
-	if (StateMachine.CurrentState->StateType == StateType::Tech)
+	if (StateMachine.CurrentState->Type == StateType::Tech)
 	{
 		HasBeenOTG = 0;
 		CurrentWallBounceEffect = WallBounceEffect();
 		CurrentGroundBounceEffect = GroundBounceEffect();
 	}
 	
-	if (StateMachine.CurrentState->StateType == StateType::Hitstun && PosY <= 0 && PrevPosY > 0)
+	if (StateMachine.CurrentState->Type == StateType::Hitstun && PosY <= 0 && PrevPosY > 0)
 	{
 		HaltMomentum();
 		if (!strcmp(StateMachine.CurrentState->Name.GetString(), "BLaunch") || !strcmp(StateMachine.CurrentState->Name.GetString(), "Blowback"))
@@ -225,13 +225,13 @@ void PlayerCharacter::Update()
 		}
 	}
 
-	if (StateMachine.CurrentState->StateType != StateType::Hitstun)
+	if (StateMachine.CurrentState->Type != StateType::Hitstun)
 	{
 		KnockdownTime = -1;
 		IsKnockedDown = false;
 	}
 
-	if (KnockdownTime < 0 && Blockstun < 0 && (Untech < 0 && StateMachine.CurrentState->StateType != StateType::Hitstun) && Hitstun < 0)
+	if (KnockdownTime < 0 && Blockstun < 0 && (Untech < 0 && StateMachine.CurrentState->Type != StateType::Hitstun) && Hitstun < 0)
 		IsStunned = false;
 
 	if (KnockdownTime == 0 && PosY <= 0 && !IsDead)
@@ -293,10 +293,10 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 {
 	for (int i = StateMachine.States.size() - 1; i >= 0; i--)
 	{
-        if (!(CheckStateEnabled(StateMachine.States[i]->StateType) && !StateMachine.States[i]->IsFollowupState
+        if (!(CheckStateEnabled(StateMachine.States[i]->Type) && !StateMachine.States[i]->IsFollowupState
             || FindChainCancelOption(StateMachine.States[i]->Name.GetString())
             || FindWhiffCancelOption(StateMachine.States[i]->Name.GetString())
-            || CheckKaraCancel(StateMachine.States[i]->StateType) && !StateMachine.States[i]->IsFollowupState
+            || CheckKaraCancel(StateMachine.States[i]->Type) && !StateMachine.States[i]->IsFollowupState
             )) //check if the state is enabled, continue if not
         {
             continue;
@@ -306,7 +306,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 			continue;
 		}
         //check current character state against entry state condition, continue if not entry state
-		if (!StateMachine.CheckStateEntryCondition(StateMachine.States[i]->EntryState, CurrentActionFlags))
+		if (!StateMachine.CheckStateEntryCondition(StateMachine.States[i]->StateEntryState, CurrentActionFlags))
         {
             continue;
         }
@@ -342,7 +342,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 							if (StateMachine.ForceSetState(StateMachine.States[i]->Name)) //if state set successful...
 							{
 								StateName.SetString(StateMachine.States[i]->Name.GetString());
-								switch (StateMachine.States[i]->EntryState)
+								switch (StateMachine.States[i]->StateEntryState)
 								{
 								case EntryState::Standing:
 									CurrentActionFlags = ACT_Standing;
@@ -369,7 +369,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 							if (StateMachine.SetState(StateMachine.States[i]->Name)) //if state set successful...
 							{
 								StateName.SetString(StateMachine.States[i]->Name.GetString());
-								switch (StateMachine.States[i]->EntryState)
+								switch (StateMachine.States[i]->StateEntryState)
 								{
 								case EntryState::Standing:
 									CurrentActionFlags = ACT_Standing;
@@ -398,7 +398,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 					if (StateMachine.SetState(StateMachine.States[i]->Name)) //if state set successful...
 					{
 						StateName.SetString(StateMachine.States[i]->Name.GetString());
-						switch (StateMachine.States[i]->EntryState)
+						switch (StateMachine.States[i]->StateEntryState)
 						{
 						case EntryState::Standing:
 							CurrentActionFlags = ACT_Standing;
@@ -440,7 +440,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 						if (StateMachine.ForceSetState(StateMachine.States[i]->Name)) //if state set successful...
 						{
 							StateName.SetString(StateMachine.States[i]->Name.GetString());
-							switch (StateMachine.States[i]->EntryState)
+							switch (StateMachine.States[i]->StateEntryState)
 							{
 							case EntryState::Standing:
 								CurrentActionFlags = ACT_Standing;
@@ -467,7 +467,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 						if (StateMachine.SetState(StateMachine.States[i]->Name)) //if state set successful...
 						{
 							StateName.SetString(StateMachine.States[i]->Name.GetString());
-							switch (StateMachine.States[i]->EntryState)
+							switch (StateMachine.States[i]->StateEntryState)
 							{
 							case EntryState::Standing:
 								CurrentActionFlags = ACT_Standing;
@@ -496,7 +496,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 				if (StateMachine.SetState(StateMachine.States[i]->Name)) //if state set successful...
 				{
 					StateName.SetString(StateMachine.States[i]->Name.GetString());
-					switch (StateMachine.States[i]->EntryState)
+					switch (StateMachine.States[i]->StateEntryState)
 					{
 					case EntryState::Standing:
 						CurrentActionFlags = ACT_Standing;
@@ -528,7 +528,7 @@ void PlayerCharacter::HandleBufferedState()
 			if (StateMachine.ForceSetState(BufferedStateName))
 			{
 				StateName.SetString(BufferedStateName.GetString());
-				switch (StateMachine.CurrentState->EntryState)
+				switch (StateMachine.CurrentState->StateEntryState)
 				{
 				case EntryState::Standing:
 					CurrentActionFlags = ACT_Standing;
@@ -550,7 +550,7 @@ void PlayerCharacter::HandleBufferedState()
 			if (StateMachine.SetState(BufferedStateName))
 			{
 				StateName.SetString(BufferedStateName.GetString());
-				switch (StateMachine.CurrentState->EntryState)
+				switch (StateMachine.CurrentState->StateEntryState)
 				{
 				case EntryState::Standing:
 					CurrentActionFlags = ACT_Standing;
@@ -626,7 +626,7 @@ void PlayerCharacter::JumpToState(char* NewName)
 		StateName.SetString(NewName);
 	if (StateMachine.CurrentState != nullptr)
 	{
-		switch (StateMachine.CurrentState->EntryState)
+		switch (StateMachine.CurrentState->StateEntryState)
 		{
 		case EntryState::Standing:
 			CurrentActionFlags = ACT_Standing;
@@ -1405,15 +1405,15 @@ void PlayerCharacter::HandleThrowCollision()
 bool PlayerCharacter::CheckKaraCancel(StateType InStateType)
 {
 	//two checks: if it's an attack, and if the given state type has a higher or equal priority to the current state
-	if (InStateType == StateType::NormalThrow && StateMachine.CurrentState->StateType < InStateType && StateMachine.CurrentState->StateType >= StateType::NormalAttack && ActionTime < 3)
+	if (InStateType == StateType::NormalThrow && StateMachine.CurrentState->Type < InStateType && StateMachine.CurrentState->Type >= StateType::NormalAttack && ActionTime < 3)
 	{
 		return true;
 	}
-	if (InStateType == StateType::SpecialAttack && StateMachine.CurrentState->StateType < InStateType && StateMachine.CurrentState->StateType >= StateType::NormalAttack && ActionTime < 3)
+	if (InStateType == StateType::SpecialAttack && StateMachine.CurrentState->Type < InStateType && StateMachine.CurrentState->Type >= StateType::NormalAttack && ActionTime < 3)
 	{
 		return true;
 	}
-	if (InStateType == StateType::SuperAttack && StateMachine.CurrentState->StateType < InStateType && StateMachine.CurrentState->StateType >= StateType::NormalAttack && ActionTime < 3)
+	if (InStateType == StateType::SuperAttack && StateMachine.CurrentState->Type < InStateType && StateMachine.CurrentState->Type >= StateType::NormalAttack && ActionTime < 3)
 	{
 		return true;
 	}	

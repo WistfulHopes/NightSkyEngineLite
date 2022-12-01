@@ -87,6 +87,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
     bool CelExecuted;
     std::vector<StateAddress> Labels;
     GetAllLabels(Addr, &Labels);
+    State* StateToModify;
     while (true)
     {
         OpCodes code = *(OpCodes*)Addr;
@@ -133,6 +134,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
             break;
         case OpCodes::CallSubroutine:
             Actor->Player->CallSubroutine(Addr + 4);
+            break;
         case OpCodes::ExitState:
             if (!Actor->IsPlayer)
             {
@@ -169,8 +171,55 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                     return;
                 }
             }
+            break;
         case OpCodes::EndLabel:
             CelExecuted = true;
+            break;
+        case OpCodes::BeginStateDefine:
+            CString<64> StateName;
+            StateName.SetString(Addr + 4);
+            int32_t Index = Actor->Player->StateMachine.GetStateIndex(StateName);
+            StateToModify = Actor->Player->StateMachine.States[Index];
+            break;
+        case OpCodes::EndStateDefine:
+            StateToModify = nullptr;
+            break;
+        case OpCodes::SetStateType:
+            if (StateToModify)
+            {
+                StateToModify->Type = *(StateType*)(Addr + 4);
+            }
+            break;
+        case OpCodes::SetEntryState:
+            if (StateToModify)
+            {
+                StateToModify->StateEntryState = *(EntryState*)(Addr + 4);
+            }
+            break;
+        case OpCodes::AddInputCondition:
+            if (StateToModify)
+            {
+                StateToModify->InputConditions.push_back(*(InputCondition*)(Addr + 4));
+            }
+            break;
+        case OpCodes::AddStateCondition:
+            if (StateToModify)
+            {
+                StateToModify->StateConditions.push_back(*(StateCondition*)(Addr + 4));
+            }
+            break;
+        case OpCodes::IsFollowupMove:
+            if (StateToModify)
+            {
+                StateToModify->IsFollowupState = *(bool*)(Addr + 4);
+            }
+            break;
+        case OpCodes::SetStateObjectID:
+            if (StateToModify)
+            {
+                StateToModify->ObjectID = *(int32_t*)(Addr + 4);
+            }
+            break;
         default:
             break;
         }
@@ -189,7 +238,7 @@ bool ScriptAnalyzer::FindNextCel(char* Addr)
             return true;
         case OpCodes::ExitState:
             return false;
-        case OpCodes::BlockEnd:
+        case OpCodes::EndBlock:
             return;
         default:
             break;
@@ -214,7 +263,7 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
             Labels->push_back(Label);
         case OpCodes::ExitState:
             return;
-        case OpCodes::BlockEnd:
+        case OpCodes::EndBlock:
             return;
         default:
             break;

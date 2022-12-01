@@ -147,12 +147,12 @@ public:
 	PlayerCharacter* Parent;
 	BattleActor* ObjectParent;
 	CString<64> Name;
-	EntryState EntryState;
+	EntryState StateEntryState;
 	std::vector<InputCondition> InputConditions;
-	StateType StateType;
+	StateType Type;
 	std::vector<StateCondition> StateConditions;
 	bool IsFollowupState;
-	int ObjectID;
+	int32_t ObjectID;
 	
 	virtual void OnEnter(); //executes on enter. write in script
 	virtual void OnUpdate(float DeltaTime); //executes every frame. write in script
