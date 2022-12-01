@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../CString.h"
+#include "NightSkyScript/ScriptAnalyzer.h"
 #include <vector>
 
 class PlayerCharacter;
@@ -153,14 +154,48 @@ public:
 	bool IsFollowupState;
 	int ObjectID;
 	
-	void OnEnter(); //executes on enter. write in script
-	void OnUpdate(float DeltaTime); //executes every frame. write in script
-	void OnExit(); //executes on exit. write in script
-	void OnLanding(); //executes on landing. write in script
-	void OnHit(); //executes on hit. write in script
-	void OnBlock(); //executes on hit. write in script
-	void OnHitOrBlock(); //executes on hit. write in script
-    void OnCounterHit(); //executes on counter hit. write in script
-	void OnSuperFreeze(); //executes on super freeze. write in script
-	void OnSuperFreezeEnd(); //executes on super freeze. write in script
+	virtual void OnEnter(); //executes on enter. write in script
+	virtual void OnUpdate(float DeltaTime); //executes every frame. write in script
+	virtual void OnExit(); //executes on exit. write in script
+	virtual void OnLanding(); //executes on landing. write in script
+	virtual void OnHit(); //executes on hit. write in script
+	virtual void OnBlock(); //executes on hit. write in script
+	virtual void OnHitOrBlock(); //executes on hit. write in script
+    virtual void OnCounterHit(); //executes on counter hit. write in script
+	virtual void OnSuperFreeze(); //executes on super freeze. write in script
+	virtual void OnSuperFreezeEnd(); //executes on super freeze. write in script
+};
+
+struct ScriptBlockOffsets 
+{
+	uint32_t OnEnterOffset;
+	uint32_t OnUpdateOffset;
+	uint32_t OnExitOffset;
+	uint32_t OnLandingOffset;
+	uint32_t OnHitOffset;
+	uint32_t OnBlockOffset;
+	uint32_t OnHitOrBlockOffset;
+	uint32_t OnCounterHitOffset;
+	uint32_t OnSuperFreezeOffset;
+	uint32_t OnSuperFreezeEndOffset;
+};
+
+class ScriptState : public State
+{
+public:
+	ScriptState* ParentState;
+	uint32_t OffsetAddress;
+	uint32_t Size;
+	ScriptBlockOffsets Offsets;
+
+	virtual void OnEnter() override; //executes on enter. write in script
+	virtual void OnUpdate(float DeltaTime) override; //executes every frame. write in script
+	virtual void OnExit() override; //executes on exit. write in script
+	virtual void OnLanding() override; //executes on landing. write in script
+	virtual void OnHit() override; //executes on hit. write in script
+	virtual void OnBlock() override; //executes on hit. write in script
+	virtual void OnHitOrBlock() override; //executes on hit. write in script
+    virtual void OnCounterHit() override; //executes on counter hit. write in script
+	virtual void OnSuperFreeze() override; //executes on super freeze. write in script
+	virtual void OnSuperFreezeEnd() override; //executes on super freeze. write in script
 };

@@ -248,9 +248,6 @@ public:
 	//current animation time
 	int32_t AnimTime = -1;
 
-	//animscript time
-	int32_t AnimscriptTime = -1;
-
 	//for spawning hit particles
 	int32_t HitPosX;
 	int32_t HitPosY;

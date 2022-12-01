@@ -17,7 +17,7 @@ public:
 	PlayerCharacter();
 
 	//starting from this until PlayerSyncEnd, everything is saved/loaded for rollback
-	unsigned char PlayerSync; 
+	unsigned char PlayerSync;	
 	int32_t CurrentEnableFlags;
 	int32_t CurrentHealth;
 protected:
@@ -137,7 +137,7 @@ public:
 	//state machine
 	StateMachine StateMachine;
 	//input buffer
-	InputBuffer InputBuffer; 
+	InputBuffer InputBuffer;
 
 	//chain cancels (copied from std::vector to static array)
 	int32_t ChainCancelOptionsInternal[CancelArraySize];
@@ -163,6 +163,11 @@ public:
 	
 	//anything past here isn't saved or loaded for rollback	
 	int32_t PlayerSyncEnd; 
+
+	//script analyzer
+	ScriptAnalyzer* Analyzer;
+	char* CharaScript;
+	char* ObjectScript;
 
 	std::vector<Subroutine*> Subroutines;
 	std::vector<CString<64>> SubroutineNames;
