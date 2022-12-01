@@ -483,14 +483,14 @@ void FighterGameState::CollisionView()
 		{
 			if (Players[i]->IsOnScreen)
 			{
-				SortedObjects[i]->CollisionView();
+				//SortedObjects[i]->CollisionView();
 			}
 		}
 		for (int i = 6; i < 406; i++)
 		{
 			if (i == ActiveObjectCount)
 				break;
-			SortedObjects[i]->CollisionView();
+			//SortedObjects[i]->CollisionView();
 		}
 	}
 }

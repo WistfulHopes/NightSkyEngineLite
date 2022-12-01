@@ -47,14 +47,14 @@ enum ObjType
 	OBJ_Child15,
 };
 
-enum HitSFXType
+enum class HitSFXType
 {
 	SFX_Punch,
 	SFX_Kick,
 	SFX_Slash,
 };
 
-enum HitVFXType
+enum class HitVFXType
 {
 	VFX_Strike,
 	VFX_Slash,
@@ -113,8 +113,8 @@ struct WallBounceEffect
 {
 	int32_t WallBounceCount = 0;
 	int32_t WallBounceUntech = 0;
-	int32_t WallBounceXSpeed;
-	int32_t WallBounceYSpeed;
+	int32_t WallBounceXSpeed = 0;
+	int32_t WallBounceYSpeed = 0;
 	int32_t WallBounceGravity = 1900;
 	bool WallBounceInCornerOnly = false;
 };
@@ -123,38 +123,38 @@ struct GroundBounceEffect
 {
 	int32_t GroundBounceCount = 0;
 	int32_t GroundBounceUntech = 0;
-	int32_t GroundBounceXSpeed;
-	int32_t GroundBounceYSpeed;
+	int32_t GroundBounceXSpeed = 0;
+	int32_t GroundBounceYSpeed = 0;
 	int32_t GroundBounceGravity = 1900;
 };
 
 struct HitEffect
 {
-	int32_t AttackLevel; //in this engine, it's only used to define effects on hit or block
-	BlockType BlockType;
-	int32_t Hitstun;
-	int32_t Blockstun;
-	int32_t Untech;
-	int32_t Hitstop;
-	int32_t BlockstopModifier;
-	int32_t HitDamage;
-	int32_t MinimumDamagePercent;
-	int32_t ChipDamagePercent;
+	int32_t AttackLevel = 0;
+	BlockType BlockType = BLK_Mid;
+	int32_t Hitstun = 0;
+	int32_t Blockstun = 0;
+	int32_t Untech = 0;
+	int32_t Hitstop = 0;
+	int32_t BlockstopModifier = 0;
+	int32_t HitDamage = 0;
+	int32_t MinimumDamagePercent = 0;
+	int32_t ChipDamagePercent = 0;
 	int32_t InitialProration = 100;
 	int32_t ForcedProration = 100;
-	int32_t HitPushbackX;
-	int32_t AirHitPushbackX;
-	int32_t AirHitPushbackY;
+	int32_t HitPushbackX = 0;
+	int32_t AirHitPushbackX = 0;
+	int32_t AirHitPushbackY = 0;
 	int32_t HitGravity = 1900;
-	int32_t HitAngle;
-	HitAction GroundHitAction;
-	HitAction AirHitAction;
+	int32_t HitAngle = 0;
+	HitAction GroundHitAction = HACT_GroundNormal;
+	HitAction AirHitAction = HACT_AirNormal;
 	int32_t KnockdownTime = 25;
 	GroundBounceEffect GroundBounceEffect;
 	WallBounceEffect WallBounceEffect;
 	HitSFXType SFXType = HitSFXType::SFX_Punch;
 	HitVFXType VFXType = HitVFXType::VFX_Strike;
-	bool DeathCamOverride;
+	bool DeathCamOverride = false;
 };
 
 struct Vector
@@ -178,7 +178,7 @@ struct Vector
 	}
 	int Size()
 	{
-		return fabs(sqrt(X * X + Y * Y));
+		return fabs(sqrt(X * X + Y * Y));  // NOLINT(bugprone-narrowing-conversions)
 	}
 };
 
@@ -186,6 +186,8 @@ class BattleActor
 {
 public:
 	BattleActor();
+
+	virtual ~BattleActor() {}
 	
 	unsigned char ObjSync; //starting from this until ObjSyncEnd, everything is saved/loaded for rollback
 	bool IsActive = false;
@@ -256,7 +258,7 @@ public:
 
 	bool DefaultCommonAction = true;
 
-	CollisionBox CollisionBoxes[CollisionArraySize];
+	CollisionBox CollisionBoxes[CollisionArraySize]{};
 	
 	CString<64> ObjectStateName;
 	uint32_t ObjectID;
@@ -273,7 +275,7 @@ public:
 
 	State* ObjectState; 
 
-	Sprite CurrentSprite;
+	Sprite CurrentSprite{};
 
 protected:
 	//move object based on speed and inertia
@@ -398,7 +400,7 @@ public:
 	//resets object for next use
 	void ResetObject();
 	//views collision. only usable in development or debug builds
-	void CollisionView();
+	//void CollisionView();
 };
 #pragma pack(pop)
 

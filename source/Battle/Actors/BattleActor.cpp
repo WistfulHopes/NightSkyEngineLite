@@ -9,6 +9,26 @@
 #include "PlayerCharacter.h"
 #include "../State.h"
 
+BattleActor::BattleActor()
+{
+	ObjSync = 0;
+	NormalHitEffect = HitEffect();
+	CounterHitEffect = HitEffect();
+	HitPosX = 0;
+	HitPosY = 0;
+	for (int i = 0; i < CollisionArraySize; i++)
+	{
+		CollisionBoxes[i] = CollisionBox();
+	}
+	ObjectID = 0;
+	Player = nullptr;
+	ObjSyncEnd = 0;
+	ObjNumber = 0;
+	GameState = nullptr;
+	ObjectState = nullptr;
+	CurrentSprite = Sprite();
+}
+
 void BattleActor::InitObject()
 {
 	RoundStart = false;
@@ -144,11 +164,6 @@ void BattleActor::Draw()
 	Dest.height = CurrentSprite.frameSize.y;
 
     DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, RAYWHITE);
-}
-
-BattleActor::BattleActor()
-{
-	
 }
 
 void BattleActor::Move()
@@ -484,163 +499,6 @@ void BattleActor::GetBoxes()
 {
 	//reimplement for new engine
 }
-
-//for collision viewer
-
-template<typename T>
-constexpr auto min(T a, T b)
-{
-	return a < b ? a : b;
-}
-
-template<typename T>
-constexpr auto max(T a, T b)
-{
-	return a > b ? a : b;
-}
-static void clip_line_y(
-	Vector &line_a, Vector &line_b,
-	float min_x, float max_x,
-	float *min_y, float *max_y)
-{
-	const auto delta = line_b - line_a;
-
-	if (abs(delta.X) > FLT_EPSILON) {
-		const auto slope = delta.Y / delta.X;
-		const auto intercept = line_a.Y - slope * line_a.X;
-		*min_y = slope * min_x + intercept;
-		*max_y = slope * max_x + intercept;
-	} else {
-		*min_y = line_a.Y;
-		*max_y = line_b.Y;
-	}
-
-	if (*min_y > *max_y)
-		std::swap(*min_y, *max_y);
-}
-
-bool line_box_intersection(
-	Vector &box_min, Vector &box_max,
-	Vector &line_a, Vector &line_b,
-	float *entry_fraction, float *exit_fraction)
-{
-	// No intersection if line runs along the edge of the box
-	if (line_a.X == line_b.X && (line_a.X == box_min.X || line_a.X == box_max.X))
-		return false;
-
-	if (line_a.Y == line_b.Y && (line_a.Y == box_min.Y || line_a.Y == box_max.Y))
-		return false;
-
-	// Clip X values to segment within box_min.X and box_max.X
-	const auto min_x = max(min(line_a.X, line_b.X), box_min.X);
-	const auto max_x = min(max(line_a.X, line_b.X), box_max.X);
-
-	// Check if the line is in the bounds of the box on the X axis
-	if (min_x > max_x)
-		return false;
-
-	// Clip Y values to segment within min_x and max_x
-	float min_y, max_y;
-	clip_line_y(line_a, line_b, min_x, max_x, &min_y, &max_y);
-
-	// Clip Y values to segment within box_min.Y and box_max.Y
-	min_y = max(min_y, (float)box_min.Y);
-	max_y = min(max_y, (float)box_max.Y);
-
-	// Check if the clipped line is in the bounds of the box on the Y axis
-	if (min_y > max_y)
-		return false;
-
-	Vector entry(
-		line_a.X < line_b.X ? min_x : max_x,
-		line_a.Y < line_b.Y ? min_y : max_y);
-
-	Vector exit(
-		line_a.X > line_b.X ? min_x : max_x,
-		line_a.Y > line_b.Y ? min_y : max_y);
-
-	const auto length = (line_b - line_a).Size();
-	*entry_fraction = (entry - line_a).Size() / length;
-	*exit_fraction = (exit - line_a).Size() / length;
-
-	return true;
-}
-
-void BattleActor::CollisionView()
-{
-	std::vector<std::vector<Vector>> Corners;
-	std::vector<std::vector<std::vector<Vector>>> Lines; 
-	for (int32_t i = 0; i < CollisionArraySize; i++)
-	{
-		std::vector<Vector> CurrentCorners;
-		if (FacingRight)
-		{
-			CurrentCorners.push_back(Vector(float(CollisionBoxes[i].PosX + PosX) / COORD_SCALE - float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE -  float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-			CurrentCorners.push_back(Vector(float(CollisionBoxes[i].PosX + PosX) / COORD_SCALE + float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE -  float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-			CurrentCorners.push_back(Vector(float(CollisionBoxes[i].PosX + PosX) / COORD_SCALE + float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE + float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-			CurrentCorners.push_back(Vector(float(CollisionBoxes[i].PosX + PosX) / COORD_SCALE - float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE + float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-		}
-		else
-		{
-			CurrentCorners.push_back(Vector(float(-CollisionBoxes[i].PosX + PosX) / COORD_SCALE - float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE -  float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-			CurrentCorners.push_back(Vector(float(-CollisionBoxes[i].PosX + PosX) / COORD_SCALE + float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE -  float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-			CurrentCorners.push_back(Vector(float(-CollisionBoxes[i].PosX + PosX) / COORD_SCALE + float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE + float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-			CurrentCorners.push_back(Vector(float(-CollisionBoxes[i].PosX + PosX) / COORD_SCALE - float(CollisionBoxes[i].SizeX) / COORD_SCALE / 2,
-				float(CollisionBoxes[i].PosY + PosY) / COORD_SCALE + float(CollisionBoxes[i].SizeY) / COORD_SCALE / 2));
-		}
-		Corners.push_back(CurrentCorners);
-		std::vector<std::vector<Vector>> CurrentLines;
-		for (int32_t j = 0; j < 4; j++)
-		{
-			//CurrentLines.push_back(std::vector { CurrentCorners[j] , CurrentCorners[(j + 1) % 4] } );
-		}
-		Lines.push_back(CurrentLines);
-	}
-	for (int32_t i = 0; i < CollisionArraySize; i++)
-	{
-		/*FLinearColor color;
-		if (CollisionBoxes[i].Type == Hitbox)
-			color = FLinearColor(1.f, 0.f, 0.f, .25f);
-		else if (IsAttacking)
-			color = FLinearColor(0.f, 1.f, 1.f, .25f);
-		else
-			color = FLinearColor(0.f, 1.f, 0.f, .25f);
-
-		for (const auto LineSet : Lines[i])
-		{
-		auto start = LineSet[0];
-		auto end = LineSet[1];
-			DrawDebugLine(GetWorld(), FVector(0, start.X, start.Y), FVector(0, end.X, end.Y), color.ToFColor(false), false, 1 / 60, 255, 2.f);
-		}*/
-	}
-	std::vector<Vector> CurrentCorners;
-	CurrentCorners.push_back(Vector(L / COORD_SCALE, B / COORD_SCALE));
-	CurrentCorners.push_back(Vector(R / COORD_SCALE, B / COORD_SCALE));
-	CurrentCorners.push_back(Vector(R / COORD_SCALE, T / COORD_SCALE));
-	CurrentCorners.push_back(Vector(L / COORD_SCALE, T / COORD_SCALE));
-	std::vector<std::vector<Vector>> CurrentLines;
-	for (int32_t j = 0; j < 4; j++)
-	{
-		//CurrentLines.push_back(std::vector { CurrentCorners[j] , CurrentCorners[(j + 1) % 4] } );
-	}
-	/*FLinearColor color = FLinearColor(1.f, 1.f, 0.f, .2f);
-
-	for (const auto LineSet : CurrentLines)
-	{
-		auto start = LineSet[0];
-		auto end = LineSet[1];
-		DrawDebugLine(GetWorld(), FVector(0, start.X, start.Y), FVector(0, end.X, end.Y), color.ToFColor(false), false,1 / 60, 255, 2.f);
-	}*/
-}
-
-//collision viewer end
 
 void BattleActor::HandleHitCollision(PlayerCharacter* OtherChar)
 {
