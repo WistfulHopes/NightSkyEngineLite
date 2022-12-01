@@ -21,8 +21,8 @@ int main(void)
         Camera2D Cam;
 
         Vector2 Offset;
-        Offset.x = 0 + 400;
-        Offset.y = 0 + 240;
+        Offset.x = 400;
+        Offset.y = 360;
         Cam.offset = Offset;
 
         double TargetX = static_cast<double>(GameState->StoredBattleState.CurrentScreenPos) / COORD_SCALE;
@@ -30,18 +30,21 @@ int main(void)
         TargetX = Clamp(TargetX, 0, 720);
         Vector2 Target;
         Target.x = TargetX;
-        Target.y = TargetY + 80;
+        Target.y = TargetY;
         Cam.target = Target;
 
         Cam.rotation = 0;
-        Cam.zoom = 0;
+
+        double Distance = static_cast<double>(2160000 - abs(GameState->Players[0]->GetInternalValue(VAL_PosX) - GameState->Players[1]->GetInternalValue(VAL_PosX))) / 2 / COORD_SCALE;
+        Distance = Clamp(Distance, 250, 400);
+        Cam.zoom = Remap(Distance, 0, 250, 1, 1.5);
         
         BeginDrawing();
         
             ClearBackground(RAYWHITE);
-            //BeginMode2D(Cam);
+            BeginMode2D(Cam);
             GameState->Draw();
-            //EndMode2D();
+            EndMode2D();
 
         EndDrawing();
     }
