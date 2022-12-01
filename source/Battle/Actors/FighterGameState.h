@@ -76,16 +76,16 @@ struct RollbackData
  */
 class FighterGameState
 {
-	PlayerCharacter* Players[6];
-	BattleActor* Objects[400];
-
 	void HandlePushCollision(); //for each active object, handle push collision
 	void HandleHitCollision(); //for each active object, handle hit collision
 	void SetScreenBounds(); //sets sRemoteInputscreen bounds
 	void SetWallCollision(); //forces wall collision
 	void CollisionView(); //for each active object, display collision
-	
+
 public:
+	PlayerCharacter* Players[6];
+	BattleActor* Objects[400];
+
 	RollbackData StoredRollbackData;
 	BattleState StoredBattleState;
 	

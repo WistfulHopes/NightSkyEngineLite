@@ -63,8 +63,8 @@ PlayerCharacter::PlayerCharacter()
 	
 	CurrentSprite.texture = LoadTexture("Sprites/Esther/Esther_stand.png");
 	Vector2 Size;
-	Size.x = 192;
-	Size.y = 224;
+	Size.x = 64;
+	Size.y = 112;
 	CurrentSprite.frameSize = Size;
 	CurrentSprite.maxFrame = 5;
 	CurrentSprite.framesWide = 3;

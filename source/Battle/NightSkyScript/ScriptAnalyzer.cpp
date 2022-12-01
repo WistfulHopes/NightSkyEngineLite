@@ -1,7 +1,5 @@
 #include "ScriptAnalyzer.h"
 #include "../Actors/PlayerCharacter.h"
-#include <stdio.h>   
-#include <stdlib.h> 
 
 void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines)
 {

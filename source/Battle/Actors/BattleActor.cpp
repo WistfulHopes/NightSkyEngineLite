@@ -131,8 +131,8 @@ void BattleActor::Draw()
 	Source.height = CurrentSprite.frameSize.y;
 	
 	Rectangle Dest;
-	Dest.x = PosX;
-	Dest.y = PosY;
+	Dest.x = PosX / COORD_SCALE;
+	Dest.y = PosY / COORD_SCALE;
 	if (FacingRight)
 	{
 		Dest.width = CurrentSprite.frameSize.x;
@@ -143,7 +143,7 @@ void BattleActor::Draw()
 	}
 	Dest.height = CurrentSprite.frameSize.y;
 
-    DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, WHITE);
+    DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, RAYWHITE);
 }
 
 BattleActor::BattleActor()
