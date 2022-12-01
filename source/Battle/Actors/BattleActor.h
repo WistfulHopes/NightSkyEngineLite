@@ -13,7 +13,7 @@ class State;
 class PlayerCharacter;
 class FighterGameState;
 
-#define COORD_SCALE ((double)1000 / 0.43)
+#define COORD_SCALE ((double)3000)
 
 constexpr int32_t CollisionArraySize = 50;
 
@@ -176,9 +176,9 @@ struct Vector
 	{
 		return Vector(OtherVector.X - X, OtherVector.Y - Y);
 	}
-	float Size()
+	int Size()
 	{
-		return abs(sqrtf(X * X + Y * Y));
+		return fabs(sqrt(X * X + Y * Y));
 	}
 };
 
@@ -191,51 +191,51 @@ public:
 	bool IsActive = false;
 protected:
 	//internal values
-	int32_t PosX;
-	int32_t PosY;
-	int32_t PrevPosX;
-	int32_t PrevPosY;
-	int32_t SpeedX;
-	int32_t SpeedY;
+	int32_t PosX = 0;
+	int32_t PosY = 0;
+	int32_t PrevPosX = 0;
+	int32_t PrevPosY = 0;
+	int32_t SpeedX = 0;
+	int32_t SpeedY = 0;
 	int32_t Gravity = 1900;
-	int32_t Inertia;
+	int32_t Inertia = 0;
 	int32_t ActiveTime = -1;
 	int32_t ActionTime = -1;
-	int32_t PushHeight;
-	int32_t PushHeightLow;
-	int32_t PushWidth;
-	int32_t PushWidthExpand;
-	int32_t Hitstop;
-	int32_t L;
-	int32_t R;
-	int32_t T;
-	int32_t B;
+	int32_t PushHeight = 0;
+	int32_t PushHeightLow = 0;
+	int32_t PushWidth = 0;
+	int32_t PushWidthExpand = 0;
+	int32_t Hitstop = 0;
+	int32_t L = 0;
+	int32_t R = 0;
+	int32_t T = 0;
+	int32_t B = 0;
 	HitEffect NormalHitEffect;
 	HitEffect CounterHitEffect;
-	bool HitActive;
-	bool IsAttacking;
-	bool AttackHeadAttribute;
+	bool HitActive = false;
+	bool IsAttacking = false;
+	bool AttackHeadAttribute = false;
 	bool AttackProjectileAttribute = true;
 	bool RoundStart = true;
-	bool HasHit;
-	bool DeactivateOnNextUpdate;
+	bool HasHit = false;
+	bool DeactivateOnNextUpdate = false;
 	int32_t SpeedXPercent = 100;
-	bool SpeedXPercentPerFrame;
-	bool ScreenCollisionActive;
-	bool PushCollisionActive;
+	bool SpeedXPercentPerFrame = false;
+	bool ScreenCollisionActive = false;
+	bool PushCollisionActive = false;
 
-	int32_t StateVal1;
-	int32_t StateVal2;
-	int32_t StateVal3;
-	int32_t StateVal4;
-	int32_t StateVal5;
-	int32_t StateVal6;
-	int32_t StateVal7;
-	int32_t StateVal8;
+	int32_t StateVal1 = 0;
+	int32_t StateVal2 = 0;
+	int32_t StateVal3 = 0;
+	int32_t StateVal4 = 0;
+	int32_t StateVal5 = 0;
+	int32_t StateVal6 = 0;
+	int32_t StateVal7 = 0;
+	int32_t StateVal8 = 0;
 
 public:	
 	bool FacingRight = true;
-	int32_t MiscFlags;
+	int32_t MiscFlags = 0;
 	//disabled if not player
 	bool IsPlayer = false;
 	int32_t SuperFreezeTime = -1;
@@ -274,7 +274,6 @@ public:
 	State* ObjectState; 
 
 	Sprite CurrentSprite;
-	int CurrentSpriteIndex;
 
 protected:
 	//move object based on speed and inertia
@@ -306,6 +305,8 @@ public:
 	void InitObject();
 	//updates the object. called every frame
 	virtual void Update();
+	//draws the object. called every frame
+	virtual void Draw();
 	
 	//script callable functions
 	

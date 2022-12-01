@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-INCLUDES += -I../raylib-master/src -I../raylib-master/src/external/glfw/include
+INCLUDES += -I../raylib/src -I../raylib/src/external/glfw/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
@@ -160,28 +160,28 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/raudio.o: ../raylib-master/src/raudio.c
+$(OBJDIR)/raudio.o: ../raylib/src/raudio.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/rcore.o: ../raylib-master/src/rcore.c
+$(OBJDIR)/rcore.o: ../raylib/src/rcore.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/rglfw.o: ../raylib-master/src/rglfw.c
+$(OBJDIR)/rglfw.o: ../raylib/src/rglfw.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/rmodels.o: ../raylib-master/src/rmodels.c
+$(OBJDIR)/rmodels.o: ../raylib/src/rmodels.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/rshapes.o: ../raylib-master/src/rshapes.c
+$(OBJDIR)/rshapes.o: ../raylib/src/rshapes.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/rtext.o: ../raylib-master/src/rtext.c
+$(OBJDIR)/rtext.o: ../raylib/src/rtext.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/rtextures.o: ../raylib-master/src/rtextures.c
+$(OBJDIR)/rtextures.o: ../raylib/src/rtextures.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/utils.o: ../raylib-master/src/utils.c
+$(OBJDIR)/utils.o: ../raylib/src/utils.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

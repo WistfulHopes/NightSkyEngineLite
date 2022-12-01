@@ -3,18 +3,18 @@
 #include <stdio.h>   
 #include <stdlib.h> 
 
-void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*> States, std::vector<Subroutine*> Subroutines)
+void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines)
 {
     DataAddress = Addr;
     StateCount = *(int*)Addr;
-    StateAddresses = (StateAddress*)(StateCount + 4);
-    SubroutineCount = *(int*)&StateAddresses[StateCount];
-    SubroutineAddresses = (StateAddress*)(SubroutineCount + 4);
+    SubroutineCount = *(int*)(Addr + 4);
+    StateAddresses = (StateAddress*)(Addr + 8);
+    SubroutineAddresses = &StateAddresses[StateCount];
     ScriptAddress = (char*)&SubroutineAddresses[StateCount];
     
     for (int i = 0; i < StateCount; i++)
     {
-        ScriptState* NewState = new ScriptState;
+        ScriptState* NewState = new ScriptState();
         NewState->Name = StateAddresses[i].Name;
         NewState->OffsetAddress = StateAddresses[i].OffsetAddress;
         uint32_t StateSize;
@@ -26,15 +26,15 @@ void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*> S
         {
             StateSize = StateAddresses[i + 1].OffsetAddress - NewState->OffsetAddress;
         }
-        InitStateOffsets((char*)NewState->OffsetAddress, StateSize, NewState);
-        States.push_back(NewState);
+        InitStateOffsets((char*)NewState->OffsetAddress + (uint64_t)Addr, StateSize, NewState);
+        States->push_back(NewState);
     }
     for (int i = 0; i < SubroutineCount; i++)
     {
         ScriptSubroutine* NewSubroutine = new ScriptSubroutine;
         NewSubroutine->Name = SubroutineAddresses[i].Name;
         NewSubroutine->OffsetAddress = SubroutineAddresses[i].OffsetAddress;
-        Subroutines.push_back(NewSubroutine);
+        Subroutines->push_back(NewSubroutine);
     }
 }
 
@@ -84,103 +84,115 @@ void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* St
 
 void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
 {
-    bool CelExecuted;
+    Addr += (uint64_t)ScriptAddress;
+    bool CelExecuted = false;
     std::vector<StateAddress> Labels;
-    GetAllLabels(Addr, &Labels);
-    State* StateToModify;
+    char* BakAddr = Addr;
+    GetAllLabels(BakAddr, &Labels);
+    State* StateToModify = nullptr;
     while (true)
     {
         OpCodes code = *(OpCodes*)Addr;
         switch(code)
         {
         case OpCodes::SetCel:
-            if (CelExecuted)
-                return;
-            int32_t AnimTime = *(int32_t*)(Addr + 68);
-            if (Actor->AnimTime > AnimTime)
             {
-                Addr += InstructionSizes[code];
-                if (FindNextCel(Addr))
-                    break;
-                else
+                if (CelExecuted)
+                    return;
+                int32_t AnimTime = *(int32_t*)(Addr + 68);
+                if (Actor->AnimTime > AnimTime)
                 {
-                    if (!Actor->IsPlayer)
-                    {
-                        Actor->DeactivateObject();
-                    }
+                    Addr += InstructionSizes[code];
+                    if (FindNextCel(Addr))
+                        break;
                     else
                     {
-                        switch(Actor->Player->CurrentActionFlags)
+                        if (!Actor->IsPlayer)
                         {
-                        case ACT_Standing:
-                            Actor->Player->JumpToState("Stand");
-                            break;
-                        case ACT_Crouching:
-                            Actor->Player->JumpToState("Crouch");
-                            break;
-                        case ACT_Jumping:
-                            Actor->Player->JumpToState("VJump");
-                            break;
+                            Actor->DeactivateObject();
                         }
+                        else
+                        {
+                            switch(Actor->Player->CurrentActionFlags)
+                            {
+                            case ACT_Standing:
+                                Actor->Player->JumpToState("Stand");
+                                break;
+                            case ACT_Crouching:
+                                Actor->Player->JumpToState("Crouch");
+                                break;
+                            case ACT_Jumping:
+                                Actor->Player->JumpToState("VJump");
+                                break;
+                            }
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
-            else
-            {
-                Actor->SetCelName(Addr + 4);
-                CelExecuted = true;
-            }
-            break;
-        case OpCodes::CallSubroutine:
-            Actor->Player->CallSubroutine(Addr + 4);
-            break;
-        case OpCodes::ExitState:
-            if (!Actor->IsPlayer)
-            {
-                Actor->DeactivateObject();
-            }
-            else
-            {
-                switch(Actor->Player->CurrentActionFlags)
+                else
                 {
-                case ACT_Standing:
-                    Actor->Player->JumpToState("Stand");
-                    break;
-                case ACT_Crouching:
-                    Actor->Player->JumpToState("Crouch");
-                    break;
-                case ACT_Jumping:
-                    Actor->Player->JumpToState("VJump");
-                    break;
+                    Actor->SetCelName(Addr + 4);
+                    CelExecuted = true;
                 }
+                break;
             }
-            break;
-        case OpCodes::GotoLabel:
-            CString<64> LabelName;
-            LabelName.SetString(Addr + 4);
-            for (StateAddress Label : Labels)
+        case OpCodes::CallSubroutine:
             {
-                if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
-                {   
-                    Addr = (char*)Label.OffsetAddress;
-                    if (FindNextCel(Addr))
-                    {
-                        Actor->AnimTime = *(int32_t*)(Addr + 68) - 1;
-                    }
-                    return;
-                }
+                Actor->Player->CallSubroutine(Addr + 4);
+                break;
             }
-            break;
+        case OpCodes::ExitState:
+            {
+                if (!Actor->IsPlayer)
+                {
+                    Actor->DeactivateObject();
+                }
+                else
+                {
+                    switch(Actor->Player->CurrentActionFlags)
+                    {
+                    case ACT_Standing:
+                        Actor->Player->JumpToState("Stand");
+                        break;
+                    case ACT_Crouching:
+                        Actor->Player->JumpToState("Crouch");
+                        break;
+                    case ACT_Jumping:
+                        Actor->Player->JumpToState("VJump");
+                        break;
+                    }
+                }
+                break;
+            }
+        case OpCodes::GotoLabel:
+            {
+                CString<64> LabelName;
+                LabelName.SetString(Addr + 4);
+                for (StateAddress Label : Labels)
+                {
+                    if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
+                    {   
+                        Addr = (char*)Label.OffsetAddress;
+                        if (FindNextCel(Addr))
+                        {
+                            Actor->AnimTime = *(int32_t*)(Addr + 68) - 1;
+                        }
+                        return;
+                    }
+                }
+                break;
+            }
         case OpCodes::EndLabel:
             CelExecuted = true;
             break;
         case OpCodes::BeginStateDefine:
-            CString<64> StateName;
-            StateName.SetString(Addr + 4);
-            int32_t Index = Actor->Player->StateMachine.GetStateIndex(StateName);
-            StateToModify = Actor->Player->StateMachine.States[Index];
-            break;
+            {
+                CString<64> StateName;
+                StateName.SetString(Addr + 4);
+                int32_t Index = Actor->Player->StateMachine.GetStateIndex(StateName);
+                StateToModify = Actor->Player->StateMachine.States[Index];
+                break;
+            }
         case OpCodes::EndStateDefine:
             StateToModify = nullptr;
             break;
@@ -239,7 +251,7 @@ bool ScriptAnalyzer::FindNextCel(char* Addr)
         case OpCodes::ExitState:
             return false;
         case OpCodes::EndBlock:
-            return;
+            return false;
         default:
             break;
         }
@@ -255,12 +267,14 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
         switch(code)
         {
         case OpCodes::BeginLabel:
-            CString<64> LabelName;
-            LabelName.SetString(Addr + 4);
-            StateAddress Label;
-            Label.Name = LabelName;
-            Label.OffsetAddress = (uint32_t)Addr;
-            Labels->push_back(Label);
+            {
+                CString<64> LabelName;
+                LabelName.SetString(Addr + 4);
+                StateAddress Label;
+                Label.Name = LabelName;
+                Label.OffsetAddress = (uint32_t)Addr;
+                Labels->push_back(Label);
+            }
         case OpCodes::ExitState:
             return;
         case OpCodes::EndBlock:

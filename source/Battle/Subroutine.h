@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 #include "../CString.h"
 
 class BattleActor;
@@ -10,7 +12,7 @@ public:
 	BattleActor* Parent;
 	CString<64> Name;
 
-	virtual void OnCall(); //executes on call. write in script
+	virtual void OnCall() = 0; //executes on call. write in script
 };
 
 class ScriptSubroutine : public Subroutine

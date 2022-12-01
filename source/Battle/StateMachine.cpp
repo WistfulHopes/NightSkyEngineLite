@@ -8,7 +8,8 @@ CString<64> StateMachine::GetStateName(int Index)
 	{
 		return States[Index]->Name;
 	}
-	return CString<64>::Null;
+	CString<64> Null = CString<64>();
+	return Null;
 }
 
 int StateMachine::GetStateIndex(CString<64> Name)
@@ -27,7 +28,7 @@ int StateMachine::GetStateIndex(CString<64> Name)
 
 bool StateMachine::SetState(CString<64> Name)
 {
-	int Index = 0;
+	uint32_t Index = 0;
 	for (CString<64> String : StateNames)
 	{
 		if (!strcmp(String.GetString(), Name.GetString()))
@@ -36,10 +37,8 @@ bool StateMachine::SetState(CString<64> Name)
 		}
 		Index++;
 	}
-	if (strcmp(StateNames[Index].GetString(), Name.GetString()))
-	{
+	if (Index == StateNames.size())
 		return false;
-	}
 
 	if (IsCurrentState(Name))
 	{
@@ -60,7 +59,7 @@ bool StateMachine::SetState(CString<64> Name)
 
 bool StateMachine::ForceSetState(CString<64> Name)
 {
-	int Index = 0;
+	uint32_t Index = 0;
 	for (CString<64> String : StateNames)
 	{
 		if (!strcmp(String.GetString(), Name.GetString()))
@@ -69,6 +68,8 @@ bool StateMachine::ForceSetState(CString<64> Name)
 		}
 		Index++;
 	}
+	if (Index == StateNames.size())
+		return false;
 	if (strcmp(StateNames[Index].GetString(), Name.GetString()))
 	{
 		return false;

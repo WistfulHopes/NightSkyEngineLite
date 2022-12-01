@@ -5,6 +5,6 @@ void ScriptSubroutine::OnCall()
 {
     if (Parent)
     {
-        Parent->Player->Analyzer->Analyze((char*)OffsetAddress, Parent);
+        Parent->Player->CharaAnalyzer->Analyze((char*)OffsetAddress, Parent);
     }
 }

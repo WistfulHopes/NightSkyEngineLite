@@ -7,7 +7,7 @@
 class PlayerCharacter;
 class BattleActor;
 
-enum EntryState //character state required to enter state
+enum class EntryState //character state required to enter state
 {
 	None, //any
 	Standing,
@@ -15,7 +15,7 @@ enum EntryState //character state required to enter state
 	Crouching,
 };
 
-enum InputCondition //input required to enter state
+enum class InputCondition //input required to enter state
 {
 	None, //no input
 	Input_1,
@@ -100,7 +100,7 @@ enum InputCondition //input required to enter state
 	Input_Any_LMHS,
 };
 
-enum StateType
+enum class StateType
 {
 	Standing,
 	Crouching,
@@ -122,7 +122,7 @@ enum StateType
 	Tech,
 };
 
-enum StateCondition
+enum class StateCondition
 {
 	None,
 	AirJumpOk,
@@ -154,30 +154,30 @@ public:
 	bool IsFollowupState;
 	int32_t ObjectID;
 	
-	virtual void OnEnter(); //executes on enter. write in script
-	virtual void OnUpdate(float DeltaTime); //executes every frame. write in script
-	virtual void OnExit(); //executes on exit. write in script
-	virtual void OnLanding(); //executes on landing. write in script
-	virtual void OnHit(); //executes on hit. write in script
-	virtual void OnBlock(); //executes on hit. write in script
-	virtual void OnHitOrBlock(); //executes on hit. write in script
-    virtual void OnCounterHit(); //executes on counter hit. write in script
-	virtual void OnSuperFreeze(); //executes on super freeze. write in script
-	virtual void OnSuperFreezeEnd(); //executes on super freeze. write in script
+	virtual void OnEnter() = 0; //executes on enter. write in script
+	virtual void OnUpdate(float DeltaTime) = 0; //executes every frame. write in script
+	virtual void OnExit() = 0; //executes on exit. write in script
+	virtual void OnLanding() = 0; //executes on landing. write in script
+	virtual void OnHit() = 0; //executes on hit. write in script
+	virtual void OnBlock() = 0; //executes on hit. write in script
+	virtual void OnHitOrBlock() = 0; //executes on hit. write in script
+    virtual void OnCounterHit() = 0; //executes on counter hit. write in script
+	virtual void OnSuperFreeze() = 0; //executes on super freeze. write in script
+	virtual void OnSuperFreezeEnd() = 0; //executes on super freeze. write in script
 };
 
 struct ScriptBlockOffsets 
 {
-	uint32_t OnEnterOffset;
-	uint32_t OnUpdateOffset;
-	uint32_t OnExitOffset;
-	uint32_t OnLandingOffset;
-	uint32_t OnHitOffset;
-	uint32_t OnBlockOffset;
-	uint32_t OnHitOrBlockOffset;
-	uint32_t OnCounterHitOffset;
-	uint32_t OnSuperFreezeOffset;
-	uint32_t OnSuperFreezeEndOffset;
+	uint32_t OnEnterOffset = 0;
+	uint32_t OnUpdateOffset = 0;
+	uint32_t OnExitOffset = 0;
+	uint32_t OnLandingOffset = 0;
+	uint32_t OnHitOffset = 0;
+	uint32_t OnBlockOffset = 0;
+	uint32_t OnHitOrBlockOffset = 0;
+	uint32_t OnCounterHitOffset = 0;
+	uint32_t OnSuperFreezeOffset = 0;
+	uint32_t OnSuperFreezeEndOffset = 0;
 };
 
 class ScriptState : public State

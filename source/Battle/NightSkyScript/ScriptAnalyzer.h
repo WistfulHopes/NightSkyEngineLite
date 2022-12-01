@@ -1,9 +1,10 @@
 #pragma once
 
 #include <stdint.h>
-#include "../CString.h"
+#include "../../CString.h"
 #include <vector>
 
+class ScriptState;
 class State;
 class Subroutine;
 class BattleActor;
@@ -1064,8 +1065,8 @@ enum OpCodes
 
 struct StateAddress
 {
-    uint32_t OffsetAddress;
     CString<64> Name;
+    uint32_t OffsetAddress;
 };
 
 class ScriptAnalyzer
@@ -1079,7 +1080,7 @@ private:
     StateAddress* SubroutineAddresses;
 
 public:
-    void Initialize(char* Addr, uint32_t Size, std::vector<State*> States, std::vector<Subroutine*> Subroutines);
+    void Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines);
     void InitStateOffsets(char* Addr, uint32_t Size, ScriptState* State);
     void Analyze(char* Addr, BattleActor* Actor);
     bool FindNextCel(char* Addr);

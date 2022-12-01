@@ -115,7 +115,40 @@ void BattleActor::Update()
 void BattleActor::SetSprite()
 {
 	int CelNameLength = strlen(CelNameInternal.GetString());
-	CurrentSpriteIndex = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
+	CurrentSprite.frame = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
+}
+
+void BattleActor::Draw()
+{
+	float ox, oy;
+    ox = (CurrentSprite.frame % CurrentSprite.framesWide) * CurrentSprite.frameSize.x;
+    oy = (int)(CurrentSprite.frame / CurrentSprite.framesWide) * CurrentSprite.frameSize.y;
+	
+	Rectangle Source;
+	Source.x = ox;
+	Source.y = oy;
+	Source.width = CurrentSprite.frameSize.x;
+	Source.height = CurrentSprite.frameSize.y;
+	
+	Rectangle Dest;
+	Dest.x = PosX;
+	Dest.y = PosY;
+	if (FacingRight)
+	{
+		Dest.width = CurrentSprite.frameSize.x;
+	}
+	else
+	{
+		Dest.width = -CurrentSprite.frameSize.x;
+	}
+	Dest.height = CurrentSprite.frameSize.y;
+
+    DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, WHITE);
+}
+
+BattleActor::BattleActor()
+{
+	
 }
 
 void BattleActor::Move()
@@ -566,7 +599,7 @@ void BattleActor::CollisionView()
 		std::vector<std::vector<Vector>> CurrentLines;
 		for (int32_t j = 0; j < 4; j++)
 		{
-			CurrentLines.push_back(std::vector { CurrentCorners[j] , CurrentCorners[(j + 1) % 4] } );
+			//CurrentLines.push_back(std::vector { CurrentCorners[j] , CurrentCorners[(j + 1) % 4] } );
 		}
 		Lines.push_back(CurrentLines);
 	}
@@ -595,7 +628,7 @@ void BattleActor::CollisionView()
 	std::vector<std::vector<Vector>> CurrentLines;
 	for (int32_t j = 0; j < 4; j++)
 	{
-		CurrentLines.push_back(std::vector { CurrentCorners[j] , CurrentCorners[(j + 1) % 4] } );
+		//CurrentLines.push_back(std::vector { CurrentCorners[j] , CurrentCorners[(j + 1) % 4] } );
 	}
 	/*FLinearColor color = FLinearColor(1.f, 1.f, 0.f, .2f);
 

@@ -99,12 +99,14 @@ public:
 
 	void Init(); //initializes game state
 	void Update(int32_t Input1, int32_t Input2); //updates game state
+	void Draw();
 	void SaveGameState(); //saves game state
 	void LoadGameState(); //loads game state
 	
 	int32_t LocalFrame;
 	int32_t RemoteFrame;
 	int32_t ActiveObjectCount;
+
 private:
 	int32_t SyncFrame;
 	int32_t LocalFrameAdvantage;
@@ -114,8 +116,6 @@ private:
 	float ElapsedTime;
 
 	void UpdateLocalInput(); //updates local input
-	bool NeedRollback(); //checks if rollback is needed
-	bool TimeSynced(); //checks if time is synchronized
 	void HandleRoundWin();
 	void HandleMatchWin();
 	void RoundInit();
@@ -130,12 +130,8 @@ public:
 	
    	bool DisplayCollision;
 
-	void UpdateCamera();
-	void UpdateUI();
-	void PlayCameraAnim(PlayerCharacter* Target);
 	BattleActor* AddBattleActor(State* InState, int32_t PosX, int32_t PosY, bool FacingRight, PlayerCharacter* Parent); //creates object
 	void StartSuperFreeze(int32_t Duration);
-	void BattleHudVisibility(bool Visible);
 	void PlayCommonAudio(char* InSoundWave, float MaxDuration);
 	void PlayCharaAudio(char* InSoundWave, float MaxDuration);
 	void PlayVoiceLine(char* InSoundWave, float MaxDuration, int32_t Player);

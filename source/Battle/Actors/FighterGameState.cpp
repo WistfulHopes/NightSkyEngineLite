@@ -262,26 +262,28 @@ void FighterGameState::SortObjects()
 	}
 }
 
-RollbackData::RollbackData()
-{
-	ActiveObjectCount = 0;
-}
-
 void FighterGameState::Init()
 {
-
+	CommonScript = (char*)LoadFileData("Scripts/NSS_Common.nss", &CommonScriptLength);
 	for (int i = 0; i < 6; i++)
 	{
 		Players[i] = new PlayerCharacter();
 		Players[i]->PlayerIndex = i * 3 > 6;
-		if (i % 3 == 0)
-		{
-			Players[i]->IsOnScreen = true;
-		}
 		SortedObjects[i] = Players[i];
 		Players[i]->InitPlayer();
 		Players[i]->GameState = this;
 		Players[i]->ObjNumber = i + 400;
+		if (i % 3 == 0)
+		{
+			unsigned int CharaScriptBytes = 0;
+			Players[i]->CharaScript = (char*)LoadFileData("Scripts/NSS_Esther.nss", &CharaScriptBytes);
+			Players[i]->CharaScriptLength = CharaScriptBytes;
+			unsigned int ObjScriptBytes = 0;
+			Players[i]->ObjectScript = (char*)LoadFileData("Scripts/NSS_EstherObj.nss", &ObjScriptBytes);
+			Players[i]->ObjectScriptLength = ObjScriptBytes;
+			Players[i]->IsOnScreen = true;
+			Players[i]->InitStates();
+		}
 	}
 	for (int i = 0; i < 400; i++)
 	{
@@ -345,7 +347,6 @@ void FighterGameState::Update(int Input1, int Input2)
 		if (!SortedObjects[i]->IsPlayer || SortedObjects[i]->Player->IsOnScreen)
 		{
 			SortedObjects[i]->Update();
-			SortedObjects[i]->SetSprite();
 		}
 	}
 	HandlePushCollision();
@@ -355,6 +356,20 @@ void FighterGameState::Update(int Input1, int Input2)
 	SetScreenBounds();
 	HandleRoundWin();
 	ManageAudio();
+}
+
+void FighterGameState::Draw()
+{
+	for (int i = 0; i < 406; i++)
+	{
+		if (i == ActiveObjectCount)
+			break;
+		if (!SortedObjects[i]->IsPlayer || SortedObjects[i]->Player->IsOnScreen)
+		{
+			SortedObjects[i]->SetSprite();
+			SortedObjects[i]->Draw();
+		}
+	}
 }
 
 void FighterGameState::SaveGameState()

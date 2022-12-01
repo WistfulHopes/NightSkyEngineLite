@@ -10,7 +10,7 @@ class PlayerCharacter; //forward declaration
  */
 struct StateMachine
 {
-	State* CurrentState;
+	State* CurrentState = nullptr;
 	std::vector<State*> States;
 	std::vector<CString<64>> StateNames;
 

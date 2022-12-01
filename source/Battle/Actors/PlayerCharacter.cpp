@@ -7,11 +7,13 @@
 PlayerCharacter::PlayerCharacter()
 {
 	InitPlayer();
-	Analyzer->Initialize(GameState->CommonScript, GameState->CommonScriptLength, CommonStates, Subroutines);
-	Analyzer->Initialize(CharaScript, CharaScriptLength, StateMachine.States, Subroutines);
-	Analyzer->Initialize(ObjectScript, ObjectScriptLength, StateMachine.States, Subroutines);
-	StateMachine.Initialize();
-	StateMachine.ParentStates(CommonStates);
+	for (int i = 0; i < 32; i++)
+		ChildBattleActors[i] = nullptr;
+	for (int i = 0; i < 16; i++)
+		StoredBattleActors[i] = nullptr;
+	CharaAnalyzer = new ScriptAnalyzer();
+	ObjAnalyzer = new ScriptAnalyzer();
+	CommonAnalyzer = new ScriptAnalyzer();
 	Player = this;
 	StateMachine.Parent = this;
 	ScreenCollisionActive = true;
@@ -58,19 +60,54 @@ PlayerCharacter::PlayerCharacter()
 	ForwardJumpMeterGain = 10;
 	ForwardDashMeterGain = 25;
 	ForwardAirDashMeterGain = 25;
-	for (int i = 0; i < MaxComponentCount; i++)
-		ComponentVisible[i] = true;
+	
+	CurrentSprite.texture = LoadTexture("Sprites/Esther/Esther_stand.png");
+	Vector2 Size;
+	Size.x = 192;
+	Size.y = 224;
+	CurrentSprite.frameSize = Size;
+	CurrentSprite.maxFrame = 5;
+	CurrentSprite.framesWide = 3;
+	Vector2 Origin;
+	Origin.x = 96;
+	Origin.y = 112;
+	CurrentSprite.origin = Origin;
 }
 
 void PlayerCharacter::InitPlayer()
 {
-	StateMachine.CurrentState->OnEnter();
 	CurrentHealth = Health;
 	AttackProjectileAttribute = false;
 	DefaultLandingAction = true;
 	EnableAll();
 	EnableFlip(true);
 	StateName.SetString("Stand");
+}
+
+void PlayerCharacter::InitStates()
+{
+	CommonAnalyzer->Initialize(GameState->CommonScript, GameState->CommonScriptLength, &CommonStates, &CommonSubroutines);
+	for (auto Subroutine : CommonSubroutines)
+	{
+		CommonSubroutineNames.push_back(Subroutine->Name);
+		Subroutine->Parent = this;
+	}
+	CharaAnalyzer->Initialize(CharaScript, CharaScriptLength, &StateMachine.States, &Subroutines);
+	ObjAnalyzer->Initialize(ObjectScript, ObjectScriptLength, &ObjectStates, &Subroutines);
+	for (auto Subroutine : Subroutines)
+	{
+		SubroutineNames.push_back(Subroutine->Name);
+		Subroutine->Parent = this;
+	}
+	for (auto State : ObjectStates)
+	{
+		ObjectStateNames.push_back(State->Name);
+	}
+	StateMachine.Initialize();
+	StateMachine.ParentStates(CommonStates);
+	CallSubroutine("CmnMatchInit");
+	CallSubroutine("MatchInit");
+	StateMachine.CurrentState->OnEnter();
 }
 
 void PlayerCharacter::Update()
@@ -292,7 +329,6 @@ void PlayerCharacter::Update()
 	if (Hitstop != 0)
 		StateMachine.Tick(0.0166666); //update current state
 	HandleStateMachine(false); //handle state transitions
-	SetComponentVisibility();
 }
 
 void PlayerCharacter::HandleStateMachine(bool Buffer)
@@ -526,7 +562,7 @@ void PlayerCharacter::HandleStateMachine(bool Buffer)
 
 void PlayerCharacter::HandleBufferedState()
 {
-	if (!strcmp(BufferedStateName.GetString(), ""))
+	if (strcmp(BufferedStateName.GetString(), ""))
 	{
 		if (FindChainCancelOption(BufferedStateName.GetString())
 			|| FindWhiffCancelOption(BufferedStateName.GetString())) //if cancel option, allow resetting state
@@ -596,6 +632,16 @@ void PlayerCharacter::AddSubroutine(CString<64> Name, Subroutine* Subroutine)
 void PlayerCharacter::CallSubroutine(char* Name)
 {
 	int Index = 0;
+	for (CString<64> String : CommonSubroutineNames)
+	{
+		if (!strcmp(String.GetString(), Name))
+		{
+			CommonSubroutines[Index]->OnCall();
+			return;
+		}
+		Index++;
+	}
+	Index = 0;
 	for (CString<64> String : SubroutineNames)
 	{
 		if (!strcmp(String.GetString(), Name))
@@ -1308,7 +1354,7 @@ void PlayerCharacter::StartSuperFreeze(int Duration)
 
 void PlayerCharacter::BattleHudVisibility(bool Visible)
 {
-	GameState->BattleHudVisibility(Visible);
+	//GameState->BattleHudVisibility(Visible);
 }
 
 void PlayerCharacter::DisableLastInput()

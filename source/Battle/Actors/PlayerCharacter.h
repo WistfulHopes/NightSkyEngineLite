@@ -21,7 +21,7 @@ public:
 	int32_t CurrentEnableFlags;
 	int32_t CurrentHealth;
 protected:
-	//internal variables	
+	//internal variables
 	int32_t CurrentAirJumpCount;
 	int32_t CurrentAirDashCount;
 	int32_t AirDashTimerMax;
@@ -37,11 +37,11 @@ protected:
 public:
 	WallBounceEffect CurrentWallBounceEffect;
 	GroundBounceEffect CurrentGroundBounceEffect;
-	bool IsDead;
-	bool ThrowActive;
-	bool IsStunned;
-	bool IsThrowLock;
-	bool IsOnScreen;
+	bool IsDead = false;
+	bool ThrowActive = false;
+	bool IsStunned = false;
+	bool IsThrowLock = false;
+	bool IsOnScreen = false;
 	bool DeathCamOverride;
 	bool IsKnockedDown;
 	bool FlipInputs;
@@ -164,13 +164,18 @@ public:
 	//anything past here isn't saved or loaded for rollback	
 	int32_t PlayerSyncEnd; 
 
-	//script analyzer
-	ScriptAnalyzer* Analyzer;
+	//scripts
+	ScriptAnalyzer* CharaAnalyzer;
 	char* CharaScript;
 	uint32_t CharaScriptLength;
+	ScriptAnalyzer* ObjAnalyzer;
 	char* ObjectScript;
 	uint32_t ObjectScriptLength;
+	ScriptAnalyzer* CommonAnalyzer;
 
+	std::vector<Subroutine*> CommonSubroutines;
+	std::vector<CString<64>> CommonSubroutineNames;
+	
 	std::vector<Subroutine*> Subroutines;
 	std::vector<CString<64>> SubroutineNames;
 
@@ -194,12 +199,12 @@ private:
 	bool FindChainCancelOption(char* Name);
 	//check if whiff cancel option exists
 	bool FindWhiffCancelOption(char* Name); 
-	//sets visibility of components
-	void SetComponentVisibility();
 	
 public:
 	//initialize player for match/round start
 	void InitPlayer();
+	//initializes states
+	void InitStates();
 	//based on received hit action, choose state
 	void HandleHitAction();
 	//check attack against block stance
