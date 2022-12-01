@@ -2,7 +2,9 @@
 
 
 #include "BattleActor.h"
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "FighterGameState.h"
 #include "PlayerCharacter.h"
 #include "../State.h"
@@ -25,7 +27,7 @@ void BattleActor::Update()
 		ResetObject();
 		return;
 	}
-	
+
 	L = PosX - PushWidth / 2; //sets pushboxes
 	R = PosX + PushWidth / 2;
 	if (FacingRight)
@@ -108,6 +110,12 @@ void BattleActor::Update()
 		ObjectState->OnUpdate(1/60);
 	}
 	RoundStart = false; //round has started
+}
+
+void BattleActor::SetSprite()
+{
+	int CelNameLength = strlen(CelNameInternal.GetString());
+	CurrentSpriteIndex = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
 }
 
 void BattleActor::Move()

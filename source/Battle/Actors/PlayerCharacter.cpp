@@ -7,6 +7,11 @@
 PlayerCharacter::PlayerCharacter()
 {
 	InitPlayer();
+	Analyzer->Initialize(GameState->CommonScript, GameState->CommonScriptLength, CommonStates, Subroutines);
+	Analyzer->Initialize(CharaScript, CharaScriptLength, StateMachine.States, Subroutines);
+	Analyzer->Initialize(ObjectScript, ObjectScriptLength, StateMachine.States, Subroutines);
+	StateMachine.Initialize();
+	StateMachine.ParentStates(CommonStates);
 	Player = this;
 	StateMachine.Parent = this;
 	ScreenCollisionActive = true;
@@ -59,6 +64,7 @@ PlayerCharacter::PlayerCharacter()
 
 void PlayerCharacter::InitPlayer()
 {
+	StateMachine.CurrentState->OnEnter();
 	CurrentHealth = Health;
 	AttackProjectileAttribute = false;
 	DefaultLandingAction = true;

@@ -94,9 +94,8 @@ public:
 	int32_t MaxOtgCount = 1;
 	NetMode CurrentNetMode;
 
-	//script analyzer
-	ScriptAnalyzer* Analyzer;
 	char* CommonScript;
+	uint32_t CommonScriptLength;
 
 	void Init(); //initializes game state
 	void Update(int32_t Input1, int32_t Input2); //updates game state

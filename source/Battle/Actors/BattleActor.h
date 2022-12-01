@@ -2,8 +2,10 @@
 
 #include "../../CString.h"
 #include "../CollisionBox.h"
+#include "../../Sprite.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
 #pragma pack (push, 1)
 
@@ -270,6 +272,10 @@ public:
 	FighterGameState* GameState;
 
 	State* ObjectState; 
+
+	Sprite CurrentSprite;
+	int CurrentSpriteIndex;
+
 protected:
 	//move object based on speed and inertia
 	void Move();
@@ -277,6 +283,9 @@ protected:
 	void GetBoxes(); 
 
 public:
+	//updates current sprite
+	void SetSprite();
+	
 	void SaveForRollback(unsigned char* Buffer);
 	void LoadForRollback(unsigned char* Buffer);
 

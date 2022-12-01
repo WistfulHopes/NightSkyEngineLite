@@ -16,6 +16,31 @@ struct StateMachine
 
 	PlayerCharacter* Parent;
 
+	void Initialize()
+	{
+		for (auto State : States)
+		{
+			State->Parent = Parent;
+			StateNames.push_back(State->Name);
+			if (CurrentState == nullptr)
+			{
+				CurrentState = State;
+			}
+		}
+	}
+
+	void ParentStates(std::vector<State*> CommonStates)
+	{
+		for (auto State : CommonStates)
+		{
+			int Index = GetStateIndex(State->Name);
+			if (Index != -1)
+			{
+				static_cast<ScriptState*>(States[Index])->ParentState = static_cast<ScriptState*>(State);
+			}
+		}
+	}
+
 	void AddState(const CString<64> Name, State* Config)
 	{
 		Config->Parent = Parent;

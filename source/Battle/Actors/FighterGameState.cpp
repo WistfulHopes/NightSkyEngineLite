@@ -343,7 +343,10 @@ void FighterGameState::Update(int Input1, int Input2)
 		if (i == ActiveObjectCount)
 			break;
 		if (!SortedObjects[i]->IsPlayer || SortedObjects[i]->Player->IsOnScreen)
+		{
 			SortedObjects[i]->Update();
+			SortedObjects[i]->SetSprite();
+		}
 	}
 	HandlePushCollision();
 	HandleHitCollision();

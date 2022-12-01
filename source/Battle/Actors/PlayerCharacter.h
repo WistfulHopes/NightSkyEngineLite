@@ -167,13 +167,18 @@ public:
 	//script analyzer
 	ScriptAnalyzer* Analyzer;
 	char* CharaScript;
+	uint32_t CharaScriptLength;
 	char* ObjectScript;
+	uint32_t ObjectScriptLength;
 
 	std::vector<Subroutine*> Subroutines;
 	std::vector<CString<64>> SubroutineNames;
 
-	std::vector<State*> ObjectStates; 
+	std::vector<State*> ObjectStates;
 	std::vector<CString<64>> ObjectStateNames; 
+
+	std::vector<State*> CommonStates;
+	std::vector<CString<64>> CommonStateNames; 
 
 	int32_t ColorIndex = 1;
 	
