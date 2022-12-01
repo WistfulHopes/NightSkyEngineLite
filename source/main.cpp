@@ -21,8 +21,8 @@ int main(void)
         Camera2D Cam;
 
         Vector2 Offset;
-        Offset.x = 0;
-        Offset.y = 0;
+        Offset.x = 0 + 400;
+        Offset.y = 0 + 240;
         Cam.offset = Offset;
 
         double TargetX = static_cast<double>(GameState->StoredBattleState.CurrentScreenPos) / COORD_SCALE;
@@ -30,7 +30,7 @@ int main(void)
         TargetX = Clamp(TargetX, 0, 720);
         Vector2 Target;
         Target.x = TargetX;
-        Target.y = TargetY;
+        Target.y = TargetY + 80;
         Cam.target = Target;
 
         Cam.rotation = 0;
@@ -39,10 +39,9 @@ int main(void)
         BeginDrawing();
         
             ClearBackground(RAYWHITE);
-
-            BeginMode2D(Cam);
+            //BeginMode2D(Cam);
             GameState->Draw();
-            EndMode2D();
+            //EndMode2D();
 
         EndDrawing();
     }

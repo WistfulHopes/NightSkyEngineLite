@@ -151,8 +151,8 @@ void BattleActor::Draw()
 	Source.height = CurrentSprite.frameSize.y;
 	
 	Rectangle Dest;
-	Dest.x = PosX / COORD_SCALE;
-	Dest.y = PosY / COORD_SCALE;
+	Dest.x = PosX / COORD_SCALE + 400;
+	Dest.y = PosY / COORD_SCALE + 330;
 	if (FacingRight)
 	{
 		Dest.width = CurrentSprite.frameSize.x;

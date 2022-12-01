@@ -4,9 +4,9 @@
 void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines)
 {
     DataAddress = Addr;
-    StateCount = *(int*)Addr;
-    SubroutineCount = *(int*)(Addr + 4);
-    StateAddresses = (StateAddress*)(Addr + 8);
+    StateCount = *reinterpret_cast<int*>(Addr);
+    SubroutineCount = *reinterpret_cast<int*>(Addr + 4);
+    StateAddresses = reinterpret_cast<StateAddress*>(Addr + 8);
     SubroutineAddresses = &StateAddresses[StateCount];
     ScriptAddress = (char*)&SubroutineAddresses[StateCount];
     
@@ -24,7 +24,7 @@ void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* 
         {
             StateSize = StateAddresses[i + 1].OffsetAddress - NewState->OffsetAddress;
         }
-        InitStateOffsets((char*)NewState->OffsetAddress + (uint64_t)Addr, StateSize, NewState);
+        InitStateOffsets(reinterpret_cast<char*>(NewState->OffsetAddress) + (uint64_t)ScriptAddress, StateSize, NewState);  // NOLINT(performance-no-int-to-ptr)
         States->push_back(NewState);
     }
     for (int i = 0; i < SubroutineCount; i++)
@@ -38,45 +38,74 @@ void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* 
 
 void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* State)
 {
-    for (uint32_t i = 0; i < Size;)
+    while (true)
     {
-        OpCodes code = *(OpCodes*)Addr;
+        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
         case OpCodes::OnEnter:
-            State->Offsets.OnEnterOffset = i * 4;
+            State->Offsets.OnEnterOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnUpdate:
-            State->Offsets.OnUpdateOffset = i * 4;
+            State->Offsets.OnUpdateOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnExit:
-            State->Offsets.OnExitOffset = i * 4;
+            State->Offsets.OnExitOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnLanding:
-            State->Offsets.OnLandingOffset = i * 4;
+            State->Offsets.OnLandingOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnHit:
-            State->Offsets.OnHitOffset = i * 4;
+            State->Offsets.OnHitOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnBlock:
-            State->Offsets.OnBlockOffset = i * 4;
+            State->Offsets.OnBlockOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnHitOrBlock:
-            State->Offsets.OnHitOrBlockOffset = i * 4;
+            State->Offsets.OnHitOrBlockOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnCounterHit:
-            State->Offsets.OnCounterHitOffset = i * 4;
+            State->Offsets.OnCounterHitOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnSuperFreeze:
-            State->Offsets.OnSuperFreezeOffset = i * 4;
+            State->Offsets.OnSuperFreezeOffset = Addr - ScriptAddress;
             break;
         case OpCodes::OnSuperFreezeEnd:
-            State->Offsets.OnSuperFreezeEndOffset = i * 4;
+            State->Offsets.OnSuperFreezeEndOffset = Addr - ScriptAddress;
             break;
+        case BeginState: break;
+        case EndState: return;
+        case SetCel: break;
+        case BeginSubroutine: break;
+        case EndSubroutine: break;
+        case CallSubroutine: break;
+        case CallSubroutineWithArgs: break;
+        case ExitState: break;
+        case EndBlock: break;
+        case BeginLabel: break;
+        case EndLabel: break;
+        case GotoLabel: break;
+        case If: break;
+        case EndIf: break;
+        case IfOperation: break;
+        case IfNot: break;
+        case Else: break;
+        case EndElse: break;
+        case GotoLabelIf: break;
+        case GotoLabelIfOperation: break;
+        case GotoLabelIfNot: break;
+        case BeginStateDefine: break;
+        case EndStateDefine: break;
+        case SetStateType: break;
+        case SetEntryState: break;
+        case AddInputCondition: break;
+        case AddStateCondition: break;
+        case IsFollowupMove: break;
+        case SetStateObjectID: break;
         default:
             break;
         }
-        i += InstructionSizes[code];
+        Addr += InstructionSizes[code];
     }
 }
 
@@ -90,23 +119,25 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
     State* StateToModify = nullptr;
     while (true)
     {
-        OpCodes code = *(OpCodes*)Addr;
+        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
         case OpCodes::SetCel:
             {
                 if (CelExecuted)
                     return;
-                int32_t AnimTime = *(int32_t*)(Addr + 68);
-                if (Actor->AnimTime > AnimTime)
+                int32_t AnimTime = *reinterpret_cast<int32_t*>(Addr + 68);
+                if (Actor->AnimTime == AnimTime)
+                {
+                    Actor->SetCelName(Addr + 4);
+                    CelExecuted = true;
+                }
+                else if (Actor->AnimTime > AnimTime)
                 {
                     Addr += InstructionSizes[code];
-                    if (FindNextCel(Addr))
-                        break;
-                    return;
+                    FindNextCel(Addr);
+                    break;
                 }
-                Actor->SetCelName(Addr + 4);
-                CelExecuted = true;
                 break;
             }
         case OpCodes::CallSubroutine:
@@ -146,10 +177,10 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 {
                     if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
                     {   
-                        Addr = (char*)Label.OffsetAddress;
+                        Addr = reinterpret_cast<char*>(Label.OffsetAddress);
                         if (FindNextCel(Addr))
                         {
-                            Actor->AnimTime = *(int32_t*)(Addr + 68) - 1;
+                            Actor->AnimTime = *reinterpret_cast<int32_t*>(Addr + 68) - 1;
                         }
                         return;
                     }
@@ -158,7 +189,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
             }
         case OpCodes::EndLabel:
             {
-                int32_t AnimTime = *(int32_t*)(Addr + 4);
+                int32_t AnimTime = *reinterpret_cast<int32_t*>(Addr + 4);
                 if (Actor->AnimTime < AnimTime)
                     return;
                 break;
@@ -177,25 +208,25 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
         case OpCodes::SetStateType:
             if (StateToModify)
             {
-                StateToModify->Type = *(StateType*)(Addr + 4);
+                StateToModify->Type = *reinterpret_cast<StateType*>(Addr + 4);
             }
             break;
         case OpCodes::SetEntryState:
             if (StateToModify)
             {
-                StateToModify->StateEntryState = *(EntryState*)(Addr + 4);
+                StateToModify->StateEntryState = *reinterpret_cast<EntryState*>(Addr + 4);
             }
             break;
         case OpCodes::AddInputCondition:
             if (StateToModify)
             {
-                StateToModify->InputConditions.push_back(*(InputCondition*)(Addr + 4));
+                StateToModify->InputConditions.push_back(*reinterpret_cast<InputCondition*>(Addr + 4));
             }
             break;
         case OpCodes::AddStateCondition:
             if (StateToModify)
             {
-                StateToModify->StateConditions.push_back(*(StateCondition*)(Addr + 4));
+                StateToModify->StateConditions.push_back(*reinterpret_cast<StateCondition*>(Addr + 4));
             }
             break;
         case OpCodes::IsFollowupMove:
@@ -207,9 +238,34 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
         case OpCodes::SetStateObjectID:
             if (StateToModify)
             {
-                StateToModify->ObjectID = *(int32_t*)(Addr + 4);
+                StateToModify->ObjectID = *reinterpret_cast<int32_t*>(Addr + 4);
             }
             break;
+        case BeginState: break;
+        case EndState: return;
+        case BeginSubroutine: break;
+        case EndSubroutine: return;
+        case CallSubroutineWithArgs: break;
+        case OnEnter: break;
+        case OnUpdate: break;
+        case OnExit: break;
+        case OnLanding: break;
+        case OnHit: break;
+        case OnBlock: break;
+        case OnHitOrBlock: break;
+        case OnCounterHit: break;
+        case OnSuperFreeze: break;
+        case OnSuperFreezeEnd: break;
+        case BeginLabel: break;
+        case If: break;
+        case EndIf: break;
+        case IfOperation: break;
+        case IfNot: break;
+        case Else: break;
+        case EndElse: break;
+        case GotoLabelIf: break;
+        case GotoLabelIfOperation: break;
+        case GotoLabelIfNot: break;
         default:
             break;
         }
@@ -221,14 +277,50 @@ bool ScriptAnalyzer::FindNextCel(char* Addr)
 {
     while (true)
     {
-        OpCodes code = *(OpCodes*)Addr;
+        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
         case OpCodes::SetCel:
+        case OpCodes::EndLabel:
             return true;
         case OpCodes::ExitState:
         case OpCodes::EndBlock:
             return false;
+        case BeginState: break;
+        case EndState: return false;
+        case BeginSubroutine: break;
+        case EndSubroutine: return false;
+        case CallSubroutine: break;
+        case CallSubroutineWithArgs: break;
+        case OnEnter: break;
+        case OnUpdate: break;
+        case OnExit: break;
+        case OnLanding: break;
+        case OnHit: break;
+        case OnBlock: break;
+        case OnHitOrBlock: break;
+        case OnCounterHit: break;
+        case OnSuperFreeze: break;
+        case OnSuperFreezeEnd: break;
+        case BeginLabel: break;
+        case GotoLabel: break;
+        case If: break;
+        case EndIf: break;
+        case IfOperation: break;
+        case IfNot: break;
+        case Else: break;
+        case EndElse: break;
+        case GotoLabelIf: break;
+        case GotoLabelIfOperation: break;
+        case GotoLabelIfNot: break;
+        case BeginStateDefine: break;
+        case EndStateDefine: break;
+        case SetStateType: break;
+        case SetEntryState: break;
+        case AddInputCondition: break;
+        case AddStateCondition: break;
+        case IsFollowupMove: break;
+        case SetStateObjectID: break;
         default:
             break;
         }
@@ -240,7 +332,7 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
 {
     while (true)
     {
-        OpCodes code = *(OpCodes*)Addr;
+        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
         case OpCodes::BeginLabel:
@@ -249,13 +341,49 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
                 LabelName.SetString(Addr + 4);
                 StateAddress Label;
                 Label.Name = LabelName;
-                Label.OffsetAddress = (uint64_t)Addr;
+                Label.OffsetAddress = reinterpret_cast<uint64_t>(Addr);
                 Labels->push_back(Label);
                 break;
             }
         case OpCodes::ExitState:
         case OpCodes::EndBlock:
             return;
+        case BeginState: break;
+        case EndState: return;
+        case SetCel: break;
+        case BeginSubroutine: break;
+        case EndSubroutine: return;
+        case CallSubroutine: break;
+        case CallSubroutineWithArgs: break;
+        case OnEnter: break;
+        case OnUpdate: break;
+        case OnExit: break;
+        case OnLanding: break;
+        case OnHit: break;
+        case OnBlock: break;
+        case OnHitOrBlock: break;
+        case OnCounterHit: break;
+        case OnSuperFreeze: break;
+        case OnSuperFreezeEnd: break;
+        case EndLabel: return;
+        case GotoLabel: break;
+        case If: break;
+        case EndIf: break;
+        case IfOperation: break;
+        case IfNot: break;
+        case Else: break;
+        case EndElse: break;
+        case GotoLabelIf: break;
+        case GotoLabelIfOperation: break;
+        case GotoLabelIfNot: break;
+        case BeginStateDefine: break;
+        case EndStateDefine: break;
+        case SetStateType: break;
+        case SetEntryState: break;
+        case AddInputCondition: break;
+        case AddStateCondition: break;
+        case IsFollowupMove: break;
+        case SetStateObjectID: break;
         default:
             break;
         }

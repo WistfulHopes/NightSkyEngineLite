@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include "../../CString.h"
 #include <vector>
 
@@ -1066,18 +1066,17 @@ enum OpCodes
 struct StateAddress
 {
     CString<64> Name;
-    uint32_t OffsetAddress;
+    uint32_t OffsetAddress = 0;
 };
 
 class ScriptAnalyzer
 {
-private:
-    char* DataAddress;
-    char* ScriptAddress;
-    int32_t StateCount;
-    StateAddress* StateAddresses;
-    int32_t SubroutineCount;
-    StateAddress* SubroutineAddresses;
+    char* DataAddress = nullptr;
+    char* ScriptAddress = nullptr;
+    int32_t StateCount = 0;
+    StateAddress* StateAddresses = nullptr;
+    int32_t SubroutineCount = 0;
+    StateAddress* SubroutineAddresses = nullptr;
 
 public:
     void Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines);

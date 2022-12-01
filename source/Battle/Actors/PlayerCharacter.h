@@ -17,22 +17,22 @@ public:
 	PlayerCharacter();
 
 	//starting from this until PlayerSyncEnd, everything is saved/loaded for rollback
-	unsigned char PlayerSync;	
-	int32_t CurrentEnableFlags;
+	unsigned char PlayerSync = 0;	
+	int32_t CurrentEnableFlags = 0;
 	int32_t CurrentHealth;
 protected:
 	//internal variables
-	int32_t CurrentAirJumpCount;
-	int32_t CurrentAirDashCount;
-	int32_t AirDashTimerMax;
-	bool JumpCancel;
-	bool FAirDashCancel;
-	bool BAirDashCancel;
-	bool SpecialCancel;
-	bool SuperCancel;
-	bool DefaultLandingAction;
-	bool FarNormalForceEnable;
-	int32_t ThrowRange;
+	int32_t CurrentAirJumpCount = 0;
+	int32_t CurrentAirDashCount = 0;
+	int32_t AirDashTimerMax = 0;
+	bool JumpCancel = false;
+	bool FAirDashCancel = false;
+	bool BAirDashCancel = false;
+	bool SpecialCancel = true;
+	bool SuperCancel = true;
+	bool DefaultLandingAction = true;
+	bool FarNormalForceEnable = false;
+	int32_t ThrowRange = 0;
 	
 public:
 	WallBounceEffect CurrentWallBounceEffect;
@@ -42,9 +42,9 @@ public:
 	bool IsStunned = false;
 	bool IsThrowLock = false;
 	bool IsOnScreen = false;
-	bool DeathCamOverride;
-	bool IsKnockedDown;
-	bool FlipInputs;
+	bool DeathCamOverride = false;
+	bool IsKnockedDown = false;
+	bool FlipInputs = false;
 	int32_t TeamIndex;
 	int32_t Inputs;
 	int32_t CurrentActionFlags;

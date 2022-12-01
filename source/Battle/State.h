@@ -168,16 +168,16 @@ public:
 
 struct ScriptBlockOffsets 
 {
-	uint32_t OnEnterOffset = 0;
-	uint32_t OnUpdateOffset = 0;
-	uint32_t OnExitOffset = 0;
-	uint32_t OnLandingOffset = 0;
-	uint32_t OnHitOffset = 0;
-	uint32_t OnBlockOffset = 0;
-	uint32_t OnHitOrBlockOffset = 0;
-	uint32_t OnCounterHitOffset = 0;
-	uint32_t OnSuperFreezeOffset = 0;
-	uint32_t OnSuperFreezeEndOffset = 0;
+	uint32_t OnEnterOffset = -1;
+	uint32_t OnUpdateOffset = -1;
+	uint32_t OnExitOffset = -1;
+	uint32_t OnLandingOffset = -1;
+	uint32_t OnHitOffset = -1;
+	uint32_t OnBlockOffset = -1;
+	uint32_t OnHitOrBlockOffset = -1;
+	uint32_t OnCounterHitOffset = -1;
+	uint32_t OnSuperFreezeOffset = -1;
+	uint32_t OnSuperFreezeEndOffset = -1;
 };
 
 class ScriptState : public State
