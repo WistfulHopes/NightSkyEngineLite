@@ -4,25 +4,29 @@
 
 int main(void)
 {
-    const int screenWidth = 800;
-    const int screenHeight  = 480;
+    const int screenWidth = 320;
+    const int screenHeight  = 240;
+	const int windowWidth = screenWidth * 2;
+    const int windowHeight  = screenHeight * 2;
 
-    InitWindow(screenWidth, screenHeight, "Night Sky Engine -Lite-");
+    InitWindow(windowWidth, windowHeight, "Night Sky Engine -Lite-");
 
     SetTargetFPS(60);
+	const RenderTexture2D renderTexture = LoadRenderTexture(screenWidth, screenHeight);
 
     FighterGameState* GameState = new FighterGameState();
     GameState->Init();
     
     while (!WindowShouldClose())
     {
+		// TODO: Capsulize all this into a "scene"
         GameState->TickGameState();
 
         Camera2D Cam;
 
         Vector2 Offset;
-        Offset.x = 400;
-        Offset.y = 360;
+        Offset.x = 160;
+        Offset.y = 180;
         Cam.offset = Offset;
 
         double TargetX = static_cast<double>(GameState->StoredBattleState.CurrentScreenPos) / COORD_SCALE;
@@ -37,14 +41,25 @@ int main(void)
 
         double Distance = static_cast<double>(2160000 - abs(GameState->Players[0]->GetInternalValue(VAL_PosX) - GameState->Players[1]->GetInternalValue(VAL_PosX))) / 2 / COORD_SCALE;
         Distance = Clamp(Distance, 250, 400);
-        Cam.zoom = Remap(Distance, 0, 250, 1, 1.5);
+        Cam.zoom = Remap(Distance, 0, 250, 1, 1);
         
         BeginDrawing();
-        
-            ClearBackground(RAYWHITE);
-            BeginMode2D(Cam);
-            GameState->Draw();
-            EndMode2D();
+			BeginTextureMode(renderTexture);
+            	ClearBackground(RAYWHITE);
+
+            	BeginMode2D(Cam);
+            		GameState->Draw();
+            	EndMode2D();
+			EndTextureMode();
+
+			// TODO: Keep aspect ratio and draw borders
+			DrawTexturePro(
+				renderTexture.texture,
+				{ 0.0f, 0.0f, (float)screenWidth, -(float)screenHeight },
+				{ 0.0f, 0.0f, (float)windowWidth, (float)windowHeight },
+				{ 0.0f, 0.0f },
+				0.0f, WHITE
+			);
 
         EndDrawing();
     }
