@@ -147,20 +147,20 @@ void BattleActor::Draw()
 	Rectangle Source;
 	Source.x = ox;
 	Source.y = oy;
-	Source.width = CurrentSprite.frameSize.x;
-	Source.height = CurrentSprite.frameSize.y;
-	
-	Rectangle Dest;
-	Dest.x = PosX / COORD_SCALE + 400;
-	Dest.y = PosY / COORD_SCALE + 330;
 	if (FacingRight)
 	{
-		Dest.width = CurrentSprite.frameSize.x;
+		Source.width = CurrentSprite.frameSize.x;
 	}
 	else
 	{
-		Dest.width = -CurrentSprite.frameSize.x;
+		Source.width = -CurrentSprite.frameSize.x;
 	}
+	Source.height = CurrentSprite.frameSize.y;
+	
+	Rectangle Dest;
+	Dest.y = PosY / COORD_SCALE + 330;
+	Dest.x = PosX / COORD_SCALE + 400;
+	Dest.width = CurrentSprite.frameSize.x;
 	Dest.height = CurrentSprite.frameSize.y;
 
     DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, RAYWHITE);

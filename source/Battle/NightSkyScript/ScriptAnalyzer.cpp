@@ -43,34 +43,34 @@ void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* St
         OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
-        case OpCodes::OnEnter:
+        case OnEnter:
             State->Offsets.OnEnterOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnUpdate:
+        case OnUpdate:
             State->Offsets.OnUpdateOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnExit:
+        case OnExit:
             State->Offsets.OnExitOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnLanding:
+        case OnLanding:
             State->Offsets.OnLandingOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnHit:
+        case OnHit:
             State->Offsets.OnHitOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnBlock:
+        case OnBlock:
             State->Offsets.OnBlockOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnHitOrBlock:
+        case OnHitOrBlock:
             State->Offsets.OnHitOrBlockOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnCounterHit:
+        case OnCounterHit:
             State->Offsets.OnCounterHitOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnSuperFreeze:
+        case OnSuperFreeze:
             State->Offsets.OnSuperFreezeOffset = Addr - ScriptAddress;
             break;
-        case OpCodes::OnSuperFreezeEnd:
+        case OnSuperFreezeEnd:
             State->Offsets.OnSuperFreezeEndOffset = Addr - ScriptAddress;
             break;
         case BeginState: break;
@@ -114,15 +114,14 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
     Addr += (uint64_t)ScriptAddress;
     bool CelExecuted = false;
     std::vector<StateAddress> Labels;
-    char* BakAddr = Addr;
-    GetAllLabels(BakAddr, &Labels);
+    GetAllLabels(Addr, &Labels);
     State* StateToModify = nullptr;
     while (true)
     {
         OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
-        case OpCodes::SetCel:
+        case SetCel:
             {
                 if (CelExecuted)
                     return;
@@ -134,18 +133,18 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 }
                 else if (Actor->AnimTime > AnimTime)
                 {
-                    FindNextCel(Addr);
+                    FindNextCel(&Addr);
                     break;
                 }
                 break;
             }
-        case OpCodes::CallSubroutine:
+        case CallSubroutine:
             {
                 Actor->Player->CallSubroutine(Addr + 4);
                 break;
             }
-        case OpCodes::ExitState:
-        case OpCodes::EndBlock:
+        case ExitState:
+        case EndBlock:
             {
                 if (!Actor->IsPlayer)
                 {
@@ -168,7 +167,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 }
                 return;
             }
-        case OpCodes::GotoLabel:
+        case GotoLabel:
             {
                 CString<64> LabelName;
                 LabelName.SetString(Addr + 4);
@@ -177,7 +176,7 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                     if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
                     {   
                         Addr = ScriptAddress + Label.OffsetAddress;
-                        if (FindNextCel(Addr))
+                        if (FindNextCel(&Addr))
                         {
                             Actor->AnimTime = *reinterpret_cast<int32_t*>(Addr + 68) - 1;
                         }
@@ -186,14 +185,14 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 }
                 break;
             }
-        case OpCodes::EndLabel:
+        case EndLabel:
             {
                 int32_t AnimTime = *reinterpret_cast<int32_t*>(Addr + 4);
                 if (Actor->AnimTime < AnimTime)
                     return;
                 break;
             }
-        case OpCodes::BeginStateDefine:
+        case BeginStateDefine:
             {
                 CString<64> StateName;
                 StateName.SetString(Addr + 4);
@@ -201,40 +200,40 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
                 StateToModify = Actor->Player->StateMachine.States[Index];
                 break;
             }
-        case OpCodes::EndStateDefine:
+        case EndStateDefine:
             StateToModify = nullptr;
             break;
-        case OpCodes::SetStateType:
+        case SetStateType:
             if (StateToModify)
             {
                 StateToModify->Type = *reinterpret_cast<StateType*>(Addr + 4);
             }
             break;
-        case OpCodes::SetEntryState:
+        case SetEntryState:
             if (StateToModify)
             {
                 StateToModify->StateEntryState = *reinterpret_cast<EntryState*>(Addr + 4);
             }
             break;
-        case OpCodes::AddInputCondition:
+        case AddInputCondition:
             if (StateToModify)
             {
                 StateToModify->InputConditions.push_back(*reinterpret_cast<InputCondition*>(Addr + 4));
             }
             break;
-        case OpCodes::AddStateCondition:
+        case AddStateCondition:
             if (StateToModify)
             {
                 StateToModify->StateConditions.push_back(*reinterpret_cast<StateCondition*>(Addr + 4));
             }
             break;
-        case OpCodes::IsFollowupMove:
+        case IsFollowupMove:
             if (StateToModify)
             {
                 StateToModify->IsFollowupState = *(bool*)(Addr + 4);
             }
             break;
-        case OpCodes::SetStateObjectID:
+        case SetStateObjectID:
             if (StateToModify)
             {
                 StateToModify->ObjectID = *reinterpret_cast<int32_t*>(Addr + 4);
@@ -272,18 +271,18 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
     }
 }
 
-bool ScriptAnalyzer::FindNextCel(char* Addr)
+bool ScriptAnalyzer::FindNextCel(char** Addr)
 {
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
+        OpCodes code = *reinterpret_cast<OpCodes*>(*Addr);
         switch(code)
         {
-        case OpCodes::SetCel:
-        case OpCodes::EndLabel:
+        case SetCel:
+        case EndLabel:
             return true;
-        case OpCodes::ExitState:
-        case OpCodes::EndBlock:
+        case ExitState:
+        case EndBlock:
             return false;
         case BeginState: break;
         case EndState: return false;
@@ -323,7 +322,7 @@ bool ScriptAnalyzer::FindNextCel(char* Addr)
         default:
             break;
         }
-        Addr += InstructionSizes[code];
+        *Addr += InstructionSizes[code];
     }
 }
 
@@ -334,7 +333,7 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
         OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
         switch(code)
         {
-        case OpCodes::BeginLabel:
+        case BeginLabel:
             {
                 CString<64> LabelName;
                 LabelName.SetString(Addr + 4);
@@ -344,8 +343,8 @@ void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
                 Labels->push_back(Label);
                 break;
             }
-        case OpCodes::ExitState:
-        case OpCodes::EndBlock:
+        case ExitState:
+        case EndBlock:
             return;
         case BeginState: break;
         case EndState: return;

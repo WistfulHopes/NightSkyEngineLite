@@ -1082,6 +1082,6 @@ public:
     void Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines);
     void InitStateOffsets(char* Addr, uint32_t Size, ScriptState* State);
     void Analyze(char* Addr, BattleActor* Actor);
-    bool FindNextCel(char* Addr);
+    bool FindNextCel(char** Addr);
     void GetAllLabels(char* Addr, std::vector<StateAddress>* Labels);
 };
