@@ -31,6 +31,7 @@
 *.out
 *.app
 
-_build\*
-_bin\*
-.idea\*
+_build/
+_bin/
+.idea/
+NightSkyEngineLite.sln
