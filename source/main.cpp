@@ -1,5 +1,5 @@
 #include "../raylib/src/raylib.h"
-#include "raymath.h"
+#include "../raylib/src/raymath.h"
 #include "Battle/Actors/FighterGameState.h"
 
 int main(void)

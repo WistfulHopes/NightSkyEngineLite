@@ -236,6 +236,8 @@ protected:
 	int32_t StateVal8 = 0;
 
 public:	
+	//script values stored here
+	int32_t StoredRegister = 0;
 	bool FacingRight = true;
 	int32_t MiscFlags = 0;
 	//disabled if not player

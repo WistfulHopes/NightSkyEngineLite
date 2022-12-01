@@ -1278,6 +1278,26 @@ enum OpCodes
     ForceEnableFarNormal = 1205,
 };
 
+enum Operation
+{
+    OP_Add = 0,
+    OP_Sub = 1,
+    OP_Mul = 2,
+    OP_Div = 3,
+    OP_Mod = 4,
+    OP_And = 5,
+    OP_Or = 6,
+    OP_BitwiseAnd = 7,
+    OP_BitwiseOr = 8,
+    OP_IsEqual = 9,
+    OP_IsGreater = 10,
+    OP_IsLesser = 11,
+    OP_IsGreaterOrEqual = 12,
+    OP_IsLesserOrEqual = 13,
+    OP_BitDelete = 14,
+    OP_IsNotEqual = 15,
+};
+
 struct StateAddress
 {
     CString<64> Name;
@@ -1298,5 +1318,8 @@ public:
     void InitStateOffsets(char* Addr, uint32_t Size, ScriptState* State);
     void Analyze(char* Addr, BattleActor* Actor);
     bool FindNextCel(char** Addr);
+    void FindMatchingEnd(char** Addr, OpCodes EndCode);
+    void FindElse(char** Addr);
     void GetAllLabels(char* Addr, std::vector<StateAddress>* Labels);
+    void CheckOperation(Operation Op, int32_t Operand1, int32_t Operand2, int32_t* Return);
 };

@@ -1,18 +1,18 @@
 #include "ScriptAnalyzer.h"
 #include "../Actors/PlayerCharacter.h"
 
-void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* States, std::vector<Subroutine*>* Subroutines)
+void ScriptAnalyzer::Initialize(char *Addr, uint32_t Size, std::vector<State *> *States, std::vector<Subroutine *> *Subroutines)
 {
     DataAddress = Addr;
-    StateCount = *reinterpret_cast<int*>(Addr);
-    SubroutineCount = *reinterpret_cast<int*>(Addr + 4);
-    StateAddresses = reinterpret_cast<StateAddress*>(Addr + 8);
+    StateCount = *reinterpret_cast<int *>(Addr);
+    SubroutineCount = *reinterpret_cast<int *>(Addr + 4);
+    StateAddresses = reinterpret_cast<StateAddress *>(Addr + 8);
     SubroutineAddresses = &StateAddresses[StateCount];
-    ScriptAddress = (char*)&SubroutineAddresses[StateCount];
-    
+    ScriptAddress = (char *)&SubroutineAddresses[StateCount];
+
     for (int i = 0; i < StateCount; i++)
     {
-        ScriptState* NewState = new ScriptState();
+        ScriptState *NewState = new ScriptState();
         NewState->Name = StateAddresses[i].Name;
         NewState->OffsetAddress = StateAddresses[i].OffsetAddress;
         uint32_t StateSize;
@@ -24,24 +24,24 @@ void ScriptAnalyzer::Initialize(char* Addr, uint32_t Size, std::vector<State*>* 
         {
             StateSize = StateAddresses[i + 1].OffsetAddress - NewState->OffsetAddress;
         }
-        InitStateOffsets(reinterpret_cast<char*>(NewState->OffsetAddress) + (uint64_t)ScriptAddress, StateSize, NewState);  // NOLINT(performance-no-int-to-ptr)
+        InitStateOffsets(reinterpret_cast<char *>(NewState->OffsetAddress) + (uint64_t)ScriptAddress, StateSize, NewState); // NOLINT(performance-no-int-to-ptr)
         States->push_back(NewState);
     }
     for (int i = 0; i < SubroutineCount; i++)
     {
-        ScriptSubroutine* NewSubroutine = new ScriptSubroutine;
+        ScriptSubroutine *NewSubroutine = new ScriptSubroutine;
         NewSubroutine->Name = SubroutineAddresses[i].Name;
         NewSubroutine->OffsetAddress = SubroutineAddresses[i].OffsetAddress;
         Subroutines->push_back(NewSubroutine);
     }
 }
 
-void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* State)
+void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *State)
 {
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
-        switch(code)
+        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        switch (code)
         {
         case OnEnter:
             State->Offsets.OnEnterOffset = Addr - ScriptAddress;
@@ -73,52 +73,98 @@ void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* St
         case OnSuperFreezeEnd:
             State->Offsets.OnSuperFreezeEndOffset = Addr - ScriptAddress;
             break;
-        case BeginState: break;
-        case EndState: return;
-        case SetCel: break;
-        case BeginSubroutine: break;
-        case EndSubroutine: break;
-        case CallSubroutine: break;
-        case CallSubroutineWithArgs: break;
-        case ExitState: break;
-        case EndBlock: break;
-        case BeginLabel: break;
-        case EndLabel: break;
-        case GotoLabel: break;
-        case If: break;
-        case EndIf: break;
-        case IfOperation: break;
-        case IfNot: break;
-        case Else: break;
-        case EndElse: break;
-        case GotoLabelIf: break;
-        case GotoLabelIfOperation: break;
-        case GotoLabelIfNot: break;
-        case BeginStateDefine: break;
-        case EndStateDefine: break;
-        case SetStateType: break;
-        case SetEntryState: break;
-        case AddInputCondition: break;
-        case AddStateCondition: break;
-        case IsFollowupMove: break;
-        case SetStateObjectID: break;
-        case SetPosX: break;
-        case AddPosX: break;
-        case AddPosXRaw: break;
-        case SetPosY: break;
-        case AddPosY: break;
-        case SetSpeedX: break;
-        case AddSpeedX: break;
-        case SetSpeedY: break;
-        case AddSpeedY: break;
-        case SetSpeedXPercent: break;
-        case SetSpeedXPercentPerFrame: break;
-        case EnableState: break;
-        case DisableState: break;
-        case EnableAll: break;
-        case DisableAll: break;
-        case EnableFlip: break;
-        case ForceEnableFarNormal: break;
+        case BeginState:
+            break;
+        case EndState:
+            return;
+        case SetCel:
+            break;
+        case BeginSubroutine:
+            break;
+        case EndSubroutine:
+            break;
+        case CallSubroutine:
+            break;
+        case CallSubroutineWithArgs:
+            break;
+        case ExitState:
+            break;
+        case EndBlock:
+            break;
+        case BeginLabel:
+            break;
+        case EndLabel:
+            break;
+        case GotoLabel:
+            break;
+        case If:
+            break;
+        case EndIf:
+            break;
+        case IfOperation:
+            break;
+        case IfNot:
+            break;
+        case Else:
+            break;
+        case EndElse:
+            break;
+        case GotoLabelIf:
+            break;
+        case GotoLabelIfOperation:
+            break;
+        case GotoLabelIfNot:
+            break;
+        case BeginStateDefine:
+            break;
+        case EndStateDefine:
+            break;
+        case SetStateType:
+            break;
+        case SetEntryState:
+            break;
+        case AddInputCondition:
+            break;
+        case AddStateCondition:
+            break;
+        case IsFollowupMove:
+            break;
+        case SetStateObjectID:
+            break;
+        case SetPosX:
+            break;
+        case AddPosX:
+            break;
+        case AddPosXRaw:
+            break;
+        case SetPosY:
+            break;
+        case AddPosY:
+            break;
+        case SetSpeedX:
+            break;
+        case AddSpeedX:
+            break;
+        case SetSpeedY:
+            break;
+        case AddSpeedY:
+            break;
+        case SetSpeedXPercent:
+            break;
+        case SetSpeedXPercentPerFrame:
+            break;
+        case EnableState:
+            break;
+        case DisableState:
+            break;
+        case EnableAll:
+            break;
+        case DisableAll:
+            break;
+        case EnableFlip:
+            break;
+        case ForceEnableFarNormal:
+            break;
         default:
             break;
         }
@@ -126,220 +172,312 @@ void ScriptAnalyzer::InitStateOffsets(char* Addr, uint32_t Size, ScriptState* St
     }
 }
 
-void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
+void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
 {
     Addr += (uint64_t)ScriptAddress;
     bool CelExecuted = false;
     std::vector<StateAddress> Labels;
     GetAllLabels(Addr, &Labels);
-    State* StateToModify = nullptr;
+    State *StateToModify = nullptr;
+    char* ElseAddr;
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
-        switch(code)
+        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        switch (code)
         {
         case SetCel:
+        {
+            if (CelExecuted)
+                return;
+            int32_t AnimTime = *reinterpret_cast<int32_t *>(Addr + 68);
+            if (Actor->AnimTime == AnimTime)
             {
-                if (CelExecuted)
-                    return;
-                int32_t AnimTime = *reinterpret_cast<int32_t*>(Addr + 68);
-                if (Actor->AnimTime == AnimTime)
-                {
-                    Actor->SetCelName(Addr + 4);
-                    CelExecuted = true;
-                }
-                else if (Actor->AnimTime > AnimTime)
-                {
-                    FindNextCel(&Addr);
-                    break;
-                }
+                Actor->SetCelName(Addr + 4);
+                CelExecuted = true;
+            }
+            else if (Actor->AnimTime > AnimTime)
+            {
+                FindNextCel(&Addr);
                 break;
             }
+            break;
+        }
         case CallSubroutine:
-            {
-                Actor->Player->CallSubroutine(Addr + 4);
-                break;
-            }
+        {
+            Actor->Player->CallSubroutine(Addr + 4);
+            break;
+        }
         case ExitState:
         case EndBlock:
+        {
+            if (!Actor->IsPlayer)
             {
-                if (!Actor->IsPlayer)
-                {
-                    Actor->DeactivateObject();
-                }
-                else
-                {
-                    switch(Actor->Player->CurrentActionFlags)
-                    {
-                    case ACT_Standing:
-                        Actor->Player->JumpToState("Stand");
-                        break;
-                    case ACT_Crouching:
-                        Actor->Player->JumpToState("Crouch");
-                        break;
-                    case ACT_Jumping:
-                        Actor->Player->JumpToState("VJump");
-                        break;
-                    }
-                }
-                return;
+                Actor->DeactivateObject();
             }
+            else
+            {
+                switch (Actor->Player->CurrentActionFlags)
+                {
+                case ACT_Standing:
+                    Actor->Player->JumpToState("Stand");
+                    break;
+                case ACT_Crouching:
+                    Actor->Player->JumpToState("Crouch");
+                    break;
+                case ACT_Jumping:
+                    Actor->Player->JumpToState("VJump");
+                    break;
+                }
+            }
+            return;
+        }
         case GotoLabel:
+        {
+            CString<64> LabelName;
+            LabelName.SetString(Addr + 4);
+            for (StateAddress Label : Labels)
             {
-                CString<64> LabelName;
-                LabelName.SetString(Addr + 4);
-                for (StateAddress Label : Labels)
+                if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
                 {
-                    if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
-                    {   
-                        Addr = ScriptAddress + Label.OffsetAddress;
-                        if (FindNextCel(&Addr))
-                        {
-                            Actor->AnimTime = *reinterpret_cast<int32_t*>(Addr + 68) - 1;
-                        }
-                        return;
+                    Addr = ScriptAddress + Label.OffsetAddress;
+                    if (FindNextCel(&Addr))
+                    {
+                        Actor->AnimTime = *reinterpret_cast<int32_t *>(Addr + 68) - 1;
                     }
-                }
-                break;
-            }
-        case EndLabel:
-            {
-                int32_t AnimTime = *reinterpret_cast<int32_t*>(Addr + 4);
-                if (Actor->AnimTime < AnimTime)
                     return;
-                break;
+                }
             }
+            break;
+        }
+        case EndLabel:
+        {
+            int32_t AnimTime = *reinterpret_cast<int32_t *>(Addr + 4);
+            if (Actor->AnimTime < AnimTime)
+                return;
+            break;
+        }
         case BeginStateDefine:
-            {
-                CString<64> StateName;
-                StateName.SetString(Addr + 4);
-                int32_t Index = Actor->Player->StateMachine.GetStateIndex(StateName);
-                StateToModify = Actor->Player->StateMachine.States[Index];
-                break;
-            }
+        {
+            CString<64> StateName;
+            StateName.SetString(Addr + 4);
+            int32_t Index = Actor->Player->StateMachine.GetStateIndex(StateName);
+            StateToModify = Actor->Player->StateMachine.States[Index];
+            break;
+        }
         case EndStateDefine:
             StateToModify = nullptr;
             break;
         case SetStateType:
             if (StateToModify)
             {
-                StateToModify->Type = *reinterpret_cast<StateType*>(Addr + 4);
+                StateToModify->Type = *reinterpret_cast<StateType *>(Addr + 4);
             }
             break;
         case SetEntryState:
             if (StateToModify)
             {
-                StateToModify->StateEntryState = *reinterpret_cast<EntryState*>(Addr + 4);
+                StateToModify->StateEntryState = *reinterpret_cast<EntryState *>(Addr + 4);
             }
             break;
         case AddInputCondition:
             if (StateToModify)
             {
-                StateToModify->InputConditions.push_back(*reinterpret_cast<InputCondition*>(Addr + 4));
+                StateToModify->InputConditions.push_back(*reinterpret_cast<InputCondition *>(Addr + 4));
             }
             break;
         case AddStateCondition:
             if (StateToModify)
             {
-                StateToModify->StateConditions.push_back(*reinterpret_cast<StateCondition*>(Addr + 4));
+                StateToModify->StateConditions.push_back(*reinterpret_cast<StateCondition *>(Addr + 4));
             }
             break;
         case IsFollowupMove:
             if (StateToModify)
             {
-                StateToModify->IsFollowupState = *reinterpret_cast<bool*>(Addr + 4);
+                StateToModify->IsFollowupState = *reinterpret_cast<bool *>(Addr + 4);
             }
             break;
         case SetStateObjectID:
             if (StateToModify)
             {
-                StateToModify->ObjectID = *reinterpret_cast<int32_t*>(Addr + 4);
+                StateToModify->ObjectID = *reinterpret_cast<int32_t *>(Addr + 4);
             }
             break;
-        case BeginState: break;
-        case EndState: return;
-        case BeginSubroutine: break;
-        case EndSubroutine: return;
-        case CallSubroutineWithArgs: break;
-        case OnEnter: break;
-        case OnUpdate: break;
-        case OnExit: break;
-        case OnLanding: break;
-        case OnHit: break;
-        case OnBlock: break;
-        case OnHitOrBlock: break;
-        case OnCounterHit: break;
-        case OnSuperFreeze: break;
-        case OnSuperFreezeEnd: break;
-        case BeginLabel: break;
-        case If: break;
-        case EndIf: break;
-        case IfOperation: break;
-        case IfNot: break;
-        case Else: break;
-        case EndElse: break;
-        case GotoLabelIf: break;
-        case GotoLabelIfOperation: break;
-        case GotoLabelIfNot: break;
-        case SetPosX: 
-            Actor->SetPosX(*reinterpret_cast<int32_t*>(Addr + 4));
-        case AddPosX: 
-            Actor->AddPosX(*reinterpret_cast<int32_t*>(Addr + 4));
+        case BeginState:
+            break;
+        case EndState:
+            return;
+        case BeginSubroutine:
+            break;
+        case EndSubroutine:
+            return;
+        case CallSubroutineWithArgs:
+            break;
+        case OnEnter:
+            break;
+        case OnUpdate:
+            break;
+        case OnExit:
+            break;
+        case OnLanding:
+            break;
+        case OnHit:
+            break;
+        case OnBlock:
+            break;
+        case OnHitOrBlock:
+            break;
+        case OnCounterHit:
+            break;
+        case OnSuperFreeze:
+            break;
+        case OnSuperFreezeEnd:
+            break;
+        case BeginLabel:
+            break;
+        case If:
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            if (Operand != 0)
+            {
+                break;
+            }
+            else
+            {
+                FindMatchingEnd(&Addr, EndIf);
+                break;
+            }
+        }
+        case EndIf:
+            break;
+        case IfOperation:
+        {
+            int32_t Operand1 = *reinterpret_cast<int32_t *>(Addr + 12);
+            if (*reinterpret_cast<int32_t *>(Addr + 8) > 0)
+            {
+                Operand1 = Actor->GetInternalValue((InternalValue)Operand1);
+            }
+            int32_t Operand2 = *reinterpret_cast<int32_t *>(Addr + 20);
+            if (*reinterpret_cast<int32_t *>(Addr + 16) > 0)
+            {
+                Operand2 = Actor->GetInternalValue((InternalValue)Operand1);
+            }
+            Operation Op = *reinterpret_cast<Operation *>(Addr + 4);
+            CheckOperation(Op, Operand1, Operand2, &Actor->StoredRegister);
+            if (Actor->StoredRegister != 0)
+            {
+                break;
+            }
+            else
+            {
+                FindMatchingEnd(&Addr, EndIf);
+                ElseAddr = Addr;
+                FindElse(&ElseAddr);
+                break;
+            }
+        }
+        case IfNot:
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            if (Operand == 0)
+            {
+                break;
+            }
+            else
+            {
+                FindMatchingEnd(&Addr, EndIf);
+                ElseAddr = Addr;
+                FindElse(&ElseAddr);
+                break;
+            }
+        };
+        case Else:
+            if (ElseAddr = Addr)
+            {
+                ElseAddr = 0;
+                break;
+            }
+            else
+            {
+                FindMatchingEnd(&Addr, EndElse);
+                break;
+            }
+            break;
+        case EndElse:
+            break;
+        case GotoLabelIf:
+            break;
+        case GotoLabelIfOperation:
+            break;
+        case GotoLabelIfNot:
+            break;
+        case SetPosX:
+            Actor->SetPosX(*reinterpret_cast<int32_t *>(Addr + 4));
+        case AddPosX:
+            Actor->AddPosX(*reinterpret_cast<int32_t *>(Addr + 4));
         case AddPosXRaw:
-            Actor->AddPosXRaw(*reinterpret_cast<int32_t*>(Addr + 4));
-        case SetPosY: 
-            Actor->SetPosY(*reinterpret_cast<int32_t*>(Addr + 4));
-        case AddPosY: 
-            Actor->AddPosY(*reinterpret_cast<int32_t*>(Addr + 4));
-        case SetSpeedX: 
-            Actor->SetSpeedX(*reinterpret_cast<int32_t*>(Addr + 4));
-        case AddSpeedX: 
-            Actor->AddSpeedX(*reinterpret_cast<int32_t*>(Addr + 4));
-        case SetSpeedY: 
-            Actor->SetSpeedY(*reinterpret_cast<int32_t*>(Addr + 4));
+            Actor->AddPosXRaw(*reinterpret_cast<int32_t *>(Addr + 4));
+        case SetPosY:
+            Actor->SetPosY(*reinterpret_cast<int32_t *>(Addr + 4));
+        case AddPosY:
+            Actor->AddPosY(*reinterpret_cast<int32_t *>(Addr + 4));
+        case SetSpeedX:
+            Actor->SetSpeedX(*reinterpret_cast<int32_t *>(Addr + 4));
+        case AddSpeedX:
+            Actor->AddSpeedX(*reinterpret_cast<int32_t *>(Addr + 4));
+        case SetSpeedY:
+            Actor->SetSpeedY(*reinterpret_cast<int32_t *>(Addr + 4));
         case AddSpeedY:
-            Actor->AddSpeedY(*reinterpret_cast<int32_t*>(Addr + 4));
+            Actor->AddSpeedY(*reinterpret_cast<int32_t *>(Addr + 4));
         case SetSpeedXPercent:
-            Actor->SetSpeedXPercent(*reinterpret_cast<int32_t*>(Addr + 4));
+            Actor->SetSpeedXPercent(*reinterpret_cast<int32_t *>(Addr + 4));
         case SetSpeedXPercentPerFrame:
-            Actor->SetSpeedXPercentPerFrame(*reinterpret_cast<int32_t*>(Addr + 4));
+            Actor->SetSpeedXPercentPerFrame(*reinterpret_cast<int32_t *>(Addr + 4));
         case EnableState:
+        {
+            if (Actor->IsPlayer)
             {
-                if (Actor->IsPlayer)
-                {
-                    Actor->Player->EnableState(*reinterpret_cast<EnableFlags*>(Addr + 4));
-                }
+                Actor->Player->EnableState(*reinterpret_cast<EnableFlags *>(Addr + 4));
             }
-        case DisableState: 
+        }
+        case DisableState:
+        {
+            if (Actor->IsPlayer)
             {
-                if (Actor->IsPlayer)
-                {
-                    Actor->Player->DisableState(*reinterpret_cast<EnableFlags*>(Addr + 4));
-                }
+                Actor->Player->DisableState(*reinterpret_cast<EnableFlags *>(Addr + 4));
             }
-        case EnableAll: 
+        }
+        case EnableAll:
+        {
+            if (Actor->IsPlayer)
             {
-                if (Actor->IsPlayer)
-                {
-                    Actor->Player->EnableAll();
-                }
+                Actor->Player->EnableAll();
             }
-        case DisableAll: 
+        }
+        case DisableAll:
+        {
+            if (Actor->IsPlayer)
             {
-                if (Actor->IsPlayer)
-                {
-                    Actor->Player->DisableAll();
-                }
+                Actor->Player->DisableAll();
             }
+        }
         case EnableFlip:
-            Actor->EnableFlip(*reinterpret_cast<bool*>(Addr + 4));
+            Actor->EnableFlip(*reinterpret_cast<bool *>(Addr + 4));
         case ForceEnableFarNormal:
+        {
+            if (Actor->IsPlayer)
             {
-                if (Actor->IsPlayer)
-                {
-                    Actor->Player->ForceEnableFarNormal(*reinterpret_cast<bool*>(Addr + 4));
-                }
+                Actor->Player->ForceEnableFarNormal(*reinterpret_cast<bool *>(Addr + 4));
             }
+        }
         default:
             break;
         }
@@ -347,12 +485,12 @@ void ScriptAnalyzer::Analyze(char* Addr, BattleActor* Actor)
     }
 }
 
-bool ScriptAnalyzer::FindNextCel(char** Addr)
+bool ScriptAnalyzer::FindNextCel(char **Addr)
 {
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes*>(*Addr);
-        switch(code)
+        OpCodes code = *reinterpret_cast<OpCodes *>(*Addr);
+        switch (code)
         {
         case SetCel:
         case EndLabel:
@@ -360,58 +498,110 @@ bool ScriptAnalyzer::FindNextCel(char** Addr)
         case ExitState:
         case EndBlock:
             return false;
-        case BeginState: break;
-        case EndState: return false;
-        case BeginSubroutine: break;
-        case EndSubroutine: return false;
-        case CallSubroutine: break;
-        case CallSubroutineWithArgs: break;
-        case OnEnter: break;
-        case OnUpdate: break;
-        case OnExit: break;
-        case OnLanding: break;
-        case OnHit: break;
-        case OnBlock: break;
-        case OnHitOrBlock: break;
-        case OnCounterHit: break;
-        case OnSuperFreeze: break;
-        case OnSuperFreezeEnd: break;
-        case BeginLabel: break;
-        case GotoLabel: break;
-        case If: break;
-        case EndIf: break;
-        case IfOperation: break;
-        case IfNot: break;
-        case Else: break;
-        case EndElse: break;
-        case GotoLabelIf: break;
-        case GotoLabelIfOperation: break;
-        case GotoLabelIfNot: break;
-        case BeginStateDefine: break;
-        case EndStateDefine: break;
-        case SetStateType: break;
-        case SetEntryState: break;
-        case AddInputCondition: break;
-        case AddStateCondition: break;
-        case IsFollowupMove: break;
-        case SetStateObjectID: break;
-        case SetPosX: break;
-        case AddPosX: break;
-        case AddPosXRaw: break;
-        case SetPosY: break;
-        case AddPosY: break;
-        case SetSpeedX: break;
-        case AddSpeedX: break;
-        case SetSpeedY: break;
-        case AddSpeedY: break;
-        case SetSpeedXPercent: break;
-        case SetSpeedXPercentPerFrame: break;
-        case EnableState: break;
-        case DisableState: break;
-        case EnableAll: break;
-        case DisableAll: break;
-        case EnableFlip: break;
-        case ForceEnableFarNormal: break;
+        case BeginState:
+            break;
+        case EndState:
+            return false;
+        case BeginSubroutine:
+            break;
+        case EndSubroutine:
+            return false;
+        case CallSubroutine:
+            break;
+        case CallSubroutineWithArgs:
+            break;
+        case OnEnter:
+            break;
+        case OnUpdate:
+            break;
+        case OnExit:
+            break;
+        case OnLanding:
+            break;
+        case OnHit:
+            break;
+        case OnBlock:
+            break;
+        case OnHitOrBlock:
+            break;
+        case OnCounterHit:
+            break;
+        case OnSuperFreeze:
+            break;
+        case OnSuperFreezeEnd:
+            break;
+        case BeginLabel:
+            break;
+        case GotoLabel:
+            break;
+        case If:
+            break;
+        case EndIf:
+            break;
+        case IfOperation:
+            break;
+        case IfNot:
+            break;
+        case Else:
+            break;
+        case EndElse:
+            break;
+        case GotoLabelIf:
+            break;
+        case GotoLabelIfOperation:
+            break;
+        case GotoLabelIfNot:
+            break;
+        case BeginStateDefine:
+            break;
+        case EndStateDefine:
+            break;
+        case SetStateType:
+            break;
+        case SetEntryState:
+            break;
+        case AddInputCondition:
+            break;
+        case AddStateCondition:
+            break;
+        case IsFollowupMove:
+            break;
+        case SetStateObjectID:
+            break;
+        case SetPosX:
+            break;
+        case AddPosX:
+            break;
+        case AddPosXRaw:
+            break;
+        case SetPosY:
+            break;
+        case AddPosY:
+            break;
+        case SetSpeedX:
+            break;
+        case AddSpeedX:
+            break;
+        case SetSpeedY:
+            break;
+        case AddSpeedY:
+            break;
+        case SetSpeedXPercent:
+            break;
+        case SetSpeedXPercentPerFrame:
+            break;
+        case EnableState:
+            break;
+        case DisableState:
+            break;
+        case EnableAll:
+            break;
+        case DisableAll:
+            break;
+        case EnableFlip:
+            break;
+        case ForceEnableFarNormal:
+            break;
         default:
             break;
         }
@@ -419,82 +609,478 @@ bool ScriptAnalyzer::FindNextCel(char** Addr)
     }
 }
 
-void ScriptAnalyzer::GetAllLabels(char* Addr, std::vector<StateAddress>* Labels)
+void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
 {
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes*>(Addr);
-        switch(code)
+        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        switch (code)
         {
         case BeginLabel:
-            {
-                CString<64> LabelName;
-                LabelName.SetString(Addr + 4);
-                StateAddress Label;
-                Label.Name = LabelName;
-                Label.OffsetAddress = Addr - ScriptAddress;
-                Labels->push_back(Label);
-                break;
-            }
+            break;
         case ExitState:
         case EndBlock:
             return;
-        case BeginState: break;
-        case EndState: return;
-        case SetCel: break;
-        case BeginSubroutine: break;
-        case EndSubroutine: return;
-        case CallSubroutine: break;
-        case CallSubroutineWithArgs: break;
-        case OnEnter: break;
-        case OnUpdate: break;
-        case OnExit: break;
-        case OnLanding: break;
-        case OnHit: break;
-        case OnBlock: break;
-        case OnHitOrBlock: break;
-        case OnCounterHit: break;
-        case OnSuperFreeze: break;
-        case OnSuperFreezeEnd: break;
-        case EndLabel: return;
-        case GotoLabel: break;
-        case If: break;
-        case EndIf: break;
-        case IfOperation: break;
-        case IfNot: break;
-        case Else: break;
-        case EndElse: break;
-        case GotoLabelIf: break;
-        case GotoLabelIfOperation: break;
-        case GotoLabelIfNot: break;
-        case BeginStateDefine: break;
-        case EndStateDefine: break;
-        case SetStateType: break;
-        case SetEntryState: break;
-        case AddInputCondition: break;
-        case AddStateCondition: break;
-        case IsFollowupMove: break;
-        case SetStateObjectID: break;
-        case SetPosX: break;
-        case AddPosX: break;
-        case AddPosXRaw: break;
-        case SetPosY: break;
-        case AddPosY: break;
-        case SetSpeedX: break;
-        case AddSpeedX: break;
-        case SetSpeedY: break;
-        case AddSpeedY: break;
-        case SetSpeedXPercent: break;
-        case SetSpeedXPercentPerFrame: break;
-        case EnableState: break;
-        case DisableState: break;
-        case EnableAll: break;
-        case DisableAll: break;
-        case EnableFlip: break;
-        case ForceEnableFarNormal: break;
+        case BeginState:
+            break;
+        case EndState:
+            return;
+        case SetCel:
+            break;
+        case BeginSubroutine:
+            break;
+        case EndSubroutine:
+            return;
+        case CallSubroutine:
+            break;
+        case CallSubroutineWithArgs:
+            break;
+        case OnEnter:
+            break;
+        case OnUpdate:
+            break;
+        case OnExit:
+            break;
+        case OnLanding:
+            break;
+        case OnHit:
+            break;
+        case OnBlock:
+            break;
+        case OnHitOrBlock:
+            break;
+        case OnCounterHit:
+            break;
+        case OnSuperFreeze:
+            break;
+        case OnSuperFreezeEnd:
+            break;
+        case EndLabel:
+            return;
+        case GotoLabel:
+            break;
+        case If:
+            break;
+        case EndIf:
+            break;
+        case IfOperation:
+            break;
+        case IfNot:
+            break;
+        case Else:
+            break;
+        case EndElse:
+            break;
+        case GotoLabelIf:
+            break;
+        case GotoLabelIfOperation:
+            break;
+        case GotoLabelIfNot:
+            break;
+        case BeginStateDefine:
+            break;
+        case EndStateDefine:
+            break;
+        case SetStateType:
+            break;
+        case SetEntryState:
+            break;
+        case AddInputCondition:
+            break;
+        case AddStateCondition:
+            break;
+        case IsFollowupMove:
+            break;
+        case SetStateObjectID:
+            break;
+        case SetPosX:
+            break;
+        case AddPosX:
+            break;
+        case AddPosXRaw:
+            break;
+        case SetPosY:
+            break;
+        case AddPosY:
+            break;
+        case SetSpeedX:
+            break;
+        case AddSpeedX:
+            break;
+        case SetSpeedY:
+            break;
+        case AddSpeedY:
+            break;
+        case SetSpeedXPercent:
+            break;
+        case SetSpeedXPercentPerFrame:
+            break;
+        case EnableState:
+            break;
+        case DisableState:
+            break;
+        case EnableAll:
+            break;
+        case DisableAll:
+            break;
+        case EnableFlip:
+            break;
+        case ForceEnableFarNormal:
+            break;
         default:
             break;
         }
         Addr += InstructionSizes[code];
+        if (code == EndCode)
+            return;
+    }
+}
+
+void ScriptAnalyzer::FindElse(char **Addr)
+{
+    while (true)
+    {
+        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        switch (code)
+        {
+        case BeginLabel:
+            break;
+        case ExitState:
+        case EndBlock:
+            *Addr = 0;
+            return;
+        case BeginState:
+            break;
+        case EndState:
+            *Addr = 0;
+            return;
+        case SetCel:
+            break;
+        case BeginSubroutine:
+            break;
+        case EndSubroutine:
+            *Addr = 0;
+            return;
+        case CallSubroutine:
+            break;
+        case CallSubroutineWithArgs:
+            break;
+        case OnEnter:
+            break;
+        case OnUpdate:
+            break;
+        case OnExit:
+            break;
+        case OnLanding:
+            break;
+        case OnHit:
+            break;
+        case OnBlock:
+            break;
+        case OnHitOrBlock:
+            break;
+        case OnCounterHit:
+            break;
+        case OnSuperFreeze:
+            break;
+        case OnSuperFreezeEnd:
+            break;
+        case EndLabel:
+            *Addr = 0;
+            return;
+        case GotoLabel:
+            break;
+        case If:
+            break;
+        case EndIf:
+            break;
+        case IfOperation:
+            break;
+        case IfNot:
+            break;
+        case Else:
+            return;
+        case EndElse:
+            break;
+        case GotoLabelIf:
+            break;
+        case GotoLabelIfOperation:
+            break;
+        case GotoLabelIfNot:
+            break;
+        case BeginStateDefine:
+            break;
+        case EndStateDefine:
+            break;
+        case SetStateType:
+            break;
+        case SetEntryState:
+            break;
+        case AddInputCondition:
+            break;
+        case AddStateCondition:
+            break;
+        case IsFollowupMove:
+            break;
+        case SetStateObjectID:
+            break;
+        case SetPosX:
+            break;
+        case AddPosX:
+            break;
+        case AddPosXRaw:
+            break;
+        case SetPosY:
+            break;
+        case AddPosY:
+            break;
+        case SetSpeedX:
+            break;
+        case AddSpeedX:
+            break;
+        case SetSpeedY:
+            break;
+        case AddSpeedY:
+            break;
+        case SetSpeedXPercent:
+            break;
+        case SetSpeedXPercentPerFrame:
+            break;
+        case EnableState:
+            break;
+        case DisableState:
+            break;
+        case EnableAll:
+            break;
+        case DisableAll:
+            break;
+        case EnableFlip:
+            break;
+        case ForceEnableFarNormal:
+            break;
+        default:
+            break;
+        }
+        Addr += InstructionSizes[code];
+    }
+}
+
+void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
+{
+    while (true)
+    {
+        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        switch (code)
+        {
+        case BeginLabel:
+        {
+            CString<64> LabelName;
+            LabelName.SetString(Addr + 4);
+            StateAddress Label;
+            Label.Name = LabelName;
+            Label.OffsetAddress = Addr - ScriptAddress;
+            Labels->push_back(Label);
+            break;
+        }
+        case ExitState:
+        case EndBlock:
+            return;
+        case BeginState:
+            break;
+        case EndState:
+            return;
+        case SetCel:
+            break;
+        case BeginSubroutine:
+            break;
+        case EndSubroutine:
+            return;
+        case CallSubroutine:
+            break;
+        case CallSubroutineWithArgs:
+            break;
+        case OnEnter:
+            break;
+        case OnUpdate:
+            break;
+        case OnExit:
+            break;
+        case OnLanding:
+            break;
+        case OnHit:
+            break;
+        case OnBlock:
+            break;
+        case OnHitOrBlock:
+            break;
+        case OnCounterHit:
+            break;
+        case OnSuperFreeze:
+            break;
+        case OnSuperFreezeEnd:
+            break;
+        case EndLabel:
+            return;
+        case GotoLabel:
+            break;
+        case If:
+            break;
+        case EndIf:
+            break;
+        case IfOperation:
+            break;
+        case IfNot:
+            break;
+        case Else:
+            break;
+        case EndElse:
+            break;
+        case GotoLabelIf:
+            break;
+        case GotoLabelIfOperation:
+            break;
+        case GotoLabelIfNot:
+            break;
+        case BeginStateDefine:
+            break;
+        case EndStateDefine:
+            break;
+        case SetStateType:
+            break;
+        case SetEntryState:
+            break;
+        case AddInputCondition:
+            break;
+        case AddStateCondition:
+            break;
+        case IsFollowupMove:
+            break;
+        case SetStateObjectID:
+            break;
+        case SetPosX:
+            break;
+        case AddPosX:
+            break;
+        case AddPosXRaw:
+            break;
+        case SetPosY:
+            break;
+        case AddPosY:
+            break;
+        case SetSpeedX:
+            break;
+        case AddSpeedX:
+            break;
+        case SetSpeedY:
+            break;
+        case AddSpeedY:
+            break;
+        case SetSpeedXPercent:
+            break;
+        case SetSpeedXPercentPerFrame:
+            break;
+        case EnableState:
+            break;
+        case DisableState:
+            break;
+        case EnableAll:
+            break;
+        case DisableAll:
+            break;
+        case EnableFlip:
+            break;
+        case ForceEnableFarNormal:
+            break;
+        default:
+            break;
+        }
+        Addr += InstructionSizes[code];
+    }
+}
+
+void ScriptAnalyzer::CheckOperation(Operation Op, int32_t Operand1, int32_t Operand2, int32_t *Return)
+{
+    switch (Op)
+    {
+    case OP_Add:
+    {
+        *Return = Operand1 + Operand2;
+        break;
+    }
+    case OP_Sub:
+    {
+        *Return = Operand1 - Operand2;
+        break;
+    }
+    case OP_Mul:
+    {
+        *Return = Operand1 * Operand2;
+        break;
+    }
+    case OP_Div:
+    {
+        *Return = Operand1 / Operand2;
+        break;
+    }
+    case OP_Mod:
+    {
+        *Return = Operand1 % Operand2;
+        break;
+    }
+    case OP_And:
+    {
+        *Return = Operand1 && Operand2;
+        break;
+    }
+    case OP_Or:
+    {
+        *Return = Operand1 || Operand2;
+        break;
+    }
+    case OP_BitwiseAnd:
+    {
+        *Return = Operand1 & Operand2;
+        break;
+    }
+    case OP_BitwiseOr:
+    {
+        *Return = Operand1 | Operand2;
+        break;
+    }
+    case OP_IsEqual:
+    {
+        *Return = Operand1 == Operand2;
+        break;
+    }
+    case OP_IsGreater:
+    {
+        *Return = Operand1 > Operand2;
+        break;
+    }
+    case OP_IsLesser:
+    {
+        *Return = Operand1 < Operand2;
+        break;
+    }
+    case OP_IsGreaterOrEqual:
+    {
+        *Return = Operand1 >= Operand2;
+        break;
+    }
+    case OP_IsLesserOrEqual:
+    {
+        *Return = Operand1 <= Operand2;
+        break;
+    }
+    case OP_BitDelete:
+    {
+        *Return = Operand1 & ~Operand2;
+        break;
+    }
+    case OP_IsNotEqual:
+    {
+        *Return = Operand1 != Operand2;
+        break;
+    }
     }
 }
