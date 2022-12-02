@@ -174,6 +174,7 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
         default:
             break;
         }
@@ -496,16 +497,16 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->JumpGravity;
                 break;
             case PLY_SuperJumpHeight:
-                Val = Actor->Player->JumpHeight;
+                Val = Actor->Player->SuperJumpHeight;
                 break;
             case PLY_FSuperJumpSpeed:
-                Val = Actor->Player->FJumpSpeed;
+                Val = Actor->Player->FSuperJumpSpeed;
                 break;
             case PLY_BSuperJumpSpeed:
-                Val = Actor->Player->BJumpSpeed;
+                Val = -Actor->Player->BSuperJumpSpeed;
                 break;
             case PLY_SuperJumpGravity:
-                Val = Actor->Player->JumpGravity;
+                Val = Actor->Player->SuperJumpGravity;
                 break;
             case PLY_FAirDashSpeed:
                 Val = Actor->Player->FAirDashSpeed;
@@ -703,6 +704,22 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             {
                 Actor->Player->JumpToState(Addr + 4);
             }
+            break;
+        case SetParentState:
+            {
+                if (StateToModify)
+                {
+                    for (auto State : Actor->Player->CommonStates)
+                    {
+                        if (!strcmp(Addr + 4, State->Name.GetString()))
+                        {
+                            dynamic_cast<ScriptState*>(StateToModify)->ParentState = dynamic_cast<ScriptState*>(State);
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
         default:
             break;
         }
@@ -843,6 +860,7 @@ bool ScriptAnalyzer::FindNextCel(char **Addr, int AnimTime)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
         default:
             break;
         }
@@ -979,6 +997,7 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
         default:
             break;
         }
@@ -1117,6 +1136,7 @@ void ScriptAnalyzer::FindElse(char **Addr)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
         default:
             break;
         }
@@ -1259,6 +1279,7 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
         default:
             break;
         }

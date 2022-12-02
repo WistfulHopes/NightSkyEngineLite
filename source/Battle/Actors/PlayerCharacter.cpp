@@ -1393,6 +1393,7 @@ void PlayerCharacter::OnStateChange()
 {
 	if (MiscFlags & MISC_FlipEnable)
 		HandleFlip();
+	DisableLastInput();
 	StateName.SetString("");
 	HitEffectName.SetString("");
 	Gravity = JumpGravity;
