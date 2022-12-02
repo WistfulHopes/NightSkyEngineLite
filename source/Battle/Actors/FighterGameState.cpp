@@ -420,9 +420,18 @@ void FighterGameState::UpdateCamera()
 
     Cam.rotation = 0;
 
-	float Distance = (2160000 - abs(abs(Players[0]->GetInternalValue(VAL_PosX)) - abs(Players[3]->GetInternalValue(VAL_PosX)))) / COORD_SCALE + 720;
-	Distance = Clamp(Distance, 1080, 1440);
-	Distance = Remap(Distance, 1080, 1440, 0.5, 1);
+	float Distance;
+	if (Players[0]->GetInternalValue(VAL_PosX) > Players[3]->GetInternalValue(VAL_PosX))
+	{
+		Distance = Players[0]->GetInternalValue(VAL_PosX) - Players[3]->GetInternalValue(VAL_PosX);
+	}
+	else
+	{
+		Distance = Players[3]->GetInternalValue(VAL_PosX) - Players[0]->GetInternalValue(VAL_PosX);
+	}
+	Distance = (2160000 - Distance) / COORD_SCALE + 900;
+	Distance = Clamp(Distance, 1280, 1440);
+	Distance = Remap(Distance, 1280, 1440, 0.7, 1);
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
     Cam.zoom = Lerp(Cam.zoom, Distance, 0.25);
@@ -654,15 +663,15 @@ void FighterGameState::SetWallCollision()
 			if (Players[i]->IsOnScreen)
 			{
 				Players[i]->TouchingWall = true;
-				if (Players[i]->GetInternalValue(VAL_PosX) > 720000 + StoredBattleState.CurrentScreenPos)
+				if (Players[i]->GetInternalValue(VAL_PosX) > 600000 + StoredBattleState.CurrentScreenPos)
 				{
-					Players[i]->SetPosX(720001 + StoredBattleState.CurrentScreenPos);
+					Players[i]->SetPosX(600001 + StoredBattleState.CurrentScreenPos);
 				}
-				else if (Players[i]->GetInternalValue(VAL_PosX) < -720000 + StoredBattleState.CurrentScreenPos)
+				else if (Players[i]->GetInternalValue(VAL_PosX) < -600000 + StoredBattleState.CurrentScreenPos)
 				{
-					Players[i]->SetPosX(-720001 + StoredBattleState.CurrentScreenPos);
+					Players[i]->SetPosX(-600001 + StoredBattleState.CurrentScreenPos);
 				}
-				else if (Players[i]->GetInternalValue(VAL_PosX) < 720000 + StoredBattleState.CurrentScreenPos || Players[i]->GetInternalValue(VAL_PosX) > -1080000 + StoredBattleState.CurrentScreenPos)
+				else if (Players[i]->GetInternalValue(VAL_PosX) < 600000 + StoredBattleState.CurrentScreenPos || Players[i]->GetInternalValue(VAL_PosX) > -1080000 + StoredBattleState.CurrentScreenPos)
 				{
 					Players[i]->TouchingWall = false;
 				}

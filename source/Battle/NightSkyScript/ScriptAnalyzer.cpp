@@ -463,7 +463,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->FWalkSpeed;
                 break;
             case PLY_BWalkSpeed:
-                Val = Actor->Player->BWalkSpeed;
+                Val = -Actor->Player->BWalkSpeed;
                 break;
             case PLY_FDashInitSpeed:
                 Val = Actor->Player->FDashInitSpeed;
@@ -478,7 +478,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->FDashFriction;
                 break;
             case PLY_BDashSpeed:
-                Val = Actor->Player->BDashSpeed;
+                Val = -Actor->Player->BDashSpeed;
                 break;
             case PLY_BDashHeight:
                 Val = Actor->Player->BDashHeight;
@@ -514,7 +514,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->FAirDashSpeed;
                 break;
             case PLY_BAirDashSpeed:
-                Val = Actor->Player->BAirDashSpeed;
+                Val = -Actor->Player->BAirDashSpeed;
                 break;
             }
             Actor->StoredRegister = Val;

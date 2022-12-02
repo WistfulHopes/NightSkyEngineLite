@@ -111,12 +111,12 @@ void BattleActor::Update()
 			if (Player->PlayerIndex == 0)
 			{
 				FacingRight = true;
-				PosX = -240000;
+				PosX = -200000;
 			}
 			else
 			{
 				FacingRight = false;
-				PosX = 240000;
+				PosX = 200000;
 			}
 		}
 	}
@@ -225,13 +225,13 @@ void BattleActor::Move()
 	}
 	if (ScreenCollisionActive)
 	{
-		if (PosX < -1440000)
+		if (PosX < -1200000)
 		{
-			PosX = -1440001;
+			PosX = -1200001;
 		}
-		else if (PosX > 1440000)
+		else if (PosX > 1200000)
 		{
-			PosX = 1440001;
+			PosX = 1200001;
 		}
 	}
 }
