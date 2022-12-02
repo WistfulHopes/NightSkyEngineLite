@@ -135,6 +135,17 @@ void BattleActor::Update()
 void BattleActor::SetSprite()
 {
 	int CelNameLength = strlen(CelNameInternal.GetString());
+	for (auto Sprite : Sprites)
+	{
+		char* SpriteName = (char*)malloc(CelNameLength);
+		strncpy(SpriteName, CelNameInternal.GetString(), CelNameLength - 3);
+		SpriteName[CelNameLength - 3] = 0;
+		if (!strcmp(Sprite.name, SpriteName))
+		{
+			CurrentSprite = Sprite;
+			break;
+		}
+	}
 	CurrentSprite.frame = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
 }
 
@@ -158,8 +169,8 @@ void BattleActor::Draw()
 	Source.height = CurrentSprite.frameSize.y;
 	
 	Rectangle Dest;
-	Dest.x = PosX / COORD_SCALE + CurrentSprite.frameSize.y / 2;
-	Dest.y = PosY / COORD_SCALE + CurrentSprite.frameSize.x / 2;
+	Dest.x = PosX / COORD_SCALE;
+	Dest.y = -PosY / COORD_SCALE;
 	Dest.width = CurrentSprite.frameSize.x;
 	Dest.height = CurrentSprite.frameSize.y;
 

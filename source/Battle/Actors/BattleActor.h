@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 
 #pragma pack (push, 1)
 
@@ -278,7 +279,9 @@ public:
 
 	State* ObjectState; 
 
-	Sprite CurrentSprite{};
+	std::vector<Sprite> Sprites;
+	
+	Sprite CurrentSprite;
 
 protected:
 	//move object based on speed and inertia

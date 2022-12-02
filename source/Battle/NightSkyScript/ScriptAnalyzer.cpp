@@ -200,7 +200,24 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             }
             else if (Actor->AnimTime > AnimTime)
             {
-                FindNextCel(&Addr);
+                while (Actor->AnimTime > AnimTime)
+                {
+                    char* BakAddr = Addr;
+                    Addr += InstructionSizes[code];
+                    if (FindNextCel(&Addr, Actor->AnimTime))
+                    {
+                        AnimTime = *reinterpret_cast<int32_t *>(Addr + 68);
+                        if (Actor->AnimTime == AnimTime)
+                        {
+                            Actor->SetCelName(Addr + 4);
+                            CelExecuted = true;
+                            break;
+                        }
+                        continue;
+                    }
+                    Addr = BakAddr;
+                    break;
+                }
                 break;
             }
             break;
@@ -224,11 +241,15 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 if (!strcmp(Label.Name.GetString(), LabelName.GetString()))
                 {
                     Addr = ScriptAddress + Label.OffsetAddress;
-                    if (FindNextCel(&Addr))
+                    char* CelAddr = Addr;
+                    if (FindNextCel(&CelAddr, Actor->AnimTime))
                     {
+                        Addr = CelAddr;
                         Actor->AnimTime = *reinterpret_cast<int32_t *>(Addr + 68) - 1;
+                        Actor->SetCelName(Addr + 4);
+                        code = SetCel;
                     }
-                    return;
+                    break;
                 }
             }
             break;
@@ -478,7 +499,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetPosX(Operand);
             break;
@@ -488,7 +509,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->AddPosX(Operand);
             break;
@@ -498,7 +519,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->AddPosXRaw(Operand);
             break;
@@ -508,7 +529,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetPosY(Operand);
             break;
@@ -518,7 +539,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->AddPosY(Operand);
             break;
@@ -528,7 +549,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetSpeedX(Operand);
             break;
@@ -538,7 +559,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->AddSpeedX(Operand);
             break;
@@ -548,7 +569,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetSpeedY(Operand);
             break;
@@ -558,7 +579,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->AddSpeedY(Operand);
             break;
@@ -568,7 +589,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetSpeedXPercent(Operand);
             break;
@@ -578,7 +599,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetSpeedXPercentPerFrame(Operand);
             break;
@@ -588,7 +609,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
             if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
             {
-                Operand = Actor->GetInternalValue((InternalValue)Operand);
+                Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
             }
             Actor->SetGravity(Operand);
             break;
@@ -643,7 +664,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
     }
 }
 
-bool ScriptAnalyzer::FindNextCel(char **Addr)
+bool ScriptAnalyzer::FindNextCel(char **Addr, int AnimTime)
 {
     while (true)
     {
@@ -651,8 +672,15 @@ bool ScriptAnalyzer::FindNextCel(char **Addr)
         switch (code)
         {
         case SetCel:
-        case EndLabel:
             return true;
+        case EndLabel:
+            {
+                if (AnimTime > *reinterpret_cast<int*>(*Addr + 4))
+                {
+                    break;
+                }
+                return false;
+            }
         case ExitState:
         case EndBlock:
             return false;

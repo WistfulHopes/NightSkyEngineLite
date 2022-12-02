@@ -63,15 +63,31 @@ PlayerCharacter::PlayerCharacter()
 	
 	CurrentSprite.texture = LoadTexture("Sprites/Esther/Esther_stand.png");
 	Vector2 Size;
-	Size.x = 64;
-	Size.y = 112;
+	Size.x = 256;
+	Size.y = 256;
 	CurrentSprite.frameSize = Size;
 	CurrentSprite.maxFrame = 5;
 	CurrentSprite.framesWide = 3;
 	Vector2 Origin;
-	Origin.x = 96;
-	Origin.y = 112;
+	Origin.x = 117;
+	Origin.y = 120;
 	CurrentSprite.origin = Origin;
+	CurrentSprite.name = "Esther_stand";
+	Sprites.push_back(CurrentSprite);
+
+	Sprite JumpSprite;
+	
+	JumpSprite.texture = LoadTexture("Sprites/Esther/Esther_jump.png");
+	Size.x = 256;
+	Size.y = 256;
+	JumpSprite.frameSize = Size;
+	JumpSprite.maxFrame = 8;
+	JumpSprite.framesWide = 3;
+	Origin.x = 117;
+	Origin.y = 120;
+	JumpSprite.origin = Origin;
+	JumpSprite.name = "Esther_jump";
+	Sprites.push_back(JumpSprite);
 }
 
 void PlayerCharacter::InitPlayer()
