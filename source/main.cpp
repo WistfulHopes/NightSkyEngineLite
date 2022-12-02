@@ -41,7 +41,7 @@ int main(void)
 
 		float Distance = (2160000 - abs(abs(GameState->Players[0]->GetInternalValue(VAL_PosX)) - abs(GameState->Players[3]->GetInternalValue(VAL_PosX)))) / COORD_SCALE + 720;
 		Distance = Clamp(Distance, 1080, 1440);
-    	Cam.zoom = Remap(Distance, 1080, 1440, 0.48, 1);
+    	Cam.zoom = Remap(Distance, 1080, 1440, 0.525, 1);
         
         BeginDrawing();
 			BeginTextureMode(renderTexture);

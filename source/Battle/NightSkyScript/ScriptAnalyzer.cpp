@@ -175,6 +175,8 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
         case CheckInputRaw: break;
         case JumpToState: break;
         case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
         default:
             break;
         }
@@ -720,6 +722,18 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 }
                 break;
             }
+        case AddAirJump:
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->AddAirJump(*reinterpret_cast<int32_t*>(Addr + 4));
+            }
+            break;
+        case AddAirDash: 
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->AddAirDash(*reinterpret_cast<int32_t*>(Addr + 4));
+            }
+            break;
         default:
             break;
         }
@@ -861,6 +875,8 @@ bool ScriptAnalyzer::FindNextCel(char **Addr, int AnimTime)
         case CheckInputRaw: break;
         case JumpToState: break;
         case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
         default:
             break;
         }
@@ -998,6 +1014,8 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
         case CheckInputRaw: break;
         case JumpToState: break;
         case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
         default:
             break;
         }
@@ -1137,6 +1155,8 @@ void ScriptAnalyzer::FindElse(char **Addr)
         case CheckInputRaw: break;
         case JumpToState: break;
         case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
         default:
             break;
         }
@@ -1280,6 +1300,8 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
         case CheckInputRaw: break;
         case JumpToState: break;
         case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
         default:
             break;
         }
