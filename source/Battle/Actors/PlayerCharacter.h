@@ -11,6 +11,29 @@
 constexpr int CancelArraySize = 50;
 constexpr int MaxComponentCount = 80;
 
+enum PlayerStats //player stats list
+{
+	PLY_FWalkSpeed,
+	PLY_BWalkSpeed,
+	PLY_FDashInitSpeed,
+	PLY_FDashAccel,
+	PLY_FDashMaxSpeed,
+	PLY_FDashFriction,
+	PLY_BDashSpeed,
+	PLY_BDashHeight,
+	PLY_BDashGravity,
+	PLY_JumpHeight,
+	PLY_FJumpSpeed,
+	PLY_BJumpSpeed,
+	PLY_JumpGravity,
+	PLY_SuperJumpHeight,
+	PLY_FSuperJumpSpeed,
+	PLY_BSuperJumpSpeed,
+	PLY_SuperJumpGravity,
+	PLY_FAirDashSpeed,
+	PLY_BAirDashSpeed,
+};
+
 class PlayerCharacter : public BattleActor
 {
 public:

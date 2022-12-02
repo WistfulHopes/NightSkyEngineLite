@@ -21,5 +21,12 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "d:\\GitHub\\NightSkyEngineLite\\_bin\\Debug",
+            "binaryPath": "d:\\GitHub\\NightSkyEngineLite\\_bin\\Debug\\NightSkyEngineLite.exe",
+            "binaryArgs": []
+        }
+    ]
 }

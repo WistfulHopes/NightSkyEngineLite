@@ -303,6 +303,8 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 	}
 	switch (InternalValue)
 	{
+	case VAL_StoredRegister:
+		return Obj->StoredRegister;
 	case VAL_ActionFlag:
 		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
 			return Obj->Player->CurrentActionFlags;

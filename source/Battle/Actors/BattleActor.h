@@ -62,13 +62,14 @@ enum class HitVFXType
 
 enum InternalValue //internal values list
 {
+	VAL_StoredRegister,
 	VAL_Angle,
 	VAL_ActionFlag,
 	VAL_PlayerVal0,
 	VAL_PlayerVal1,
 	VAL_PlayerVal2,
 	VAL_PlayerVal3,
-	VAL_SpeedX, 
+	VAL_SpeedX,
 	VAL_SpeedY,
 	VAL_ActionTime,
 	VAL_PosX,
@@ -310,7 +311,7 @@ public:
 	//updates the object. called every frame
 	virtual void Update();
 	//draws the object. called every frame
-	virtual void Draw();
+	virtual void Draw(); 
 	
 	//script callable functions
 	

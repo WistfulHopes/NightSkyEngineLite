@@ -187,7 +187,8 @@ public:
 	uint32_t OffsetAddress;
 	uint32_t Size;
 	ScriptBlockOffsets Offsets;
-
+	bool CommonState;
+	
 	virtual void OnEnter() override; //executes on enter. write in script
 	virtual void OnUpdate(float DeltaTime) override; //executes every frame. write in script
 	virtual void OnExit() override; //executes on exit. write in script

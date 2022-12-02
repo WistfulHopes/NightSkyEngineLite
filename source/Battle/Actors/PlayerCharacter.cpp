@@ -87,10 +87,16 @@ void PlayerCharacter::InitPlayer()
 void PlayerCharacter::InitStates()
 {
 	CommonAnalyzer->Initialize(GameState->CommonScript, GameState->CommonScriptLength, &CommonStates, &CommonSubroutines);
+	for (auto State : CommonStates)
+	{
+		State->Parent = this;
+		dynamic_cast<ScriptState*>(State)->CommonState = true;
+	}
 	for (auto Subroutine : CommonSubroutines)
 	{
 		CommonSubroutineNames.push_back(Subroutine->Name);
 		Subroutine->Parent = this;
+		dynamic_cast<ScriptSubroutine*>(Subroutine)->CommonSubroutine = true;
 	}
 	CharaAnalyzer->Initialize(CharaScript, CharaScriptLength, &StateMachine.States, &Subroutines);
 	ObjAnalyzer->Initialize(ObjectScript, ObjectScriptLength, &ObjectStates, &Subroutines);

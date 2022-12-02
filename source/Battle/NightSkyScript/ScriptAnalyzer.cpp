@@ -115,6 +115,8 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
             break;
         case GotoLabelIfNot:
             break;
+        case GetPlayerStats:
+            break;
         case BeginStateDefine:
             break;
         case EndStateDefine:
@@ -165,6 +167,7 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
             break;
         case ForceEnableFarNormal:
             break;
+        case SetGravity: break;
         default:
             break;
         }
@@ -179,7 +182,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
     std::vector<StateAddress> Labels;
     GetAllLabels(Addr, &Labels);
     State *StateToModify = nullptr;
-    char* ElseAddr;
+    char* ElseAddr = 0;
     while (true)
     {
         OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
@@ -227,6 +230,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 case ACT_Jumping:
                     Actor->Player->JumpToState("VJump");
                     break;
+                default: ;
                 }
             }
             return;
@@ -349,6 +353,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             else
             {
                 FindMatchingEnd(&Addr, EndIf);
+                code = EndIf;
                 break;
             }
         }
@@ -377,6 +382,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 FindMatchingEnd(&Addr, EndIf);
                 ElseAddr = Addr;
                 FindElse(&ElseAddr);
+                code = EndIf;
                 break;
             }
         }
@@ -396,11 +402,12 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 FindMatchingEnd(&Addr, EndIf);
                 ElseAddr = Addr;
                 FindElse(&ElseAddr);
+                code = EndIf;
                 break;
             }
         };
         case Else:
-            if (ElseAddr = Addr)
+            if (ElseAddr == Addr)
             {
                 ElseAddr = 0;
                 break;
@@ -408,9 +415,9 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             else
             {
                 FindMatchingEnd(&Addr, EndElse);
+                code = EndElse;
                 break;
             }
-            break;
         case EndElse:
             break;
         case GotoLabelIf:
@@ -419,34 +426,200 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             break;
         case GotoLabelIfNot:
             break;
+        case GetPlayerStats:
+        {
+            PlayerStats Stat = *reinterpret_cast<PlayerStats*>(Addr + 8);
+            int32_t Val = 0;
+            switch(Stat)
+            {
+            case PLY_FWalkSpeed:
+                Val = Actor->Player->FWalkSpeed;
+                break;
+            case PLY_BWalkSpeed:
+                Val = Actor->Player->BWalkSpeed;
+                break;
+            case PLY_FDashInitSpeed:
+                Val = Actor->Player->FDashInitSpeed;
+                break;
+            case PLY_FDashAccel:
+                Val = Actor->Player->FDashAccel;
+                break;
+            case PLY_FDashMaxSpeed:
+                Val = Actor->Player->FDashMaxSpeed;
+                break;
+            case PLY_FDashFriction:
+                Val = Actor->Player->FDashFriction;
+                break;
+            case PLY_BDashSpeed:
+                Val = Actor->Player->BDashSpeed;
+                break;
+            case PLY_BDashHeight:
+                Val = Actor->Player->BDashHeight;
+                break;
+            case PLY_BDashGravity:
+                Val = Actor->Player->BDashGravity;
+                break;
+            case PLY_JumpHeight:
+                Val = Actor->Player->JumpHeight;
+                break;
+            case PLY_FJumpSpeed:
+                Val = Actor->Player->FJumpSpeed;
+                break;
+            case PLY_BJumpSpeed:
+                Val = Actor->Player->BJumpSpeed;
+                break;
+            case PLY_JumpGravity:
+                Val = Actor->Player->JumpGravity;
+                break;
+            case PLY_SuperJumpHeight:
+                Val = Actor->Player->JumpHeight;
+                break;
+            case PLY_FSuperJumpSpeed:
+                Val = Actor->Player->FJumpSpeed;
+                break;
+            case PLY_BSuperJumpSpeed:
+                Val = Actor->Player->BJumpSpeed;
+                break;
+            case PLY_SuperJumpGravity:
+                Val = Actor->Player->JumpGravity;
+                break;
+            case PLY_FAirDashSpeed:
+                Val = Actor->Player->FAirDashSpeed;
+                break;
+            case PLY_BAirDashSpeed:
+                Val = Actor->Player->BAirDashSpeed;
+                break;
+            }
+            Actor->StoredRegister = Val;
+            break;
+        }
         case SetPosX:
-            Actor->SetPosX(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetPosX(Operand);
+            break;
+        }
         case AddPosX:
-            Actor->AddPosX(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->AddPosX(Operand);
+            break;
+        }
         case AddPosXRaw:
-            Actor->AddPosXRaw(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->AddPosXRaw(Operand);
+            break;
+        }
         case SetPosY:
-            Actor->SetPosY(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetPosY(Operand);
+            break;
+        }
         case AddPosY:
-            Actor->AddPosY(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->AddPosY(Operand);
+            break;
+        }
         case SetSpeedX:
-            Actor->SetSpeedX(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetSpeedX(Operand);
+            break;
+        }
         case AddSpeedX:
-            Actor->AddSpeedX(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->AddSpeedX(Operand);
+            break;
+        }
         case SetSpeedY:
-            Actor->SetSpeedY(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetSpeedY(Operand);
+            break;
+        }
         case AddSpeedY:
-            Actor->AddSpeedY(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->AddSpeedY(Operand);
+            break;
+        }
         case SetSpeedXPercent:
-            Actor->SetSpeedXPercent(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetSpeedXPercent(Operand);
+            break;
+        }
         case SetSpeedXPercentPerFrame:
-            Actor->SetSpeedXPercentPerFrame(*reinterpret_cast<int32_t *>(Addr + 4));
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetSpeedXPercentPerFrame(Operand);
+            break;
+        }
+        case SetGravity:
+        {
+            int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+            if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+            {
+                Operand = Actor->GetInternalValue((InternalValue)Operand);
+            }
+            Actor->SetGravity(Operand);
+            break;
+        }
         case EnableState:
         {
             if (Actor->IsPlayer)
             {
                 Actor->Player->EnableState(*reinterpret_cast<EnableFlags *>(Addr + 4));
             }
+            break;
         }
         case DisableState:
         {
@@ -454,6 +627,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             {
                 Actor->Player->DisableState(*reinterpret_cast<EnableFlags *>(Addr + 4));
             }
+            break;
         }
         case EnableAll:
         {
@@ -461,6 +635,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             {
                 Actor->Player->EnableAll();
             }
+            break;
         }
         case DisableAll:
         {
@@ -468,15 +643,18 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             {
                 Actor->Player->DisableAll();
             }
+            break;
         }
         case EnableFlip:
             Actor->EnableFlip(*reinterpret_cast<bool *>(Addr + 4));
+            break;
         case ForceEnableFarNormal:
         {
             if (Actor->IsPlayer)
             {
                 Actor->Player->ForceEnableFarNormal(*reinterpret_cast<bool *>(Addr + 4));
             }
+            break;
         }
         default:
             break;
@@ -552,6 +730,8 @@ bool ScriptAnalyzer::FindNextCel(char **Addr)
             break;
         case GotoLabelIfNot:
             break;
+        case GetPlayerStats:
+            break;
         case BeginStateDefine:
             break;
         case EndStateDefine:
@@ -602,6 +782,7 @@ bool ScriptAnalyzer::FindNextCel(char **Addr)
             break;
         case ForceEnableFarNormal:
             break;
+        case SetGravity: break;
         default:
             break;
         }
@@ -613,7 +794,9 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
 {
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        OpCodes code = *reinterpret_cast<OpCodes*>(*Addr);
+        if (code == EndCode)
+            return;
         switch (code)
         {
         case BeginLabel:
@@ -677,6 +860,8 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
             break;
         case GotoLabelIfNot:
             break;
+        case GetPlayerStats:
+            break;
         case BeginStateDefine:
             break;
         case EndStateDefine:
@@ -727,12 +912,11 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
             break;
         case ForceEnableFarNormal:
             break;
+        case SetGravity: break;
         default:
             break;
         }
-        Addr += InstructionSizes[code];
-        if (code == EndCode)
-            return;
+        *Addr += InstructionSizes[code];
     }
 }
 
@@ -740,7 +924,7 @@ void ScriptAnalyzer::FindElse(char **Addr)
 {
     while (true)
     {
-        OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
+        OpCodes code = *reinterpret_cast<OpCodes *>(*Addr);
         switch (code)
         {
         case BeginLabel:
@@ -808,6 +992,8 @@ void ScriptAnalyzer::FindElse(char **Addr)
             break;
         case GotoLabelIfNot:
             break;
+        case GetPlayerStats:
+            break;
         case BeginStateDefine:
             break;
         case EndStateDefine:
@@ -858,10 +1044,11 @@ void ScriptAnalyzer::FindElse(char **Addr)
             break;
         case ForceEnableFarNormal:
             break;
+        case SetGravity: break;
         default:
             break;
         }
-        Addr += InstructionSizes[code];
+        *Addr += InstructionSizes[code];
     }
 }
 
@@ -920,7 +1107,7 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
         case OnSuperFreezeEnd:
             break;
         case EndLabel:
-            return;
+            break;
         case GotoLabel:
             break;
         case If:
@@ -940,6 +1127,8 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
         case GotoLabelIfOperation:
             break;
         case GotoLabelIfNot:
+            break;
+        case GetPlayerStats:
             break;
         case BeginStateDefine:
             break;
@@ -991,6 +1180,7 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
             break;
         case ForceEnableFarNormal:
             break;
+        case SetGravity: break;
         default:
             break;
         }

@@ -9,6 +9,11 @@ void ScriptState::OnEnter()
     {
         ParentState->OnEnter();
     }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnEnterOffset, Parent);
+        return;
+    }
     if (Parent)
     {
         Parent->CharaAnalyzer->Analyze((char*)Offsets.OnEnterOffset, Parent);
@@ -26,6 +31,11 @@ void ScriptState::OnUpdate(float DeltaTime)
     if (ParentState)
     {
         ParentState->OnUpdate(DeltaTime);
+    }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnUpdateOffset, Parent);
+        return;
     }
     if (Parent)
     {
@@ -45,6 +55,11 @@ void ScriptState::OnExit()
     {
         ParentState->OnExit();
     }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnExitOffset, Parent);
+        return;
+    }
     if (Parent)
     {
         Parent->CharaAnalyzer->Analyze((char*)Offsets.OnExitOffset, Parent);
@@ -62,6 +77,11 @@ void ScriptState::OnLanding()
     if (ParentState)
     {
         ParentState->OnLanding();
+    }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnLandingOffset, Parent);
+        return;
     }
     if (Parent)
     {
@@ -81,6 +101,11 @@ void ScriptState::OnHit()
     {
         ParentState->OnHit();
     }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnHitOffset, Parent);
+        return;
+    }
     if (Parent)
     {
         Parent->CharaAnalyzer->Analyze((char*)Offsets.OnHitOffset, Parent);
@@ -98,6 +123,11 @@ void ScriptState::OnBlock()
     if (ParentState)
     {
         ParentState->OnBlock();
+    }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnBlockOffset, Parent);
+        return;
     }
     if (Parent)
     {
@@ -117,6 +147,11 @@ void ScriptState::OnHitOrBlock()
     {
         ParentState->OnHitOrBlock();
     }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnHitOrBlockOffset, Parent);
+        return;
+    }
     if (Parent)
     {
         Parent->CharaAnalyzer->Analyze((char*)Offsets.OnHitOrBlockOffset, Parent);
@@ -134,6 +169,11 @@ void ScriptState::OnCounterHit()
     if (ParentState)
     {
         ParentState->OnCounterHit();
+    }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnCounterHitOffset, Parent);
+        return;
     }
     if (Parent)
     {
@@ -153,6 +193,11 @@ void ScriptState::OnSuperFreeze()
     {
         ParentState->OnSuperFreeze();
     }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnSuperFreezeOffset, Parent);
+        return;
+    }
     if (Parent)
     {
         Parent->CharaAnalyzer->Analyze((char*)Offsets.OnSuperFreezeOffset, Parent);
@@ -170,6 +215,11 @@ void ScriptState::OnSuperFreezeEnd()
     if (ParentState)
     {
         ParentState->OnSuperFreezeEnd();
+    }
+    if (CommonState)
+    {
+        Parent->CommonAnalyzer->Analyze((char*)Offsets.OnSuperFreezeEndOffset, Parent);
+        return;
     }
     if (Parent)
     {
