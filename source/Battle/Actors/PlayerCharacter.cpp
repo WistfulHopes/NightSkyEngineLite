@@ -78,16 +78,22 @@ PlayerCharacter::PlayerCharacter()
 	Sprite JumpSprite;
 	
 	JumpSprite.texture = LoadTexture("Sprites/Esther/Esther_jump.png");
-	Size.x = 256;
-	Size.y = 256;
 	JumpSprite.frameSize = Size;
 	JumpSprite.maxFrame = 8;
 	JumpSprite.framesWide = 3;
-	Origin.x = 117;
-	Origin.y = 120;
 	JumpSprite.origin = Origin;
 	JumpSprite.name = "Esther_jump";
 	Sprites.push_back(JumpSprite);
+
+	Sprite CrouchSprite;
+	
+	CrouchSprite.texture = LoadTexture("Sprites/Esther/Esther_crouch.png");
+	CrouchSprite.frameSize = Size;
+	CrouchSprite.maxFrame = 8;
+	CrouchSprite.framesWide = 3;
+	CrouchSprite.origin = Origin;
+	CrouchSprite.name = "Esther_crouch";
+	Sprites.push_back(CrouchSprite);
 }
 
 void PlayerCharacter::InitPlayer()
@@ -711,8 +717,7 @@ void PlayerCharacter::JumpToState(char* NewName)
 		case EntryState::Jumping:
 			CurrentActionFlags = ACT_Jumping;
 			break;
-		default:
-			break;
+		case EntryState::None: break;
 		}
 	}
 }
@@ -1633,7 +1638,7 @@ void PlayerCharacter::HandleWallBounce()
 	{
 		if (CurrentWallBounceEffect.WallBounceInCornerOnly)
 		{
-			if (PosX > 2160000 || PosX < -2160000)
+			if (PosX > 1440000 || PosX < -1440000)
 			{
 				if (CurrentWallBounceEffect.WallBounceCount > 0)
 				{

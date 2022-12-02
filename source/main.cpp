@@ -31,14 +31,17 @@ int main(void)
 
         double TargetX = static_cast<double>(GameState->StoredBattleState.CurrentScreenPos) / COORD_SCALE;
         double TargetY = -static_cast<double>(GameState->Players[0]->GetInternalValue(VAL_PosY) + GameState->Players[1]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
-        TargetX = Clamp(TargetX, 0, 720);
+        TargetX = Clamp(TargetX, -1440, 1440);
         Vector2 Target;
         Target.x = TargetX;
         Target.y = TargetY;
         Cam.target = Target;
 
         Cam.rotation = 0;
-        Cam.zoom = 1;
+
+		float Distance = (2160000 - abs(abs(GameState->Players[0]->GetInternalValue(VAL_PosX)) - abs(GameState->Players[3]->GetInternalValue(VAL_PosX)))) / COORD_SCALE + 720;
+		Distance = Clamp(Distance, 1080, 1440);
+    	Cam.zoom = Remap(Distance, 1080, 1440, 0.48, 1);
         
         BeginDrawing();
 			BeginTextureMode(renderTexture);

@@ -115,12 +115,12 @@ void BattleActor::Update()
 			if (Player->PlayerIndex == 0)
 			{
 				FacingRight = true;
-				PosX = -350000;
+				PosX = -240000;
 			}
 			else
 			{
 				FacingRight = false;
-				PosX = 350000;
+				PosX = 240000;
 			}
 		}
 	}
@@ -134,19 +134,22 @@ void BattleActor::Update()
 
 void BattleActor::SetSprite()
 {
-	int CelNameLength = strlen(CelNameInternal.GetString());
-	for (auto Sprite : Sprites)
+	if (strcmp(CelNameInternal.GetString(), ""))
 	{
-		char* SpriteName = (char*)malloc(CelNameLength);
-		strncpy(SpriteName, CelNameInternal.GetString(), CelNameLength - 3);
-		SpriteName[CelNameLength - 3] = 0;
-		if (!strcmp(Sprite.name, SpriteName))
+		int CelNameLength = strlen(CelNameInternal.GetString());
+		for (auto Sprite : Sprites)
 		{
-			CurrentSprite = Sprite;
-			break;
+			char* SpriteName = (char*)malloc(CelNameLength);
+			strncpy(SpriteName, CelNameInternal.GetString(), CelNameLength - 3);
+			SpriteName[CelNameLength - 3] = 0;
+			if (!strcmp(Sprite.name, SpriteName))
+			{
+				CurrentSprite = Sprite;
+				break;
+			}
 		}
+		CurrentSprite.frame = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
 	}
-	CurrentSprite.frame = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
 }
 
 void BattleActor::Draw()
@@ -223,13 +226,13 @@ void BattleActor::Move()
 	}
 	if (ScreenCollisionActive)
 	{
-		if (PosX < -2160000)
+		if (PosX < -1440000)
 		{
-			PosX = -2160001;
+			PosX = -1440001;
 		}
-		else if (PosX > 2160000)
+		else if (PosX > 1440000)
 		{
-			PosX = 2160001;
+			PosX = 1440001;
 		}
 	}
 }
@@ -337,9 +340,9 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 	case VAL_Hitstop:
 		return Obj->Hitstop;
 	case VAL_DistanceToBackWall:
-		return -2160000 + Obj->PosX;
+		return -1440000 + Obj->PosX;
 	case VAL_DistanceToFrontWall:
-		return 2160000 + Obj->PosX;
+		return 1440000 + Obj->PosX;
 	case VAL_IsAir:
 		return Obj-> PosY > 0;
 	case VAL_IsLand:

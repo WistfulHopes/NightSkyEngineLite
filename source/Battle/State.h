@@ -11,8 +11,8 @@ enum class EntryState //character state required to enter state
 {
 	None, //any
 	Standing,
-	Jumping,
 	Crouching,
+	Jumping,
 };
 
 enum class InputCondition //input required to enter state

@@ -8,7 +8,7 @@ void ScriptAnalyzer::Initialize(char *Addr, uint32_t Size, std::vector<State *> 
     SubroutineCount = *reinterpret_cast<int *>(Addr + 4);
     StateAddresses = reinterpret_cast<StateAddress *>(Addr + 8);
     SubroutineAddresses = &StateAddresses[StateCount];
-    ScriptAddress = (char *)&SubroutineAddresses[StateCount];
+    ScriptAddress = (char *)&SubroutineAddresses[SubroutineCount];
 
     for (int i = 0; i < StateCount; i++)
     {
@@ -168,6 +168,12 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
         case ForceEnableFarNormal:
             break;
         case SetGravity: break;
+        case HaltMomentum: break;
+        case ClearInertia: break;
+        case SetActionFlags: break;
+        case CheckInput: break;
+        case CheckInputRaw: break;
+        case JumpToState: break;
         default:
             break;
         }
@@ -228,6 +234,23 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             break;
         }
         case ExitState:
+        {
+            if (Actor->IsPlayer)
+            {
+                switch (Actor->Player->CurrentActionFlags)
+                {
+                case ACT_Standing:
+                    Actor->Player->JumpToState("Stand");
+                    return;
+                case ACT_Crouching:
+                    Actor->Player->JumpToState("Crouch");
+                    return;
+                case ACT_Jumping:
+                    Actor->Player->JumpToState("VJump");
+                    return;
+                }
+            }
+        }
         case EndBlock:
         {
             return;
@@ -467,7 +490,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->FJumpSpeed;
                 break;
             case PLY_BJumpSpeed:
-                Val = Actor->Player->BJumpSpeed;
+                Val = -Actor->Player->BJumpSpeed;
                 break;
             case PLY_JumpGravity:
                 Val = Actor->Player->JumpGravity;
@@ -657,6 +680,29 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             }
             break;
         }
+        case HaltMomentum: 
+            Actor->HaltMomentum();
+            break;
+        case ClearInertia:
+            Actor->ClearInertia();
+            break;
+        case SetActionFlags:
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->SetActionFlags(*reinterpret_cast<ActionFlags*>(Addr + 4));
+            }
+            break;
+        case CheckInput: 
+            Actor->StoredRegister = Actor->Player->CheckInput(*reinterpret_cast<InputCondition*>(Addr + 4));
+            break;
+        case CheckInputRaw: 
+            Actor->StoredRegister = Actor->Player->CheckInputRaw(*reinterpret_cast<InputFlags*>(Addr + 4));
+            break;
+        case JumpToState:
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->JumpToState(Addr + 4);
+            }
         default:
             break;
         }
@@ -791,6 +837,12 @@ bool ScriptAnalyzer::FindNextCel(char **Addr, int AnimTime)
         case ForceEnableFarNormal:
             break;
         case SetGravity: break;
+        case HaltMomentum: break;
+        case ClearInertia: break;
+        case SetActionFlags: break;
+        case CheckInput: break;
+        case CheckInputRaw: break;
+        case JumpToState: break;
         default:
             break;
         }
@@ -921,6 +973,12 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
         case ForceEnableFarNormal:
             break;
         case SetGravity: break;
+        case HaltMomentum: break;
+        case ClearInertia: break;
+        case SetActionFlags: break;
+        case CheckInput: break;
+        case CheckInputRaw: break;
+        case JumpToState: break;
         default:
             break;
         }
@@ -1053,6 +1111,12 @@ void ScriptAnalyzer::FindElse(char **Addr)
         case ForceEnableFarNormal:
             break;
         case SetGravity: break;
+        case HaltMomentum: break;
+        case ClearInertia: break;
+        case SetActionFlags: break;
+        case CheckInput: break;
+        case CheckInputRaw: break;
+        case JumpToState: break;
         default:
             break;
         }
@@ -1189,6 +1253,12 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
         case ForceEnableFarNormal:
             break;
         case SetGravity: break;
+        case HaltMomentum: break;
+        case ClearInertia: break;
+        case SetActionFlags: break;
+        case CheckInput: break;
+        case CheckInputRaw: break;
+        case JumpToState: break;
         default:
             break;
         }
