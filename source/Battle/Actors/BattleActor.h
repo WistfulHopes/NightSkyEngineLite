@@ -88,6 +88,7 @@ enum InternalValue //internal values list
 	VAL_IsStunned,
 	VAL_Health,
 	VAL_Meter,
+	VAL_DefaultCommonAction,
 };
 
 enum HitAction
@@ -316,6 +317,7 @@ public:
 	
 	//gets internal value for script
 	int32_t GetInternalValue(InternalValue InternalValue, ObjType ObjType = OBJ_Self);
+	void SetInternalValue(InternalValue InternalValue, int32_t Val, ObjType ObjType = OBJ_Self);
 	//checks if on frame
 	bool IsOnFrame(int32_t Frame);
 	bool IsStopped();

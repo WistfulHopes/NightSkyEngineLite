@@ -412,10 +412,10 @@ void FighterGameState::UpdateCamera()
 
     double TargetX = static_cast<double>(StoredBattleState.CurrentScreenPos) / COORD_SCALE;
     double TargetY = -static_cast<double>(Players[0]->GetInternalValue(VAL_PosY) + Players[1]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
-    TargetX = Clamp(TargetX, -1440, 1440);
+    TargetX = Clamp(TargetX, -270, 270);
     Vector2 Target;
-    Target.x = Lerp(Cam.target.x, TargetX, 0.25);
-    Target.y = Lerp(Cam.target.y, TargetY, 0.25);
+    Target.x = Lerp(Cam.target.x, TargetX, 0.5);
+    Target.y = Lerp(Cam.target.y, TargetY, 0.5);
     Cam.target = Target;
 
     Cam.rotation = 0;
@@ -434,7 +434,7 @@ void FighterGameState::UpdateCamera()
 	Distance = Remap(Distance, 1280, 1440, 0.7, 1);
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
-    Cam.zoom = Lerp(Cam.zoom, Distance, 0.25);
+    Cam.zoom = Lerp(Cam.zoom, Distance, 0.5);
 
 	BeginMode2D(Cam);
 }

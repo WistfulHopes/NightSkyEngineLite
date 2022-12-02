@@ -389,10 +389,107 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
 			return Obj->Player->PlayerVal8;
 		break;
+	case VAL_DefaultCommonAction:
+		return Obj->DefaultCommonAction;
 	default:
 		return 0;
 	}
 	return 0;
+}
+
+void BattleActor::SetInternalValue(InternalValue InternalValue, int32_t Val, ObjType ObjType)
+{
+	BattleActor* Obj;
+	switch (ObjType)
+	{
+	case OBJ_Self:
+		Obj = this;
+		break;
+	case OBJ_Enemy:
+		Obj = Player->Enemy;
+		break;
+	case OBJ_Parent:
+		Obj = Player;
+		break;
+	default:
+		Obj = this;
+		break;
+	}
+	switch (InternalValue)
+	{
+	case VAL_StoredRegister:
+		Obj->StoredRegister = Val;
+	case VAL_ActionFlag:
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->CurrentActionFlags = Val;
+		break;
+	case VAL_PosX:
+		Obj->PosX = Val;
+	case VAL_PosY:
+		Obj->PosY = Val;
+	case VAL_SpeedX:
+		Obj->SpeedX = Val;
+	case VAL_SpeedY:
+		Obj->SpeedY = Val;
+	case VAL_ActionTime:
+		Obj->ActionTime = Val;
+	case VAL_Inertia:
+		Obj->Inertia = Val;
+	case VAL_FacingRight:
+		Obj->FacingRight = Val;
+	case VAL_DistanceToBackWall:
+	case VAL_DistanceToFrontWall:
+	case VAL_IsAir:
+	case VAL_IsLand:
+	case VAL_IsStunned:
+		break;
+	case VAL_Health:
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->CurrentHealth = Val;
+		break;
+	case VAL_Meter:
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			GameState->StoredBattleState.Meter[Obj->Player->PlayerIndex] = Val;
+		break;
+	case VAL_Angle: break;
+	case VAL_PlayerVal1: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal1 = Val;
+		break;
+	case VAL_PlayerVal2: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal2 = Val;
+		break;
+	case VAL_PlayerVal3: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal3 = Val;
+		break;
+	case VAL_PlayerVal4: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal4 = Val;
+		break;
+	case VAL_PlayerVal5: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal5 = Val;
+		break;
+	case VAL_PlayerVal6: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal6 = Val;
+		break;
+	case VAL_PlayerVal7: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal7 = Val;
+		break;
+	case VAL_PlayerVal8: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal8 = Val;
+		break;
+	case VAL_DefaultCommonAction:
+		Obj->DefaultCommonAction = Val;
+	default:
+		return;
+	}
+	return;
 }
 
 bool BattleActor::IsOnFrame(int32_t Frame)
