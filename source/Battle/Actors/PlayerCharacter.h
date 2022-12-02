@@ -93,7 +93,7 @@ public:
 	bool ProjectileInvulnerable;
 	bool HeadInvulnerable;
 	int RoundWinTimer = 300;
-	bool RoundWinInputLock;
+	bool RoundWinInputLock = false;
 	int MeterCooldownTimer = 0;
 	
 	//movement values
@@ -176,7 +176,7 @@ public:
 	int ReceivedAttackLevel = -1; 
 
 	//pointer to active enemy.
-	PlayerCharacter* Enemy; 
+	PlayerCharacter* Enemy = nullptr; 
 
 	BattleActor* ChildBattleActors[32];
 

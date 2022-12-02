@@ -213,26 +213,6 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
         case ExitState:
         case EndBlock:
         {
-            if (!Actor->IsPlayer)
-            {
-                Actor->DeactivateObject();
-            }
-            else
-            {
-                switch (Actor->Player->CurrentActionFlags)
-                {
-                case ACT_Standing:
-                    Actor->Player->JumpToState("Stand");
-                    break;
-                case ACT_Crouching:
-                    Actor->Player->JumpToState("Crouch");
-                    break;
-                case ACT_Jumping:
-                    Actor->Player->JumpToState("VJump");
-                    break;
-                default: ;
-                }
-            }
             return;
         }
         case GotoLabel:
@@ -428,7 +408,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             break;
         case GetPlayerStats:
         {
-            PlayerStats Stat = *reinterpret_cast<PlayerStats*>(Addr + 8);
+            PlayerStats Stat = *reinterpret_cast<PlayerStats*>(Addr + 4);
             int32_t Val = 0;
             switch(Stat)
             {

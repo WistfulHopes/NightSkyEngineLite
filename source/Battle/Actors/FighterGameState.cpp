@@ -10,11 +10,40 @@ void FighterGameState::TickGameState()
 
 int FighterGameState::GetLocalInputs(int Index)
 {
-	/*if (const AFighterPlayerController* Controller = Cast<AFighterPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), Index)); Controller != nullptr)
+	int Inputs = 0;
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_UP))
 	{
-		return Controller->Inputs;
-	}*/
-	return 0;
+		Inputs |= InputUp;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_DOWN))
+	{
+		Inputs |= InputDown;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_LEFT))
+	{
+		Inputs |= InputLeft;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_RIGHT))
+	{
+		Inputs |= InputRight;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_LEFT))
+	{
+		Inputs |= InputL;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_UP))
+	{
+		Inputs |= InputM;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))
+	{
+		Inputs |= InputH;
+	}
+	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))
+	{
+		Inputs |= InputS;
+	}
+	return Inputs;
 }
 
 void FighterGameState::UpdateLocalInput()
@@ -23,7 +52,6 @@ void FighterGameState::UpdateLocalInput()
 	{
 		LocalInputs[0] = GetLocalInputs(0);
 		LocalInputs[1] = GetLocalInputs(1);
-		return;
 	}
 	else if (CurrentNetMode == Player1)
 	{
