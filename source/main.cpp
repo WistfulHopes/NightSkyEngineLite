@@ -25,8 +25,8 @@ int main(void)
         Camera2D Cam;
 
         Vector2 Offset;
-        Offset.x = 150;
-        Offset.y = 100;
+        Offset.x = 160;
+        Offset.y = 200;
         Cam.offset = Offset;
 
         double TargetX = static_cast<double>(GameState->StoredBattleState.CurrentScreenPos) / COORD_SCALE;

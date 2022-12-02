@@ -2,9 +2,6 @@
 
 
 #include "BattleActor.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "FighterGameState.h"
 #include "PlayerCharacter.h"
 #include "../State.h"
@@ -26,7 +23,6 @@ BattleActor::BattleActor()
 	ObjNumber = 0;
 	GameState = nullptr;
 	ObjectState = nullptr;
-	CurrentSprite = Sprite();
 }
 
 void BattleActor::InitObject()
@@ -136,48 +132,51 @@ void BattleActor::SetSprite()
 {
 	if (strcmp(CelNameInternal.GetString(), ""))
 	{
-		int CelNameLength = strlen(CelNameInternal.GetString());
-		for (auto Sprite : Sprites)
+		for (int i = 0; i < Sprites.size(); i++)
 		{
-			char* SpriteName = (char*)malloc(CelNameLength);
-			strncpy(SpriteName, CelNameInternal.GetString(), CelNameLength - 3);
-			SpriteName[CelNameLength - 3] = 0;
-			if (!strcmp(Sprite.name, SpriteName))
+			AtlasSprite* TmpSprite = AtlasSprite::GetSprite(Sprites[i].Sprites.data(), Sprites[i].Sprites.size(), CelNameInternal.GetString());
+			if (TmpSprite)
 			{
-				CurrentSprite = Sprite;
-				break;
+				Sprites[i].CurrentSprite = *TmpSprite;
+				CurrentSprite = Sprites[i];
 			}
 		}
-		CurrentSprite.frame = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
 	}
 }
 
 void BattleActor::Draw()
 {
-	float ox, oy;
-    ox = (CurrentSprite.frame % CurrentSprite.framesWide) * CurrentSprite.frameSize.x;
-    oy = (int)(CurrentSprite.frame / CurrentSprite.framesWide) * CurrentSprite.frameSize.y;
-	
 	Rectangle Source;
-	Source.x = ox;
-	Source.y = oy;
+	Source.x = CurrentSprite.CurrentSprite.positionX;
+	Source.y = CurrentSprite.CurrentSprite.positionY;
 	if (FacingRight)
 	{
-		Source.width = CurrentSprite.frameSize.x;
+		Source.width = CurrentSprite.CurrentSprite.trimWidth;
 	}
 	else
 	{
-		Source.width = -CurrentSprite.frameSize.x;
+		Source.width = -CurrentSprite.CurrentSprite.trimWidth;
 	}
-	Source.height = CurrentSprite.frameSize.y;
-	
+	Source.height = CurrentSprite.CurrentSprite.trimHeight;
+
 	Rectangle Dest;
 	Dest.x = PosX / COORD_SCALE;
 	Dest.y = -PosY / COORD_SCALE;
-	Dest.width = CurrentSprite.frameSize.x;
-	Dest.height = CurrentSprite.frameSize.y;
+	Dest.width = CurrentSprite.CurrentSprite.trimWidth;
+	Dest.height = CurrentSprite.CurrentSprite.trimHeight;
 
-    DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, RAYWHITE);
+	Vector2 Origin;
+	if (FacingRight)
+	{
+		Origin.x = CurrentSprite.CurrentSprite.originX;
+	}
+	else
+	{
+		Origin.x = CurrentSprite.CurrentSprite.sourceWidth - (CurrentSprite.CurrentSprite.sourceWidth - CurrentSprite.CurrentSprite.trimX - CurrentSprite.CurrentSprite.trimWidth) - CurrentSprite.CurrentSprite.trimX - CurrentSprite.CurrentSprite.originX;
+	}
+	Origin.y = CurrentSprite.CurrentSprite.originY;
+	
+	DrawTexturePro(CurrentSprite.Atlas, Source, Dest, Origin, 0, RAYWHITE);
 }
 
 void BattleActor::Move()
@@ -337,8 +336,6 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 		return Obj->Inertia;
 	case VAL_FacingRight:
 		return Obj->FacingRight;
-	case VAL_Hitstop:
-		return Obj->Hitstop;
 	case VAL_DistanceToBackWall:
 		return -1440000 + Obj->PosX;
 	case VAL_DistanceToFrontWall:
@@ -358,6 +355,39 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 	case VAL_Meter:
 		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
 			return GameState->StoredBattleState.Meter[Obj->Player->PlayerIndex];
+		break;
+	case VAL_Angle: break;
+	case VAL_PlayerVal1: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal1;
+		break;
+	case VAL_PlayerVal2: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal2;
+		break;
+	case VAL_PlayerVal3: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal3;
+		break;
+	case VAL_PlayerVal4: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal4;
+		break;
+	case VAL_PlayerVal5: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal5;
+		break;
+	case VAL_PlayerVal6: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal6;
+		break;
+	case VAL_PlayerVal7: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal7;
+		break;
+	case VAL_PlayerVal8: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal8;
 		break;
 	default:
 		return 0;

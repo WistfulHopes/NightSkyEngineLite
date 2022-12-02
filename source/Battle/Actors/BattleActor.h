@@ -2,11 +2,11 @@
 
 #include "../../CString.h"
 #include "../CollisionBox.h"
-#include "../../Sprite.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <math.h>
+#include "../../AtlasSprite.h"
+#include <cstdint>
 #include <vector>
+
+#include "raylib.h"
 
 #pragma pack (push, 1)
 
@@ -66,10 +66,14 @@ enum InternalValue //internal values list
 	VAL_StoredRegister,
 	VAL_Angle,
 	VAL_ActionFlag,
-	VAL_PlayerVal0,
 	VAL_PlayerVal1,
 	VAL_PlayerVal2,
 	VAL_PlayerVal3,
+	VAL_PlayerVal4,
+	VAL_PlayerVal5,
+	VAL_PlayerVal6,
+	VAL_PlayerVal7,
+	VAL_PlayerVal8,
 	VAL_SpeedX,
 	VAL_SpeedY,
 	VAL_ActionTime,
@@ -84,7 +88,6 @@ enum InternalValue //internal values list
 	VAL_IsStunned,
 	VAL_Health,
 	VAL_Meter,
-	VAL_Hitstop,
 };
 
 enum HitAction
@@ -184,6 +187,13 @@ struct Vector
 	}
 };
 
+struct Sprite
+{
+	Texture2D Atlas;
+	std::vector<AtlasSprite> Sprites;
+	AtlasSprite CurrentSprite;
+};
+
 class BattleActor
 {
 public:
@@ -280,7 +290,6 @@ public:
 	State* ObjectState; 
 
 	std::vector<Sprite> Sprites;
-	
 	Sprite CurrentSprite;
 
 protected:

@@ -61,39 +61,45 @@ PlayerCharacter::PlayerCharacter()
 	ForwardDashMeterGain = 25;
 	ForwardAirDashMeterGain = 25;
 	
-	CurrentSprite.texture = LoadTexture("Sprites/Esther/Esther_stand.png");
-	Vector2 Size;
-	Size.x = 256;
-	Size.y = 256;
-	CurrentSprite.frameSize = Size;
-	CurrentSprite.maxFrame = 5;
-	CurrentSprite.framesWide = 3;
-	Vector2 Origin;
-	Origin.x = 117;
-	Origin.y = 120;
-	CurrentSprite.origin = Origin;
-	CurrentSprite.name = "Esther_stand";
-	Sprites.push_back(CurrentSprite);
+	Texture2D Stand = LoadTexture("Sprites/Esther/Esther_stand.png");
+	int StandSpriteCount = 0;
+	AtlasSprite* StandSprites = AtlasSprite::LoadAtlasSprite("Sprites/Esther/Esther_stand.rtpb", &StandSpriteCount);
 
-	Sprite JumpSprite;
+	Sprite StandSprite;
+	StandSprite.Atlas = Stand;
+	for (int i = 0; i < StandSpriteCount; i++)
+	{
+		StandSprite.Sprites.push_back(StandSprites[i]);
+	}
+	StandSprite.CurrentSprite = StandSprite.Sprites[0];
+	Sprites.push_back(StandSprite);
+	CurrentSprite = StandSprite;
 	
-	JumpSprite.texture = LoadTexture("Sprites/Esther/Esther_jump.png");
-	JumpSprite.frameSize = Size;
-	JumpSprite.maxFrame = 8;
-	JumpSprite.framesWide = 3;
-	JumpSprite.origin = Origin;
-	JumpSprite.name = "Esther_jump";
-	Sprites.push_back(JumpSprite);
+	Texture2D Crouch = LoadTexture("Sprites/Esther/Esther_crouch.png");
+	int CrouchSpriteCount = 0;
+	AtlasSprite* CrouchSprites = AtlasSprite::LoadAtlasSprite("Sprites/Esther/Esther_crouch.rtpb", &CrouchSpriteCount);
 
 	Sprite CrouchSprite;
-	
-	CrouchSprite.texture = LoadTexture("Sprites/Esther/Esther_crouch.png");
-	CrouchSprite.frameSize = Size;
-	CrouchSprite.maxFrame = 8;
-	CrouchSprite.framesWide = 3;
-	CrouchSprite.origin = Origin;
-	CrouchSprite.name = "Esther_crouch";
+	CrouchSprite.Atlas = Crouch;
+	for (int i = 0; i < CrouchSpriteCount; i++)
+	{
+		CrouchSprite.Sprites.push_back(CrouchSprites[i]);
+	}
+	CrouchSprite.CurrentSprite = CrouchSprite.Sprites[0];
 	Sprites.push_back(CrouchSprite);
+	
+	Texture2D Jump = LoadTexture("Sprites/Esther/Esther_jump.png");
+	int JumpSpriteCount = 0;
+	AtlasSprite* JumpSprites = AtlasSprite::LoadAtlasSprite("Sprites/Esther/Esther_jump.rtpb", &JumpSpriteCount);
+
+	Sprite JumpSprite;
+	JumpSprite.Atlas = Jump;
+	for (int i = 0; i < JumpSpriteCount; i++)
+	{
+		JumpSprite.Sprites.push_back(JumpSprites[i]);
+	}
+	JumpSprite.CurrentSprite = JumpSprite.Sprites[0];
+	Sprites.push_back(JumpSprite);
 }
 
 void PlayerCharacter::InitPlayer()
