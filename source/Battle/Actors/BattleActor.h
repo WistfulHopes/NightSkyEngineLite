@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "raylib.h"
+#include "../../../raylib/src/raylib.h"
 
 #pragma pack (push, 1)
 
@@ -172,19 +172,6 @@ struct Vector
 
 	int32_t X;
 	int32_t Y;
-
-	Vector operator+(const Vector OtherVector)
-	{
-		return Vector(OtherVector.X + X, OtherVector.Y + Y);
-	}
-	Vector operator-(const Vector OtherVector)
-	{
-		return Vector(OtherVector.X - X, OtherVector.Y - Y);
-	}
-	int Size()
-	{
-		return fabs(sqrt(X * X + Y * Y));  // NOLINT(bugprone-narrowing-conversions)
-	}
 };
 
 struct Sprite

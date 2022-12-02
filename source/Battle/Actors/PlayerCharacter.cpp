@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 #include "FighterGameState.h"
+#include <cstdlib>
 
 PlayerCharacter::PlayerCharacter()
 {

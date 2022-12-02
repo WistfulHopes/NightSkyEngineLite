@@ -87,6 +87,7 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/AtlasSprite.o
 GENERATED += $(OBJDIR)/BattleActor.o
 GENERATED += $(OBJDIR)/CString.o
 GENERATED += $(OBJDIR)/FighterGameState.o
@@ -97,6 +98,7 @@ GENERATED += $(OBJDIR)/State.o
 GENERATED += $(OBJDIR)/StateMachine.o
 GENERATED += $(OBJDIR)/Subroutine.o
 GENERATED += $(OBJDIR)/main.o
+OBJECTS += $(OBJDIR)/AtlasSprite.o
 OBJECTS += $(OBJDIR)/BattleActor.o
 OBJECTS += $(OBJDIR)/CString.o
 OBJECTS += $(OBJDIR)/FighterGameState.o
@@ -170,6 +172,9 @@ endif
 # File Rules
 # #############################################
 
+$(OBJDIR)/AtlasSprite.o: ../source/AtlasSprite.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/BattleActor.o: ../source/Battle/Actors/BattleActor.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"

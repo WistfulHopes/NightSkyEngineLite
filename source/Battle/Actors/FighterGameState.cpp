@@ -1,4 +1,5 @@
 #include "FighterGameState.h"
+#include "../../../raylib/src/raymath.h"
 
 void FighterGameState::TickGameState()
 {
@@ -388,6 +389,7 @@ void FighterGameState::Update(int Input1, int Input2)
 
 void FighterGameState::Draw()
 {
+	UpdateCamera();
 	for (int i = 0; i < 406; i++)
 	{
 		if (i == ActiveObjectCount)
@@ -398,6 +400,34 @@ void FighterGameState::Draw()
 			SortedObjects[i]->Draw();
 		}
 	}
+	EndMode2D();
+}
+
+void FighterGameState::UpdateCamera()
+{
+    Vector2 Offset;
+    Offset.x = 160;
+    Offset.y = 200;
+    Cam.offset = Offset;
+
+    double TargetX = static_cast<double>(StoredBattleState.CurrentScreenPos) / COORD_SCALE;
+    double TargetY = -static_cast<double>(Players[0]->GetInternalValue(VAL_PosY) + Players[1]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
+    TargetX = Clamp(TargetX, -1440, 1440);
+    Vector2 Target;
+    Target.x = Lerp(Cam.target.x, TargetX, 0.25);
+    Target.y = Lerp(Cam.target.y, TargetY, 0.25);
+    Cam.target = Target;
+
+    Cam.rotation = 0;
+
+	float Distance = (2160000 - abs(abs(Players[0]->GetInternalValue(VAL_PosX)) - abs(Players[3]->GetInternalValue(VAL_PosX)))) / COORD_SCALE + 720;
+	Distance = Clamp(Distance, 1080, 1440);
+	Distance = Remap(Distance, 1080, 1440, 0.5, 1);
+	if (Cam.zoom == 0)
+	    Cam.zoom = 1.5;
+    Cam.zoom = Lerp(Cam.zoom, Distance, 0.25);
+
+	BeginMode2D(Cam);
 }
 
 void FighterGameState::SaveGameState()
