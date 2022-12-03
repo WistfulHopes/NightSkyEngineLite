@@ -1,5 +1,5 @@
 #include "FighterGameState.h"
-#include "../../../raylib/src/raymath.h"
+#include "../../../raylib-nx/src/raymath.h"
 
 void FighterGameState::TickGameState()
 {
@@ -293,7 +293,7 @@ void FighterGameState::SortObjects()
 
 void FighterGameState::Init()
 {
-	CommonScript = (char*)LoadFileData("Scripts/NSS_Common.nss", &CommonScriptLength);
+	CommonScript = (char*)LoadFileData("romfs:/Scripts/NSS_Common.nss", &CommonScriptLength);
 	for (int i = 0; i < 6; i++)
 	{
 		Players[i] = new PlayerCharacter();
@@ -305,10 +305,10 @@ void FighterGameState::Init()
 		if (i % 3 == 0)
 		{
 			unsigned int CharaScriptBytes = 0;
-			Players[i]->CharaScript = (char*)LoadFileData("Scripts/NSS_Esther.nss", &CharaScriptBytes);
+			Players[i]->CharaScript = (char*)LoadFileData("romfs:/Scripts/NSS_Esther.nss", &CharaScriptBytes);
 			Players[i]->CharaScriptLength = CharaScriptBytes;
 			unsigned int ObjScriptBytes = 0;
-			Players[i]->ObjectScript = (char*)LoadFileData("Scripts/NSS_EstherObj.nss", &ObjScriptBytes);
+			Players[i]->ObjectScript = (char*)LoadFileData("romfs:/Scripts/NSS_EstherObj.nss", &ObjScriptBytes);
 			Players[i]->ObjectScriptLength = ObjScriptBytes;
 			Players[i]->IsOnScreen = true;
 			Players[i]->InitStates();

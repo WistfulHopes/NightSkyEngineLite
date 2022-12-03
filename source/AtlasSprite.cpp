@@ -1,7 +1,7 @@
 ﻿#include "AtlasSprite.h"
 #include <cstring>
 #include <cstdlib>
-#include "../raylib/src/raylib.h"
+#include "../raylib-nx/src/raylib.h"
 
 // Load sprite data from .rtpb file
 AtlasSprite *AtlasSprite::LoadAtlasSprite(const char *rtpbFilename, int *spriteCount)

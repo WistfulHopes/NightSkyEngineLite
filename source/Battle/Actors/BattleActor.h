@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "../../../raylib/src/raylib.h"
+#include "../../../raylib-nx/src/raylib.h"
 
 #pragma pack (push, 1)
 

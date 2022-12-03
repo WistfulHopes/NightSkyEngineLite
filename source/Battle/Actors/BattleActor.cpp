@@ -148,7 +148,7 @@ void BattleActor::SetSprite()
 void BattleActor::LoadSprites(char* SpriteListName)
 {
 	unsigned int SpriteListLength;
-	char SpriteListPath[256] = "Sprites/";
+	char SpriteListPath[256] = "romfs:/Sprites/";
 	strcat(SpriteListPath, SpriteListName);
 	strcat(SpriteListPath, ".spls");
 	unsigned char* SpriteListData = (unsigned char*)LoadFileData(SpriteListPath, &SpriteListLength);
@@ -164,14 +164,14 @@ void BattleActor::LoadSprites(char* SpriteListName)
 	}
 	for (uint32_t i = 0; i < List.SpriteCount; i++)
 	{
-		char PngName[256] = "Sprites/";
+		char PngName[256] = "romfs:/Sprites/";
 		strcat(PngName, SpriteListName);
 		strcat(PngName, "/");
 		strcat(PngName, List.NameList[i].GetString());
 		strcat(PngName, ".png");
 		Texture2D Tex = LoadTexture(PngName);
 
-		char AtlasName[256] = "Sprites/";
+		char AtlasName[256] = "romfs:/Sprites/";
 		strcat(AtlasName, SpriteListName);
 		strcat(AtlasName, "/");
 		strcat(AtlasName, List.NameList[i].GetString());

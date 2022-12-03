@@ -1,12 +1,15 @@
-#include "../raylib/src/raylib.h"
+#include <switch.h>
+#include "../raylib-nx/src/raylib.h"
 #include "Battle/Actors/FighterGameState.h"
 
 int main(void)
 {
+    romfsInit();
+    
     const int screenWidth = 320;
     const int screenHeight  = 240;
-	const int windowWidth = screenWidth * 2;
-    const int windowHeight  = screenHeight * 2;
+	const int windowWidth = 960;
+    const int windowHeight  = 720;
 
     InitWindow(windowWidth, windowHeight, "Night Sky Engine -Lite-");
 
@@ -40,6 +43,8 @@ int main(void)
     }
 
     CloseWindow();
-
+    
+    romfsExit();
+    
     return 0;
 }
