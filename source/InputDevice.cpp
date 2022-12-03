@@ -82,12 +82,6 @@ int KeyboardInputDevice::GetInputs() {
 	if(IsKeyDown(this->config.InputLeft)) inputFlags |= InputLeft;
 	if(IsKeyDown(this->config.InputRight)) inputFlags |= InputRight;
 
-	// SOCD Cleaning
-	if (inputFlags & InputUp + InputDown) inputFlags &= InputDown;
-	if (inputFlags & InputLeft + InputRight) inputFlags &= InputLeft + InputRight;
-	
-	if(inputFlags == 0) inputFlags |= InputNeutral;
-
 	if(IsKeyDown(this->config.InputL)) inputFlags |= InputL;
 	if(IsKeyDown(this->config.InputM)) inputFlags |= InputM;
 	if(IsKeyDown(this->config.InputH)) inputFlags |= InputH;
