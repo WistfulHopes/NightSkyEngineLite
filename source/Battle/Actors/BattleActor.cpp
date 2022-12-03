@@ -7,6 +7,15 @@
 #include "../State.h"
 #include "../Utilities/CreateSpriteList.h"
 
+#define RRES_IMPLEMENTATION
+#include "../../../rres/src/rres.h"
+
+#define RRES_RAYLIB_IMPLEMENTATION
+#define RRES_SUPPORT_COMPRESSION_LZ4
+#define RRES_SUPPORT_ENCRYPTION_AES
+#define RRES_SUPPORT_ENCRYPTION_XCHACHA20
+#include "../../../rres/src/rres-raylib.h"
+
 BattleActor::BattleActor()
 {
 	ObjSync = 0;
@@ -145,13 +154,19 @@ void BattleActor::SetSprite()
 	}
 }
 
-void BattleActor::LoadSprites(char* SpriteListName)
+void BattleActor::LoadSprites(char* CharaName)
 {
-	unsigned int SpriteListLength;
+	int SpriteListLength;
 	char SpriteListPath[256] = "Sprites/";
-	strcat(SpriteListPath, SpriteListName);
-	strcat(SpriteListPath, ".spls");
-	unsigned char* SpriteListData = (unsigned char*)LoadFileData(SpriteListPath, &SpriteListLength);
+	strcat(SpriteListPath, CharaName);
+	strcat(SpriteListPath, ".rres");
+	rresCentralDir CentralDir = rresLoadCentralDirectory(SpriteListPath);	
+	char SpriteListName[32];
+	strcpy(SpriteListName, CharaName);
+	strcat(SpriteListName, ".spls");
+	int SpriteListID = rresGetResourceId(CentralDir, SpriteListName);
+	rresResourceChunk SpriteListChunk = rresLoadResourceChunk(SpriteListPath, SpriteListID);
+	unsigned char* SpriteListData = (unsigned char*)LoadDataFromResource(SpriteListChunk, &SpriteListLength);
 	SpriteList List;
 	List.SpriteCount = *reinterpret_cast<uint32_t*>(SpriteListData + 4);
 	for (uint32_t i = 0; i < List.SpriteCount; i++)
@@ -162,22 +177,26 @@ void BattleActor::LoadSprites(char* SpriteListName)
 		FinalSpriteName.SetString(SpriteName);
 		List.NameList.push_back(FinalSpriteName);
 	}
+	rresUnloadResourceChunk(SpriteListChunk);
 	for (uint32_t i = 0; i < List.SpriteCount; i++)
 	{
-		char PngName[256] = "Sprites/";
-		strcat(PngName, SpriteListName);
-		strcat(PngName, "/");
-		strcat(PngName, List.NameList[i].GetString());
+		char PngName[68];
+		strcpy(PngName, List.NameList[i].GetString());
 		strcat(PngName, ".png");
-		Texture2D Tex = LoadTexture(PngName);
-
-		char AtlasName[256] = "Sprites/";
-		strcat(AtlasName, SpriteListName);
-		strcat(AtlasName, "/");
-		strcat(AtlasName, List.NameList[i].GetString());
+		int PngID = rresGetResourceId(CentralDir, PngName);
+		rresResourceChunk PngChunk = rresLoadResourceChunk(SpriteListPath, PngID);
+		Image Png = LoadImageFromResource(PngChunk);
+		Texture2D Tex = LoadTextureFromImage(Png);
+		
+		char AtlasName[69];
+		strcpy(AtlasName, List.NameList[i].GetString());
 		strcat(AtlasName, ".rtpb");
+		int AtlasID = rresGetResourceId(CentralDir, AtlasName);
+		rresResourceChunk AtlasChunk = rresLoadResourceChunk(SpriteListPath, AtlasID);
+		int AtlasSize = 0;
+		unsigned char* Atlas = (unsigned char*)LoadDataFromResource(AtlasChunk, &AtlasSize);
 		int SpriteCount = 0;
-		AtlasSprite* InSprites = AtlasSprite::LoadAtlasSprite(AtlasName, &SpriteCount);
+		AtlasSprite* InSprites = AtlasSprite::LoadAtlasSpriteFromData(Atlas, &SpriteCount, AtlasSize);
 
 		Sprite InSprite;
 		InSprite.Atlas = Tex;
@@ -189,8 +208,9 @@ void BattleActor::LoadSprites(char* SpriteListName)
 		Sprites.push_back(InSprite);
 		if (i == 0)
 			CurrentSprite = InSprite;
+		rresUnloadResourceChunk(PngChunk);
+		rresUnloadResourceChunk(AtlasChunk);
 	}
-	UnloadFileData(SpriteListData);
 }
 
 void BattleActor::Draw()

@@ -106,7 +106,9 @@ workspace (workspaceName)
 
     cdialect "C99"
     cppdialect "C++11"
+    
 check_raylib();
+check_rres();
 
 include ("raylib_premake5.lua")
 include ("rres_premake5.lua")

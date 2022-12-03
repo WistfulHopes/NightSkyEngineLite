@@ -20,6 +20,9 @@ struct AtlasSprite {
     
     // Load sprite data from .rtpb file
     static AtlasSprite *LoadAtlasSprite(const char *rtpbFilename, int *spriteCount);
+    
+    // Load sprite data from .rtpb file
+    static AtlasSprite *LoadAtlasSpriteFromData(unsigned char *data, int *spriteCount, int rtpbSize);
 
     // Get one sprite from the array by nameId
     static AtlasSprite *GetSprite(AtlasSprite *sprites, int spriteCount, const char *nameId);

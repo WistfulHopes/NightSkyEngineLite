@@ -289,7 +289,7 @@ protected:
 public:
 	//updates current sprite
 	void SetSprite();
-	void LoadSprites(char* SpriteListName);
+	void LoadSprites(char* CharaName);
 	
 	void SaveForRollback(unsigned char* Buffer);
 	void LoadForRollback(unsigned char* Buffer);
