@@ -36,7 +36,7 @@ PlayerCharacter::PlayerCharacter()
 	FSuperJumpSpeed = 7900;
 	BSuperJumpSpeed = 5200;
 	SuperJumpGravity = 1900;
-	AirDashMinimumHeight = 105000;
+	AirDashMinimumHeight = 165000;
 	FAirDashSpeed = 30000;
 	BAirDashSpeed = 24500;
 	FAirDashTime = 20;
@@ -226,11 +226,6 @@ void PlayerCharacter::Update()
 		}
 		TotalProration = 10000;
 	}
-	
-	if (PosY > 0) //set jumping if above ground
-	{
-		SetActionFlags(ACT_Jumping);
-	}
 
 	Untech--;
 	if (Untech == 0 && !IsKnockedDown && !IsDead)
@@ -323,6 +318,12 @@ void PlayerCharacter::Update()
 	HandleThrowCollision();
 	if (Hitstop != 0)
 		StateMachine.Tick(0.0166666); //update current state
+
+	if (PosY > 0) //set jumping if above ground
+	{
+		SetActionFlags(ACT_Jumping);
+	}
+	
 	HandleStateMachine(false); //handle state transitions
 }
 

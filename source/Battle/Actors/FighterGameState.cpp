@@ -668,7 +668,7 @@ void FighterGameState::SetScreenBounds()
 					if (Players[i]->IsOnScreen && Players[j]->IsOnScreen)
 					{
 					    int NewScreenPos = (Players[i]->GetInternalValue(VAL_PosX) + Players[j]->GetInternalValue(VAL_PosX)) / 2;
-						StoredBattleState.CurrentScreenPos = StoredBattleState.CurrentScreenPos + (NewScreenPos - StoredBattleState.CurrentScreenPos) * 5 / 100;
+						StoredBattleState.CurrentScreenPos = StoredBattleState.CurrentScreenPos + (NewScreenPos - StoredBattleState.CurrentScreenPos) * 10 / 100;
 						if (StoredBattleState.CurrentScreenPos > 1080000)
 						{
 							StoredBattleState.CurrentScreenPos = 1080000;

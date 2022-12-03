@@ -185,6 +185,7 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
         case StoreInternalValue: break;
         case ModifyInternalValueAndSave:
             break;
+        case SetAirDashTimer: break;
         default:
             break;
         }
@@ -830,6 +831,12 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 }
                 break;
             }
+        case SetAirDashTimer: 
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->SetAirDashTimer(*reinterpret_cast<bool *>(Addr + 4));
+            }
+            break;
         default:
             break;
         }
