@@ -54,7 +54,7 @@ struct BattleState
 	
 	char BattleStateSyncEnd;
 
-	RoundFormat RoundFormat = RoundFormat::FirstToTwo;
+	RoundFormat CurRoundFormat = RoundFormat::FirstToTwo;
 };
 #pragma pack(pop)
 

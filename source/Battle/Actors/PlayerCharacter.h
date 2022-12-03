@@ -158,9 +158,9 @@ public:
 	int32_t PlayerVal8 = 0;
 	
 	//state machine
-	StateMachine StateMachine;
+	StateMachine CurStateMachine;
 	//input buffer
-	InputBuffer InputBuffer;
+	InputBuffer CurInputBuffer;
 
 	//chain cancels (copied from std::vector to static array)
 	int32_t ChainCancelOptionsInternal[CancelArraySize];

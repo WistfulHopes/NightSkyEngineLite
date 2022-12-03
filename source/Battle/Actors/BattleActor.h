@@ -137,7 +137,7 @@ struct GroundBounceEffect
 struct HitEffect
 {
 	int32_t AttackLevel = 0;
-	BlockType BlockType = BLK_Mid;
+	BlockType InBlockType = BLK_Mid;
 	int32_t Hitstun = 0;
 	int32_t Blockstun = 0;
 	int32_t Untech = 0;
@@ -156,8 +156,8 @@ struct HitEffect
 	HitAction GroundHitAction = HACT_GroundNormal;
 	HitAction AirHitAction = HACT_AirNormal;
 	int32_t KnockdownTime = 25;
-	GroundBounceEffect GroundBounceEffect;
-	WallBounceEffect WallBounceEffect;
+	GroundBounceEffect InGroundBounceEffect;
+	WallBounceEffect InWallBounceEffect;
 	HitSFXType SFXType = HitSFXType::SFX_Punch;
 	HitVFXType VFXType = HitVFXType::VFX_Strike;
 	bool DeathCamOverride = false;

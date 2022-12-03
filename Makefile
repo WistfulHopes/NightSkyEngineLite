@@ -7,7 +7,7 @@ $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/de
 endif
 
 ifeq ($(strip $(RAYLIB_NX)),)
-$(error "Please set RAYLIB_NX in your environment. export RAYLIB_NX=<path to>/raylib-nx")
+export OUTPUT	:=	$(CURDIR)/raylib-nx
 endif
 
 TOPDIR ?= $(CURDIR)
