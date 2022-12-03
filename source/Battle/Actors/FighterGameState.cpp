@@ -312,6 +312,7 @@ void FighterGameState::Init()
 			Players[i]->ObjectScriptLength = ObjScriptBytes;
 			Players[i]->IsOnScreen = true;
 			Players[i]->InitStates();
+			Players[i]->LoadSprites("Esther");
 		}
 	}
 	for (int i = 0; i < 400; i++)

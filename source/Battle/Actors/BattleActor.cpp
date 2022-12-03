@@ -5,6 +5,7 @@
 #include "FighterGameState.h"
 #include "PlayerCharacter.h"
 #include "../State.h"
+#include "../Utilities/CreateSpriteList.h"
 
 BattleActor::BattleActor()
 {
@@ -141,6 +142,53 @@ void BattleActor::SetSprite()
 				CurrentSprite = Sprites[i];
 			}
 		}
+	}
+}
+
+void BattleActor::LoadSprites(char* SpriteListName)
+{
+	unsigned int SpriteListLength;
+	char SpriteListPath[256] = "Sprites/";
+	strcat(SpriteListPath, SpriteListName);
+	strcat(SpriteListPath, ".spls");
+	char* SpriteListData = (char*)LoadFileData(SpriteListPath, &SpriteListLength);
+	SpriteList List;
+	List.SpriteCount = *reinterpret_cast<uint32_t*>(SpriteListData + 4);
+	for (uint32_t i = 0; i < List.SpriteCount; i++)
+	{
+		char* SpriteName = (char*)malloc(64);
+		memcpy(SpriteName, SpriteListData + 8 + i * 64, 64);
+		CString<64> FinalSpriteName;
+		FinalSpriteName.SetString(SpriteName);
+		List.NameList.push_back(FinalSpriteName);
+	}
+	for (uint32_t i = 0; i < List.SpriteCount; i++)
+	{
+		char PngName[256] = "Sprites/";
+		strcat(PngName, SpriteListName);
+		strcat(PngName, "/");
+		strcat(PngName, List.NameList[i].GetString());
+		strcat(PngName, ".png");
+		Texture2D Tex = LoadTexture(PngName);
+
+		char AtlasName[256] = "Sprites/";
+		strcat(AtlasName, SpriteListName);
+		strcat(AtlasName, "/");
+		strcat(AtlasName, List.NameList[i].GetString());
+		strcat(AtlasName, ".rtpb");
+		int SpriteCount = 0;
+		AtlasSprite* InSprites = AtlasSprite::LoadAtlasSprite(AtlasName, &SpriteCount);
+
+		Sprite InSprite;
+		InSprite.Atlas = Tex;
+		for (int i = 0; i < SpriteCount; i++)
+		{
+			InSprite.Sprites.push_back(InSprites[i]);
+		}
+		InSprite.CurrentSprite = InSprite.Sprites[0];
+		Sprites.push_back(InSprite);
+		if (i == 0)
+			CurrentSprite = InSprite;
 	}
 }
 

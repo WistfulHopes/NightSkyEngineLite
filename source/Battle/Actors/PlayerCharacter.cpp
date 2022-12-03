@@ -61,46 +61,6 @@ PlayerCharacter::PlayerCharacter()
 	ForwardJumpMeterGain = 10;
 	ForwardDashMeterGain = 25;
 	ForwardAirDashMeterGain = 25;
-	
-	Texture2D Stand = LoadTexture("Sprites/Esther/Esther_stand.png");
-	int StandSpriteCount = 0;
-	AtlasSprite* StandSprites = AtlasSprite::LoadAtlasSprite("Sprites/Esther/Esther_stand.rtpb", &StandSpriteCount);
-
-	Sprite StandSprite;
-	StandSprite.Atlas = Stand;
-	for (int i = 0; i < StandSpriteCount; i++)
-	{
-		StandSprite.Sprites.push_back(StandSprites[i]);
-	}
-	StandSprite.CurrentSprite = StandSprite.Sprites[0];
-	Sprites.push_back(StandSprite);
-	CurrentSprite = StandSprite;
-	
-	Texture2D Crouch = LoadTexture("Sprites/Esther/Esther_crouch.png");
-	int CrouchSpriteCount = 0;
-	AtlasSprite* CrouchSprites = AtlasSprite::LoadAtlasSprite("Sprites/Esther/Esther_crouch.rtpb", &CrouchSpriteCount);
-
-	Sprite CrouchSprite;
-	CrouchSprite.Atlas = Crouch;
-	for (int i = 0; i < CrouchSpriteCount; i++)
-	{
-		CrouchSprite.Sprites.push_back(CrouchSprites[i]);
-	}
-	CrouchSprite.CurrentSprite = CrouchSprite.Sprites[0];
-	Sprites.push_back(CrouchSprite);
-	
-	Texture2D Jump = LoadTexture("Sprites/Esther/Esther_jump.png");
-	int JumpSpriteCount = 0;
-	AtlasSprite* JumpSprites = AtlasSprite::LoadAtlasSprite("Sprites/Esther/Esther_jump.rtpb", &JumpSpriteCount);
-
-	Sprite JumpSprite;
-	JumpSprite.Atlas = Jump;
-	for (int i = 0; i < JumpSpriteCount; i++)
-	{
-		JumpSprite.Sprites.push_back(JumpSprites[i]);
-	}
-	JumpSprite.CurrentSprite = JumpSprite.Sprites[0];
-	Sprites.push_back(JumpSprite);
 }
 
 void PlayerCharacter::InitPlayer()

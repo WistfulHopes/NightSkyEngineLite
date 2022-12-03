@@ -47,8 +47,6 @@ bool StateMachine::SetState(CString<64> Name)
 		CurrentState = States[Index];
 		return true;
 	}
-
-	std::cout << "New state: " << Name.GetString() << std::endl;
 	
 	CurrentState->OnExit();
 	Parent->OnStateChange();	
