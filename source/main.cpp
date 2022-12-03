@@ -1,5 +1,5 @@
 #include <switch.h>
-#include "../raylib-nx/src/raylib.h"
+#include "raylib.h"
 #include "Battle/Actors/FighterGameState.h"
 
 int main(void)

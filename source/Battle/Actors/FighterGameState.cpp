@@ -1,5 +1,5 @@
 #include "FighterGameState.h"
-#include "../../../raylib-nx/src/raymath.h"
+#include "raymath.h"
 
 void FighterGameState::TickGameState()
 {
