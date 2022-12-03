@@ -151,7 +151,7 @@ void BattleActor::LoadSprites(char* SpriteListName)
 	char SpriteListPath[256] = "Sprites/";
 	strcat(SpriteListPath, SpriteListName);
 	strcat(SpriteListPath, ".spls");
-	char* SpriteListData = (char*)LoadFileData(SpriteListPath, &SpriteListLength);
+	unsigned char* SpriteListData = (unsigned char*)LoadFileData(SpriteListPath, &SpriteListLength);
 	SpriteList List;
 	List.SpriteCount = *reinterpret_cast<uint32_t*>(SpriteListData + 4);
 	for (uint32_t i = 0; i < List.SpriteCount; i++)
@@ -190,6 +190,7 @@ void BattleActor::LoadSprites(char* SpriteListName)
 		if (i == 0)
 			CurrentSprite = InSprite;
 	}
+	UnloadFileData(SpriteListData);
 }
 
 void BattleActor::Draw()
