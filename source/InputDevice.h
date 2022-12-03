@@ -7,7 +7,7 @@ public:
 };
 
 struct ButtonConfig {
-	int id = true;
+	int id = 0;
 	bool axis = false;
 };
 
@@ -16,6 +16,10 @@ struct ControllerConfig {
 	ButtonConfig InputDown;
 	ButtonConfig InputLeft;
 	ButtonConfig InputRight;
+	ButtonConfig InputUpAnalog;
+	ButtonConfig InputDownAnalog;
+	ButtonConfig InputLeftAnalog;
+	ButtonConfig InputRightAnalog;
 
 	ButtonConfig InputL;
 	ButtonConfig InputM;
@@ -24,13 +28,14 @@ struct ControllerConfig {
 	ButtonConfig InputA1;
 	ButtonConfig InputA2;
 
-	float deadzone = 0;
+	float deadzone = 0.2;
 };
 
 class ControllerInputDevice : public InputDevice {
 	ControllerConfig config;
 
 	bool IsButtonDown(ButtonConfig button);
+	bool IsAxisDown(ButtonConfig button, bool positive);
 
 public:
 	ControllerInputDevice();

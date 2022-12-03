@@ -10,25 +10,29 @@ endif
 
 ifeq ($(config),debug_x64)
   raylib_config = debug_x64
+  rres_config = debug_x64
   NightSkyEngineLite_config = debug_x64
 
 else ifeq ($(config),debug_x86)
   raylib_config = debug_x86
+  rres_config = debug_x86
   NightSkyEngineLite_config = debug_x86
 
 else ifeq ($(config),release_x64)
   raylib_config = release_x64
+  rres_config = release_x64
   NightSkyEngineLite_config = release_x64
 
 else ifeq ($(config),release_x86)
   raylib_config = release_x86
+  rres_config = release_x86
   NightSkyEngineLite_config = release_x86
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := raylib NightSkyEngineLite
+PROJECTS := raylib rres NightSkyEngineLite
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -40,6 +44,12 @@ ifneq (,$(raylib_config))
 	@${MAKE} --no-print-directory -C _build -f raylib.make config=$(raylib_config)
 endif
 
+rres:
+ifneq (,$(rres_config))
+	@echo "==== Building rres ($(rres_config)) ===="
+	@${MAKE} --no-print-directory -C _build -f rres.make config=$(rres_config)
+endif
+
 NightSkyEngineLite: raylib
 ifneq (,$(NightSkyEngineLite_config))
 	@echo "==== Building NightSkyEngineLite ($(NightSkyEngineLite_config)) ===="
@@ -48,6 +58,7 @@ endif
 
 clean:
 	@${MAKE} --no-print-directory -C _build -f raylib.make clean
+	@${MAKE} --no-print-directory -C _build -f rres.make clean
 	@${MAKE} --no-print-directory -C _build -f NightSkyEngineLite.make clean
 
 help:
@@ -63,6 +74,7 @@ help:
 	@echo "   all (default)"
 	@echo "   clean"
 	@echo "   raylib"
+	@echo "   rres"
 	@echo "   NightSkyEngineLite"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

@@ -386,7 +386,7 @@ void FighterGameState::UpdateCamera()
     Cam.offset = Offset;
 
     double TargetX = static_cast<double>(StoredBattleState.CurrentScreenPos) / COORD_SCALE;
-    double TargetY = -static_cast<double>(Players[0]->GetInternalValue(VAL_PosY) + Players[1]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
+    double TargetY = -static_cast<double>(Players[0]->GetInternalValue(VAL_PosY) + Players[3]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
     TargetX = Clamp(TargetX, -270, 270);
     Vector2 Target;
     Target.x = Lerp(Cam.target.x, TargetX, 0.5);

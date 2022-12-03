@@ -52,10 +52,31 @@ function check_raylib()
     end
 end
 
+function check_rres()
+    if(os.isdir("rres") == false and os.isdir("rres") == false) then
+        if(not os.isfile("rres.zip")) then
+            print("rres not found, downloading from github")
+            local result_str, response_code = http.download("https://github.com/raysan5/rres/archive/refs/heads/master.zip", "rres.zip", {
+                progress = download_progress,
+                headers = { "From: Premake", "Referer: Premake" }
+            })
+        end
+        print("Unzipping to " ..  os.getcwd())
+        zip.extract("rres.zip", os.getcwd())
+        os.remove("rres.zip")
+    end
+end
+
 workspaceName = path.getbasename(os.getcwd())
 
 if (string.lower(workspaceName) == "raylib") then
     print("raylib is a reserved name. Name your project directory something else.")
+    -- Project generation will succeed, but compilation will definitely fail, so just abort here.
+    os.exit()
+end
+
+if (string.lower(workspaceName) == "rres") then
+    print("rres is a reserved name. Name your project directory something else.")
     -- Project generation will succeed, but compilation will definitely fail, so just abort here.
     os.exit()
 end
@@ -88,6 +109,7 @@ workspace (workspaceName)
 check_raylib();
 
 include ("raylib_premake5.lua")
+include ("rres_premake5.lua")
 
 if(os.isdir("source")) then
     include ("source")
@@ -96,6 +118,12 @@ end
 folders = os.matchdirs("*")
 for _, folderName in ipairs(folders) do
     if (string.starts(folderName, "raylib") == false and string.starts(folderName, "_") == false and string.starts(folderName, ".") == false) then
+        if (os.isfile(folderName .. "/premake5.lua")) then
+            print(folderName)
+            include (folderName)
+        end
+    end
+    if (string.starts(folderName, "rres") == false and string.starts(folderName, "_") == false and string.starts(folderName, ".") == false) then
         if (os.isfile(folderName .. "/premake5.lua")) then
             print(folderName)
             include (folderName)
