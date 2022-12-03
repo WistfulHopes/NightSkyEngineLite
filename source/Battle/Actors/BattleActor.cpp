@@ -2,12 +2,10 @@
 
 
 #include "BattleActor.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "FighterGameState.h"
 #include "PlayerCharacter.h"
 #include "../State.h"
+#include "../Utilities/CreateSpriteList.h"
 
 BattleActor::BattleActor()
 {
@@ -26,7 +24,6 @@ BattleActor::BattleActor()
 	ObjNumber = 0;
 	GameState = nullptr;
 	ObjectState = nullptr;
-	CurrentSprite = Sprite();
 }
 
 void BattleActor::InitObject()
@@ -115,12 +112,12 @@ void BattleActor::Update()
 			if (Player->PlayerIndex == 0)
 			{
 				FacingRight = true;
-				PosX = -240000;
+				PosX = -200000;
 			}
 			else
 			{
 				FacingRight = false;
-				PosX = 240000;
+				PosX = 200000;
 			}
 		}
 	}
@@ -136,48 +133,99 @@ void BattleActor::SetSprite()
 {
 	if (strcmp(CelNameInternal.GetString(), ""))
 	{
-		int CelNameLength = strlen(CelNameInternal.GetString());
-		for (auto Sprite : Sprites)
+		for (int i = 0; i < Sprites.size(); i++)
 		{
-			char* SpriteName = (char*)malloc(CelNameLength);
-			strncpy(SpriteName, CelNameInternal.GetString(), CelNameLength - 3);
-			SpriteName[CelNameLength - 3] = 0;
-			if (!strcmp(Sprite.name, SpriteName))
+			AtlasSprite* TmpSprite = AtlasSprite::GetSprite(Sprites[i].Sprites.data(), Sprites[i].Sprites.size(), CelNameInternal.GetString());
+			if (TmpSprite)
 			{
-				CurrentSprite = Sprite;
-				break;
+				Sprites[i].CurrentSprite = *TmpSprite;
+				CurrentSprite = Sprites[i];
 			}
 		}
-		CurrentSprite.frame = atoi(&CelNameInternal.GetString()[CelNameLength - 2]);
 	}
+}
+
+void BattleActor::LoadSprites(char* SpriteListName)
+{
+	unsigned int SpriteListLength;
+	char SpriteListPath[256] = "Sprites/";
+	strcat(SpriteListPath, SpriteListName);
+	strcat(SpriteListPath, ".spls");
+	unsigned char* SpriteListData = (unsigned char*)LoadFileData(SpriteListPath, &SpriteListLength);
+	SpriteList List;
+	List.SpriteCount = *reinterpret_cast<uint32_t*>(SpriteListData + 4);
+	for (uint32_t i = 0; i < List.SpriteCount; i++)
+	{
+		char* SpriteName = (char*)malloc(64);
+		memcpy(SpriteName, SpriteListData + 8 + i * 64, 64);
+		CString<64> FinalSpriteName;
+		FinalSpriteName.SetString(SpriteName);
+		List.NameList.push_back(FinalSpriteName);
+	}
+	for (uint32_t i = 0; i < List.SpriteCount; i++)
+	{
+		char PngName[256] = "Sprites/";
+		strcat(PngName, SpriteListName);
+		strcat(PngName, "/");
+		strcat(PngName, List.NameList[i].GetString());
+		strcat(PngName, ".png");
+		Texture2D Tex = LoadTexture(PngName);
+
+		char AtlasName[256] = "Sprites/";
+		strcat(AtlasName, SpriteListName);
+		strcat(AtlasName, "/");
+		strcat(AtlasName, List.NameList[i].GetString());
+		strcat(AtlasName, ".rtpb");
+		int SpriteCount = 0;
+		AtlasSprite* InSprites = AtlasSprite::LoadAtlasSprite(AtlasName, &SpriteCount);
+
+		Sprite InSprite;
+		InSprite.Atlas = Tex;
+		for (int i = 0; i < SpriteCount; i++)
+		{
+			InSprite.Sprites.push_back(InSprites[i]);
+		}
+		InSprite.CurrentSprite = InSprite.Sprites[0];
+		Sprites.push_back(InSprite);
+		if (i == 0)
+			CurrentSprite = InSprite;
+	}
+	UnloadFileData(SpriteListData);
 }
 
 void BattleActor::Draw()
 {
-	float ox, oy;
-    ox = (CurrentSprite.frame % CurrentSprite.framesWide) * CurrentSprite.frameSize.x;
-    oy = (int)(CurrentSprite.frame / CurrentSprite.framesWide) * CurrentSprite.frameSize.y;
-	
 	Rectangle Source;
-	Source.x = ox;
-	Source.y = oy;
+	Source.x = CurrentSprite.CurrentSprite.positionX;
+	Source.y = CurrentSprite.CurrentSprite.positionY;
 	if (FacingRight)
 	{
-		Source.width = CurrentSprite.frameSize.x;
+		Source.width = CurrentSprite.CurrentSprite.trimWidth;
 	}
 	else
 	{
-		Source.width = -CurrentSprite.frameSize.x;
+		Source.width = -CurrentSprite.CurrentSprite.trimWidth;
 	}
-	Source.height = CurrentSprite.frameSize.y;
-	
+	Source.height = CurrentSprite.CurrentSprite.trimHeight;
+
 	Rectangle Dest;
 	Dest.x = PosX / COORD_SCALE;
 	Dest.y = -PosY / COORD_SCALE;
-	Dest.width = CurrentSprite.frameSize.x;
-	Dest.height = CurrentSprite.frameSize.y;
+	Dest.width = CurrentSprite.CurrentSprite.trimWidth;
+	Dest.height = CurrentSprite.CurrentSprite.trimHeight;
 
-    DrawTexturePro(CurrentSprite.texture, Source, Dest, CurrentSprite.origin, 0, RAYWHITE);
+	Vector2 Origin;
+	if (FacingRight)
+	{
+		Origin.x = CurrentSprite.CurrentSprite.originX;
+	}
+	else
+	{
+		Origin.x = CurrentSprite.CurrentSprite.sourceWidth - (CurrentSprite.CurrentSprite.sourceWidth - CurrentSprite.CurrentSprite.trimX - CurrentSprite.CurrentSprite.trimWidth) - CurrentSprite.CurrentSprite.trimX - CurrentSprite.CurrentSprite.originX;
+	}
+	Origin.y = CurrentSprite.CurrentSprite.originY;
+	
+	DrawTexturePro(CurrentSprite.Atlas, Source, Dest, Origin, 0, RAYWHITE);
 }
 
 void BattleActor::Move()
@@ -226,13 +274,13 @@ void BattleActor::Move()
 	}
 	if (ScreenCollisionActive)
 	{
-		if (PosX < -1440000)
+		if (PosX < -1200000)
 		{
-			PosX = -1440001;
+			PosX = -1200001;
 		}
-		else if (PosX > 1440000)
+		else if (PosX > 1200000)
 		{
-			PosX = 1440001;
+			PosX = 1200001;
 		}
 	}
 }
@@ -337,8 +385,6 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 		return Obj->Inertia;
 	case VAL_FacingRight:
 		return Obj->FacingRight;
-	case VAL_Hitstop:
-		return Obj->Hitstop;
 	case VAL_DistanceToBackWall:
 		return -1440000 + Obj->PosX;
 	case VAL_DistanceToFrontWall:
@@ -359,10 +405,140 @@ int32_t BattleActor::GetInternalValue(InternalValue InternalValue, ObjType ObjTy
 		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
 			return GameState->StoredBattleState.Meter[Obj->Player->PlayerIndex];
 		break;
+	case VAL_Angle: break;
+	case VAL_PlayerVal1: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal1;
+		break;
+	case VAL_PlayerVal2: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal2;
+		break;
+	case VAL_PlayerVal3: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal3;
+		break;
+	case VAL_PlayerVal4: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal4;
+		break;
+	case VAL_PlayerVal5: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal5;
+		break;
+	case VAL_PlayerVal6: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal6;
+		break;
+	case VAL_PlayerVal7: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal7;
+		break;
+	case VAL_PlayerVal8: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			return Obj->Player->PlayerVal8;
+		break;
+	case VAL_DefaultCommonAction:
+		return Obj->DefaultCommonAction;
 	default:
 		return 0;
 	}
 	return 0;
+}
+
+void BattleActor::SetInternalValue(InternalValue InternalValue, int32_t Val, ObjType ObjType)
+{
+	BattleActor* Obj;
+	switch (ObjType)
+	{
+	case OBJ_Self:
+		Obj = this;
+		break;
+	case OBJ_Enemy:
+		Obj = Player->Enemy;
+		break;
+	case OBJ_Parent:
+		Obj = Player;
+		break;
+	default:
+		Obj = this;
+		break;
+	}
+	switch (InternalValue)
+	{
+	case VAL_StoredRegister:
+		Obj->StoredRegister = Val;
+	case VAL_ActionFlag:
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->CurrentActionFlags = Val;
+		break;
+	case VAL_PosX:
+		Obj->PosX = Val;
+	case VAL_PosY:
+		Obj->PosY = Val;
+	case VAL_SpeedX:
+		Obj->SpeedX = Val;
+	case VAL_SpeedY:
+		Obj->SpeedY = Val;
+	case VAL_ActionTime:
+		Obj->ActionTime = Val;
+	case VAL_Inertia:
+		Obj->Inertia = Val;
+	case VAL_FacingRight:
+		Obj->FacingRight = Val;
+	case VAL_DistanceToBackWall:
+	case VAL_DistanceToFrontWall:
+	case VAL_IsAir:
+	case VAL_IsLand:
+	case VAL_IsStunned:
+		break;
+	case VAL_Health:
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->CurrentHealth = Val;
+		break;
+	case VAL_Meter:
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			GameState->StoredBattleState.Meter[Obj->Player->PlayerIndex] = Val;
+		break;
+	case VAL_Angle: break;
+	case VAL_PlayerVal1: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal1 = Val;
+		break;
+	case VAL_PlayerVal2: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal2 = Val;
+		break;
+	case VAL_PlayerVal3: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal3 = Val;
+		break;
+	case VAL_PlayerVal4: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal4 = Val;
+		break;
+	case VAL_PlayerVal5: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal5 = Val;
+		break;
+	case VAL_PlayerVal6: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal6 = Val;
+		break;
+	case VAL_PlayerVal7: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal7 = Val;
+		break;
+	case VAL_PlayerVal8: 
+		if (Obj->IsPlayer && Obj->Player != nullptr) //only available as player character
+			Obj->Player->PlayerVal8 = Val;
+		break;
+	case VAL_DefaultCommonAction:
+		Obj->DefaultCommonAction = Val;
+	default:
+		return;
+	}
+	return;
 }
 
 bool BattleActor::IsOnFrame(int32_t Frame)

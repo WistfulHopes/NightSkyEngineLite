@@ -100,6 +100,7 @@ public:
 	void Init(); //initializes game state
 	void Update(int32_t Input1, int32_t Input2); //updates game state
 	void Draw();
+	void UpdateCamera();
 	void SaveGameState(); //saves game state
 	void LoadGameState(); //loads game state
 	
@@ -114,7 +115,8 @@ private:
 	int32_t LocalInputs[2];
 	int32_t RemoteInputs[2];
 	float ElapsedTime;
-
+    Camera2D Cam;
+	
 	void UpdateLocalInput(); //updates local input
 	void HandleRoundWin();
 	void HandleMatchWin();

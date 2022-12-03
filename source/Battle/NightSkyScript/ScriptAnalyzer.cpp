@@ -174,6 +174,17 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
+        case AddGravity: break;
+        case SetInertia: break;
+        case EnableInertia: break;
+        case DisableInertia: break;
+        case ModifyInternalValue: break;
+        case StoreInternalValue: break;
+        case ModifyInternalValueAndSave:
+            break;
         default:
             break;
         }
@@ -393,7 +404,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             int32_t Operand2 = *reinterpret_cast<int32_t *>(Addr + 20);
             if (*reinterpret_cast<int32_t *>(Addr + 16) > 0)
             {
-                Operand2 = Actor->GetInternalValue((InternalValue)Operand1);
+                Operand2 = Actor->GetInternalValue((InternalValue)Operand2);
             }
             Operation Op = *reinterpret_cast<Operation *>(Addr + 4);
             CheckOperation(Op, Operand1, Operand2, &Actor->StoredRegister);
@@ -460,7 +471,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->FWalkSpeed;
                 break;
             case PLY_BWalkSpeed:
-                Val = Actor->Player->BWalkSpeed;
+                Val = -Actor->Player->BWalkSpeed;
                 break;
             case PLY_FDashInitSpeed:
                 Val = Actor->Player->FDashInitSpeed;
@@ -475,7 +486,7 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->FDashFriction;
                 break;
             case PLY_BDashSpeed:
-                Val = Actor->Player->BDashSpeed;
+                Val = -Actor->Player->BDashSpeed;
                 break;
             case PLY_BDashHeight:
                 Val = Actor->Player->BDashHeight;
@@ -496,22 +507,22 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
                 Val = Actor->Player->JumpGravity;
                 break;
             case PLY_SuperJumpHeight:
-                Val = Actor->Player->JumpHeight;
+                Val = Actor->Player->SuperJumpHeight;
                 break;
             case PLY_FSuperJumpSpeed:
-                Val = Actor->Player->FJumpSpeed;
+                Val = Actor->Player->FSuperJumpSpeed;
                 break;
             case PLY_BSuperJumpSpeed:
-                Val = Actor->Player->BJumpSpeed;
+                Val = -Actor->Player->BSuperJumpSpeed;
                 break;
             case PLY_SuperJumpGravity:
-                Val = Actor->Player->JumpGravity;
+                Val = Actor->Player->SuperJumpGravity;
                 break;
             case PLY_FAirDashSpeed:
                 Val = Actor->Player->FAirDashSpeed;
                 break;
             case PLY_BAirDashSpeed:
-                Val = Actor->Player->BAirDashSpeed;
+                Val = -Actor->Player->BAirDashSpeed;
                 break;
             }
             Actor->StoredRegister = Val;
@@ -703,6 +714,122 @@ void ScriptAnalyzer::Analyze(char *Addr, BattleActor *Actor)
             {
                 Actor->Player->JumpToState(Addr + 4);
             }
+            break;
+        case SetParentState:
+            {
+                if (StateToModify)
+                {
+                    for (auto State : Actor->Player->CommonStates)
+                    {
+                        if (!strcmp(Addr + 4, State->Name.GetString()))
+                        {
+                            dynamic_cast<ScriptState*>(StateToModify)->ParentState = dynamic_cast<ScriptState*>(State);
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        case AddAirJump:
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->AddAirJump(*reinterpret_cast<int32_t*>(Addr + 4));
+            }
+            break;
+        case AddAirDash: 
+            if (Actor->IsPlayer)
+            {
+                Actor->Player->AddAirDash(*reinterpret_cast<int32_t*>(Addr + 4));
+            }
+            break;
+        case AddGravity: break;
+        case SetInertia:
+            {
+                int32_t Operand = *reinterpret_cast<int32_t *>(Addr + 8);
+                if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+                {
+                    Operand = Actor->GetInternalValue(static_cast<InternalValue>(Operand));
+                }
+                Actor->SetInertia(Operand);
+                break;
+            }
+        case EnableInertia:
+            Actor->EnableInertia();
+            break;
+        case DisableInertia: 
+            Actor->DisableInertia();
+            break;
+        case ModifyInternalValue:
+            {
+                int32_t Operand1 = *reinterpret_cast<int32_t *>(Addr + 12);
+                bool IsOperand1InternalVal = false;
+                if (*reinterpret_cast<int32_t *>(Addr + 8) > 0)
+                {
+                    Operand1 = Actor->GetInternalValue((InternalValue)Operand1);
+                    IsOperand1InternalVal = true;
+                }
+                int32_t Operand2 = *reinterpret_cast<int32_t *>(Addr + 20);
+                if (*reinterpret_cast<int32_t *>(Addr + 16) > 0)
+                {
+                    Operand2 = Actor->GetInternalValue((InternalValue)Operand2);
+                }
+                Operation Op = *reinterpret_cast<Operation *>(Addr + 4);
+                int32_t Temp;
+                CheckOperation(Op, Operand1, Operand2, &Temp);
+                if (IsOperand1InternalVal)
+                {
+                    Actor->SetInternalValue((InternalValue)Operand1, Temp);
+                }
+                break;
+            }
+        case StoreInternalValue:
+            {
+                int32_t Operand1 = *reinterpret_cast<int32_t *>(Addr + 8);
+                bool IsOperand1InternalVal = false;
+                if (*reinterpret_cast<int32_t *>(Addr + 4) > 0)
+                {
+                    Operand1 = Actor->GetInternalValue((InternalValue)Operand1);
+                    IsOperand1InternalVal = true;
+                }
+                int32_t Operand2 = *reinterpret_cast<int32_t *>(Addr + 16);
+                if (*reinterpret_cast<int32_t *>(Addr + 12) > 0)
+                {
+                    Operand2 = Actor->GetInternalValue((InternalValue)Operand2);
+                }
+                if (IsOperand1InternalVal)
+                {
+                    Actor->SetInternalValue((InternalValue)Operand1, Operand2);
+                }
+                break;
+            }
+        case ModifyInternalValueAndSave:
+            {
+                int32_t Operand1 = *reinterpret_cast<int32_t *>(Addr + 12);
+                if (*reinterpret_cast<int32_t *>(Addr + 8) > 0)
+                {
+                    Operand1 = Actor->GetInternalValue((InternalValue)Operand1);
+                }
+                int32_t Operand2 = *reinterpret_cast<int32_t *>(Addr + 20);
+                if (*reinterpret_cast<int32_t *>(Addr + 16) > 0)
+                {
+                    Operand2 = Actor->GetInternalValue((InternalValue)Operand2);
+                }
+                Operation Op = *reinterpret_cast<Operation *>(Addr + 4);
+                int32_t Temp;
+                CheckOperation(Op, Operand1, Operand2, &Temp);
+                int32_t Operand3 = *reinterpret_cast<int32_t *>(Addr + 20);
+                bool IsOperand3InternalVal = false;
+                if (*reinterpret_cast<int32_t *>(Addr + 16) > 0)
+                {
+                    Operand3 = Actor->GetInternalValue((InternalValue)Operand3);
+                    IsOperand3InternalVal = true;
+                }
+                if (IsOperand3InternalVal)
+                {
+                    Actor->SetInternalValue((InternalValue)Operand3, Temp);
+                }
+                break;
+            }
         default:
             break;
         }
@@ -843,6 +970,17 @@ bool ScriptAnalyzer::FindNextCel(char **Addr, int AnimTime)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
+        case AddGravity: break;
+        case SetInertia: break;
+        case EnableInertia: break;
+        case DisableInertia: break;
+        case ModifyInternalValue: break;
+        case StoreInternalValue: break;
+        case ModifyInternalValueAndSave:
+            break;
         default:
             break;
         }
@@ -979,6 +1117,17 @@ void ScriptAnalyzer::FindMatchingEnd(char **Addr, OpCodes EndCode)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
+        case AddGravity: break;
+        case SetInertia: break;
+        case EnableInertia: break;
+        case DisableInertia: break;
+        case ModifyInternalValue: break;
+        case StoreInternalValue: break;
+        case ModifyInternalValueAndSave:
+            break;
         default:
             break;
         }
@@ -1117,6 +1266,17 @@ void ScriptAnalyzer::FindElse(char **Addr)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
+        case AddGravity: break;
+        case SetInertia: break;
+        case EnableInertia: break;
+        case DisableInertia: break;
+        case ModifyInternalValue: break;
+        case StoreInternalValue: break;
+        case ModifyInternalValueAndSave:
+            break;
         default:
             break;
         }
@@ -1259,6 +1419,17 @@ void ScriptAnalyzer::GetAllLabels(char *Addr, std::vector<StateAddress> *Labels)
         case CheckInput: break;
         case CheckInputRaw: break;
         case JumpToState: break;
+        case SetParentState: break;
+        case AddAirJump: break;
+        case AddAirDash: break;
+        case AddGravity: break;
+        case SetInertia: break;
+        case EnableInertia: break;
+        case DisableInertia: break;
+        case ModifyInternalValue: break;
+        case StoreInternalValue: break;
+        case ModifyInternalValueAndSave:
+            break;
         default:
             break;
         }

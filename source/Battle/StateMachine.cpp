@@ -1,5 +1,7 @@
 ﻿#include "StateMachine.h"
 
+#include <iostream>
+
 #include "Actors/PlayerCharacter.h"
 
 CString<64> StateMachine::GetStateName(int Index)
@@ -45,7 +47,7 @@ bool StateMachine::SetState(CString<64> Name)
 		CurrentState = States[Index];
 		return true;
 	}
-		
+	
 	CurrentState->OnExit();
 	Parent->OnStateChange();	
 

@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 #include "FighterGameState.h"
+#include <cstdlib>
 
 PlayerCharacter::PlayerCharacter()
 {
@@ -60,40 +61,6 @@ PlayerCharacter::PlayerCharacter()
 	ForwardJumpMeterGain = 10;
 	ForwardDashMeterGain = 25;
 	ForwardAirDashMeterGain = 25;
-	
-	CurrentSprite.texture = LoadTexture("Sprites/Esther/Esther_stand.png");
-	Vector2 Size;
-	Size.x = 256;
-	Size.y = 256;
-	CurrentSprite.frameSize = Size;
-	CurrentSprite.maxFrame = 5;
-	CurrentSprite.framesWide = 3;
-	Vector2 Origin;
-	Origin.x = 117;
-	Origin.y = 120;
-	CurrentSprite.origin = Origin;
-	CurrentSprite.name = "Esther_stand";
-	Sprites.push_back(CurrentSprite);
-
-	Sprite JumpSprite;
-	
-	JumpSprite.texture = LoadTexture("Sprites/Esther/Esther_jump.png");
-	JumpSprite.frameSize = Size;
-	JumpSprite.maxFrame = 8;
-	JumpSprite.framesWide = 3;
-	JumpSprite.origin = Origin;
-	JumpSprite.name = "Esther_jump";
-	Sprites.push_back(JumpSprite);
-
-	Sprite CrouchSprite;
-	
-	CrouchSprite.texture = LoadTexture("Sprites/Esther/Esther_crouch.png");
-	CrouchSprite.frameSize = Size;
-	CrouchSprite.maxFrame = 8;
-	CrouchSprite.framesWide = 3;
-	CrouchSprite.origin = Origin;
-	CrouchSprite.name = "Esther_crouch";
-	Sprites.push_back(CrouchSprite);
 }
 
 void PlayerCharacter::InitPlayer()
@@ -1393,6 +1360,7 @@ void PlayerCharacter::OnStateChange()
 {
 	if (MiscFlags & MISC_FlipEnable)
 		HandleFlip();
+	DisableLastInput();
 	StateName.SetString("");
 	HitEffectName.SetString("");
 	Gravity = JumpGravity;
@@ -1638,7 +1606,7 @@ void PlayerCharacter::HandleWallBounce()
 	{
 		if (CurrentWallBounceEffect.WallBounceInCornerOnly)
 		{
-			if (PosX > 1440000 || PosX < -1440000)
+			if (PosX > 1200000 || PosX < -1200000)
 			{
 				if (CurrentWallBounceEffect.WallBounceCount > 0)
 				{

@@ -2,11 +2,11 @@
 
 #include "../../CString.h"
 #include "../CollisionBox.h"
-#include "../../Sprite.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <math.h>
+#include "../../AtlasSprite.h"
+#include <cstdint>
 #include <vector>
+
+#include "../../../raylib/src/raylib.h"
 
 #pragma pack (push, 1)
 
@@ -66,10 +66,14 @@ enum InternalValue //internal values list
 	VAL_StoredRegister,
 	VAL_Angle,
 	VAL_ActionFlag,
-	VAL_PlayerVal0,
 	VAL_PlayerVal1,
 	VAL_PlayerVal2,
 	VAL_PlayerVal3,
+	VAL_PlayerVal4,
+	VAL_PlayerVal5,
+	VAL_PlayerVal6,
+	VAL_PlayerVal7,
+	VAL_PlayerVal8,
 	VAL_SpeedX,
 	VAL_SpeedY,
 	VAL_ActionTime,
@@ -84,7 +88,7 @@ enum InternalValue //internal values list
 	VAL_IsStunned,
 	VAL_Health,
 	VAL_Meter,
-	VAL_Hitstop,
+	VAL_DefaultCommonAction,
 };
 
 enum HitAction
@@ -169,19 +173,13 @@ struct Vector
 
 	int32_t X;
 	int32_t Y;
+};
 
-	Vector operator+(const Vector OtherVector)
-	{
-		return Vector(OtherVector.X + X, OtherVector.Y + Y);
-	}
-	Vector operator-(const Vector OtherVector)
-	{
-		return Vector(OtherVector.X - X, OtherVector.Y - Y);
-	}
-	int Size()
-	{
-		return fabs(sqrt(X * X + Y * Y));  // NOLINT(bugprone-narrowing-conversions)
-	}
+struct Sprite
+{
+	Texture2D Atlas;
+	std::vector<AtlasSprite> Sprites;
+	AtlasSprite CurrentSprite;
 };
 
 class BattleActor
@@ -280,7 +278,6 @@ public:
 	State* ObjectState; 
 
 	std::vector<Sprite> Sprites;
-	
 	Sprite CurrentSprite;
 
 protected:
@@ -292,6 +289,7 @@ protected:
 public:
 	//updates current sprite
 	void SetSprite();
+	void LoadSprites(char* SpriteListName);
 	
 	void SaveForRollback(unsigned char* Buffer);
 	void LoadForRollback(unsigned char* Buffer);
@@ -320,6 +318,7 @@ public:
 	
 	//gets internal value for script
 	int32_t GetInternalValue(InternalValue InternalValue, ObjType ObjType = OBJ_Self);
+	void SetInternalValue(InternalValue InternalValue, int32_t Val, ObjType ObjType = OBJ_Self);
 	//checks if on frame
 	bool IsOnFrame(int32_t Frame);
 	bool IsStopped();

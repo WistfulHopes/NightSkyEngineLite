@@ -1,4 +1,5 @@
 #include "FighterGameState.h"
+#include "../../../raylib/src/raymath.h"
 
 void FighterGameState::TickGameState()
 {
@@ -311,6 +312,7 @@ void FighterGameState::Init()
 			Players[i]->ObjectScriptLength = ObjScriptBytes;
 			Players[i]->IsOnScreen = true;
 			Players[i]->InitStates();
+			Players[i]->LoadSprites("Esther");
 		}
 	}
 	for (int i = 0; i < 400; i++)
@@ -388,6 +390,7 @@ void FighterGameState::Update(int Input1, int Input2)
 
 void FighterGameState::Draw()
 {
+	UpdateCamera();
 	for (int i = 0; i < 406; i++)
 	{
 		if (i == ActiveObjectCount)
@@ -398,6 +401,43 @@ void FighterGameState::Draw()
 			SortedObjects[i]->Draw();
 		}
 	}
+	EndMode2D();
+}
+
+void FighterGameState::UpdateCamera()
+{
+    Vector2 Offset;
+    Offset.x = 160;
+    Offset.y = 200;
+    Cam.offset = Offset;
+
+    double TargetX = static_cast<double>(StoredBattleState.CurrentScreenPos) / COORD_SCALE;
+    double TargetY = -static_cast<double>(Players[0]->GetInternalValue(VAL_PosY) + Players[1]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
+    TargetX = Clamp(TargetX, -270, 270);
+    Vector2 Target;
+    Target.x = Lerp(Cam.target.x, TargetX, 0.5);
+    Target.y = Lerp(Cam.target.y, TargetY, 0.5);
+    Cam.target = Target;
+
+    Cam.rotation = 0;
+
+	float Distance;
+	if (Players[0]->GetInternalValue(VAL_PosX) > Players[3]->GetInternalValue(VAL_PosX))
+	{
+		Distance = Players[0]->GetInternalValue(VAL_PosX) - Players[3]->GetInternalValue(VAL_PosX);
+	}
+	else
+	{
+		Distance = Players[3]->GetInternalValue(VAL_PosX) - Players[0]->GetInternalValue(VAL_PosX);
+	}
+	Distance = (2160000 - Distance) / COORD_SCALE + 900;
+	Distance = Clamp(Distance, 1280, 1440);
+	Distance = Remap(Distance, 1280, 1440, 0.7, 1);
+	if (Cam.zoom == 0)
+	    Cam.zoom = 1.5;
+    Cam.zoom = Lerp(Cam.zoom, Distance, 0.5);
+
+	BeginMode2D(Cam);
 }
 
 void FighterGameState::SaveGameState()
@@ -624,15 +664,15 @@ void FighterGameState::SetWallCollision()
 			if (Players[i]->IsOnScreen)
 			{
 				Players[i]->TouchingWall = true;
-				if (Players[i]->GetInternalValue(VAL_PosX) > 720000 + StoredBattleState.CurrentScreenPos)
+				if (Players[i]->GetInternalValue(VAL_PosX) > 600000 + StoredBattleState.CurrentScreenPos)
 				{
-					Players[i]->SetPosX(720001 + StoredBattleState.CurrentScreenPos);
+					Players[i]->SetPosX(600001 + StoredBattleState.CurrentScreenPos);
 				}
-				else if (Players[i]->GetInternalValue(VAL_PosX) < -720000 + StoredBattleState.CurrentScreenPos)
+				else if (Players[i]->GetInternalValue(VAL_PosX) < -600000 + StoredBattleState.CurrentScreenPos)
 				{
-					Players[i]->SetPosX(-720001 + StoredBattleState.CurrentScreenPos);
+					Players[i]->SetPosX(-600001 + StoredBattleState.CurrentScreenPos);
 				}
-				else if (Players[i]->GetInternalValue(VAL_PosX) < 720000 + StoredBattleState.CurrentScreenPos || Players[i]->GetInternalValue(VAL_PosX) > -1080000 + StoredBattleState.CurrentScreenPos)
+				else if (Players[i]->GetInternalValue(VAL_PosX) < 600000 + StoredBattleState.CurrentScreenPos || Players[i]->GetInternalValue(VAL_PosX) > -1080000 + StoredBattleState.CurrentScreenPos)
 				{
 					Players[i]->TouchingWall = false;
 				}
