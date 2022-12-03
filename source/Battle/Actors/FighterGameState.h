@@ -2,6 +2,8 @@
 
 #include "PlayerCharacter.h"
 
+class InputDevice;
+
 constexpr int32_t CommonAudioChannelCount = 50;
 constexpr int32_t CharaAudioChannelCount = 50;
 constexpr int32_t CharaVoiceChannelCount = 6;
@@ -29,30 +31,30 @@ enum NetMode
 #pragma pack (push, 1)
 struct AudioChannel
 {
-	char* SoundWave;
-	int32_t StartingFrame;
+	char* SoundWave = nullptr;
+	int32_t StartingFrame = 0;
 	float MaxDuration = 1.0f;
 	bool Finished = true;
 };
 
 struct BattleState
 {
-	char BattleStateSync;
-	int32_t FrameNumber;
+	char BattleStateSync = 0;
+	int32_t FrameNumber = 0;
 	int32_t CurrentScreenPos = 0;
-	int32_t RoundTimer;
-	bool PauseTimer;
-	bool PauseParticles;
+	int32_t RoundTimer = 0;
+	bool PauseTimer = false;
+	bool PauseParticles = false;
 	int32_t Meter[2] { 0 , 0 };
 	int32_t MaxMeter[2] { 50000 , 50000 };
-	int32_t P1RoundsWon;
-	int32_t P2RoundsWon;
+	int32_t P1RoundsWon = 0;
+	int32_t P2RoundsWon = 0;
 	AudioChannel CommonAudioChannels[CommonAudioChannelCount];
 	AudioChannel CharaAudioChannels[CharaAudioChannelCount];
 	AudioChannel CharaVoiceChannels[CharaVoiceChannelCount];
-	AudioChannel AnnouncerVoiceChannel;
+	AudioChannel AnnouncerVoiceChannel = {};
 	
-	char BattleStateSyncEnd;
+	char BattleStateSyncEnd = 0;
 
 	RoundFormat RoundFormat = RoundFormat::FirstToTwo;
 };
@@ -63,7 +65,7 @@ struct BattleState
 #pragma pack (push, 1)
 struct RollbackData
 {
-	int32_t ActiveObjectCount;
+	int32_t ActiveObjectCount = 0;
 	uint8_t ObjBuffer[406][SIZEOF_BATTLEACTOR] = { { 0 } };
 	bool ObjActive[400] = { false };
 	uint8_t CharBuffer[6][SIZEOF_PLAYERCHARACTER] = { { 0 } };
@@ -109,13 +111,10 @@ public:
 	int32_t ActiveObjectCount;
 
 private:
-	int32_t SyncFrame;
-	int32_t LocalFrameAdvantage;
-	int32_t RemoteFrameAdvantage;
-	int32_t LocalInputs[2];
-	int32_t RemoteInputs[2];
-	float ElapsedTime;
-    Camera2D Cam;
+	int32_t LocalInputs[2] = {0, 0};
+	int32_t RemoteInputs[2] = {0, 0};
+    Camera2D Cam = {};
+	InputDevice* InputDevices[2];
 	
 	void UpdateLocalInput(); //updates local input
 	void HandleRoundWin();

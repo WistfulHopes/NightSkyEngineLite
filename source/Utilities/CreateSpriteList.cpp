@@ -1,3 +1,6 @@
+//uncomment the following code to compile CreateSpriteList.
+
+/*
 #include "CreateSpriteList.h"
 #include <filesystem>
 #include <vector>
@@ -47,3 +50,4 @@ int main(int argc, char* argv[])
 
     return 1;
 }
+*/

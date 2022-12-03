@@ -1,4 +1,6 @@
 #include "FighterGameState.h"
+
+#include "InputDevice.h"
 #include "../../../raylib/src/raymath.h"
 
 void FighterGameState::TickGameState()
@@ -11,40 +13,7 @@ void FighterGameState::TickGameState()
 
 int FighterGameState::GetLocalInputs(int Index)
 {
-	int Inputs = 0;
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_UP))
-	{
-		Inputs |= InputUp;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_DOWN))
-	{
-		Inputs |= InputDown;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_LEFT))
-	{
-		Inputs |= InputLeft;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_LEFT_FACE_RIGHT))
-	{
-		Inputs |= InputRight;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_LEFT))
-	{
-		Inputs |= InputL;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_UP))
-	{
-		Inputs |= InputM;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))
-	{
-		Inputs |= InputH;
-	}
-	if (IsGamepadButtonDown(Index, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))
-	{
-		Inputs |= InputS;
-	}
-	return Inputs;
+	return InputDevices[Index]->GetInputs();
 }
 
 void FighterGameState::UpdateLocalInput()
@@ -293,6 +262,11 @@ void FighterGameState::SortObjects()
 
 void FighterGameState::Init()
 {
+	InputDevices[0] = new ControllerInputDevice;
+	dynamic_cast<ControllerInputDevice*>(InputDevices[0])->controller_id = 0;
+	InputDevices[1] = new ControllerInputDevice;
+	dynamic_cast<ControllerInputDevice*>(InputDevices[1])->controller_id = 1;
+	
 	CommonScript = (char*)LoadFileData("Scripts/NSS_Common.nss", &CommonScriptLength);
 	for (int i = 0; i < 6; i++)
 	{

@@ -1,12 +1,9 @@
 #include "InputDevice.h"
+
+#include <iostream>
+
 #include "../raylib/src/raylib.h"
 #include "Battle/Bitflags.h"
-
-int InputDevice::GetInputs() {
-	// Dummy class, returns nothing
-	return 0;
-}
-
 int ControllerInputDevice::GetInputs() {
 	int inputFlags = 0;
 
@@ -21,7 +18,6 @@ int ControllerInputDevice::GetInputs() {
 	if(this->IsButtonDown(this->config.InputDown)) inputFlags |= InputDown;
 	if(this->IsButtonDown(this->config.InputLeft)) inputFlags |= InputLeft;
 	if(this->IsButtonDown(this->config.InputRight)) inputFlags |= InputRight;
-	if(inputFlags == 0) inputFlags |= InputNeutral;
 
 	if(this->IsButtonDown(this->config.InputL)) inputFlags |= InputL;
 	if(this->IsButtonDown(this->config.InputM)) inputFlags |= InputM;
@@ -29,16 +25,27 @@ int ControllerInputDevice::GetInputs() {
 	if(this->IsButtonDown(this->config.InputS)) inputFlags |= InputS;
 	if(this->IsButtonDown(this->config.InputA1)) inputFlags |= InputA1;
 	if(this->IsButtonDown(this->config.InputA2)) inputFlags |= InputA2;
-
+	
 	return inputFlags;
 }
 
 bool ControllerInputDevice::IsButtonDown(ButtonConfig button) {
 	if (button.axis) {
 		return GetGamepadAxisMovement(this->controller_id, button.id) > this->config.deadzone;
-	} else {
-		return IsGamepadButtonDown(this->controller_id, button.id);
 	}
+	return IsGamepadButtonDown(this->controller_id, button.id);
+}
+
+ControllerInputDevice::ControllerInputDevice()
+{
+	config.InputUp.id = GAMEPAD_BUTTON_LEFT_FACE_UP;
+	config.InputDown.id = GAMEPAD_BUTTON_LEFT_FACE_DOWN;
+	config.InputLeft.id = GAMEPAD_BUTTON_LEFT_FACE_LEFT;
+	config.InputRight.id = GAMEPAD_BUTTON_LEFT_FACE_RIGHT;
+	config.InputL.id = GAMEPAD_BUTTON_RIGHT_FACE_LEFT;
+	config.InputM.id = GAMEPAD_BUTTON_RIGHT_FACE_UP;
+	config.InputH.id = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT;
+	config.InputS.id = GAMEPAD_BUTTON_RIGHT_FACE_DOWN;
 }
 
 int KeyboardInputDevice::GetInputs() {

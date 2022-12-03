@@ -1,12 +1,15 @@
+#pragma once
+
 class InputDevice {
-	public:
-		int GetInputs();
-}
+public:
+	virtual int GetInputs() = 0;
+	virtual ~InputDevice() = default;
+};
 
 struct ButtonConfig {
-	int id;
-	bool axis;
-}
+	int id = true;
+	bool axis = false;
+};
 
 struct ControllerConfig {
 	ButtonConfig InputUp;
@@ -21,38 +24,40 @@ struct ControllerConfig {
 	ButtonConfig InputA1;
 	ButtonConfig InputA2;
 
-	float deadzone;
-}
+	float deadzone = 0;
+};
 
 class ControllerInputDevice : public InputDevice {
-	private:
-		int controller_id;
-		ControllerConfig config;
+	ControllerConfig config;
 
-		bool IsButtonDown(ButtonConfig button);
+	bool IsButtonDown(ButtonConfig button);
 
-	public:
-		int GetInputs();
-}
+public:
+	ControllerInputDevice();
+	~ControllerInputDevice() override = default;
+	int controller_id = 0;
+
+	int GetInputs() override;
+};
 
 struct KeyboardConfig {
-	int InputUp;
-	int InputDown;
-	int InputLeft;
-	int InputRight;
+	int InputUp = 0;
+	int InputDown = 0;
+	int InputLeft = 0;
+	int InputRight = 0;
 
-	int InputL;
-	int InputM;
-	int InputH;
-	int InputS;
-	int InputA1;
-	int InputA2;
-}
+	int InputL = 0;
+	int InputM = 0;
+	int InputH = 0;
+	int InputS = 0;
+	int InputA1 = 0;
+	int InputA2 = 0;
+};
 
 class KeyboardInputDevice : public InputDevice {
-	private:
-		KeyboardConfig config;
+	KeyboardConfig config = {};
 
-	public:
-		int GetInputs();
-}
+public:
+	int GetInputs() override;
+	~KeyboardInputDevice() override = default;
+};

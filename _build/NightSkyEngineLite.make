@@ -90,8 +90,10 @@ OBJECTS :=
 GENERATED += $(OBJDIR)/AtlasSprite.o
 GENERATED += $(OBJDIR)/BattleActor.o
 GENERATED += $(OBJDIR)/CString.o
+GENERATED += $(OBJDIR)/CreateSpriteList.o
 GENERATED += $(OBJDIR)/FighterGameState.o
 GENERATED += $(OBJDIR)/InputBuffer.o
+GENERATED += $(OBJDIR)/InputDevice.o
 GENERATED += $(OBJDIR)/PlayerCharacter.o
 GENERATED += $(OBJDIR)/ScriptAnalyzer.o
 GENERATED += $(OBJDIR)/State.o
@@ -101,8 +103,10 @@ GENERATED += $(OBJDIR)/main.o
 OBJECTS += $(OBJDIR)/AtlasSprite.o
 OBJECTS += $(OBJDIR)/BattleActor.o
 OBJECTS += $(OBJDIR)/CString.o
+OBJECTS += $(OBJDIR)/CreateSpriteList.o
 OBJECTS += $(OBJDIR)/FighterGameState.o
 OBJECTS += $(OBJDIR)/InputBuffer.o
+OBJECTS += $(OBJDIR)/InputDevice.o
 OBJECTS += $(OBJDIR)/PlayerCharacter.o
 OBJECTS += $(OBJDIR)/ScriptAnalyzer.o
 OBJECTS += $(OBJDIR)/State.o
@@ -200,6 +204,12 @@ $(OBJDIR)/Subroutine.o: ../source/Battle/Subroutine.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/CString.o: ../source/CString.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/InputDevice.o: ../source/InputDevice.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/CreateSpriteList.o: ../source/Utilities/CreateSpriteList.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/main.o: ../source/main.cpp
