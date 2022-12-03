@@ -24,12 +24,6 @@ int ControllerInputDevice::GetInputs() {
 	if(this->IsButtonDown(this->config.InputLeftAnalog)) inputFlags |= InputLeft;
 	if(this->IsButtonDown(this->config.InputRightAnalog)) inputFlags |= InputRight;
 
-	// SOCD Cleaning
-	if (inputFlags & InputUp + InputDown) inputFlags &= InputDown;
-	if (inputFlags & InputLeft + InputRight) inputFlags &= InputLeft + InputRight;
-
-	if(inputFlags == 0) inputFlags |= InputNeutral;
-
 	if(this->IsButtonDown(this->config.InputL)) inputFlags |= InputL;
 	if(this->IsButtonDown(this->config.InputM)) inputFlags |= InputM;
 	if(this->IsButtonDown(this->config.InputH)) inputFlags |= InputH;
