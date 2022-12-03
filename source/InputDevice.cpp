@@ -19,10 +19,16 @@ int ControllerInputDevice::GetInputs() {
 	if(this->IsButtonDown(this->config.InputLeft)) inputFlags |= InputLeft;
 	if(this->IsButtonDown(this->config.InputRight)) inputFlags |= InputRight;
 	
-	if(this->IsAxisDown(this->config.InputUpAnalog, false)) inputFlags |= InputUp;
-	if(this->IsAxisDown(this->config.InputDownAnalog, true)) inputFlags |= InputDown;
-	if(this->IsAxisDown(this->config.InputLeftAnalog, false)) inputFlags |= InputLeft;
-	if(this->IsAxisDown(this->config.InputRightAnalog, true)) inputFlags |= InputRight;
+	if(this->IsButtonDown(this->config.InputUpAnalog)) inputFlags |= InputUp;
+	if(this->IsButtonDown(this->config.InputDownAnalog)) inputFlags |= InputDown;
+	if(this->IsButtonDown(this->config.InputLeftAnalog)) inputFlags |= InputLeft;
+	if(this->IsButtonDown(this->config.InputRightAnalog)) inputFlags |= InputRight;
+
+	// SOCD Cleaning
+	if (inputFlags & InputUp + InputDown) inputFlags &= InputDown;
+	if (inputFlags & InputLeft + InputRight) inputFlags &= InputLeft + InputRight;
+
+	if(inputFlags == 0) inputFlags |= InputNeutral;
 
 	if(this->IsButtonDown(this->config.InputL)) inputFlags |= InputL;
 	if(this->IsButtonDown(this->config.InputM)) inputFlags |= InputM;
@@ -36,25 +42,19 @@ int ControllerInputDevice::GetInputs() {
 
 bool ControllerInputDevice::IsButtonDown(ButtonConfig button) {
 	if (button.axis) {
+		float Axis = GetGamepadAxisMovement(this->controller_id, button.id);
+		if (button.positive && Axis > config.deadzone)
+		{
+			return true;
+		}
+		if (!button.positive && Axis < -config.deadzone)
+		{
+			return true;
+		}
+
 		return false;
 	}
 	return IsGamepadButtonDown(this->controller_id, button.id);
-}
-
-bool ControllerInputDevice::IsAxisDown(ButtonConfig button, bool positive)
-{
-	if (button.axis) {
-		float Axis = GetGamepadAxisMovement(this->controller_id, button.id);
-		if (positive && Axis > config.deadzone)
-		{
-			return true;
-		}
-		if (!positive && Axis < -config.deadzone)
-		{
-			return true;
-		}
-	}
-	return false;
 }
 
 ControllerInputDevice::ControllerInputDevice()
@@ -67,10 +67,12 @@ ControllerInputDevice::ControllerInputDevice()
 	config.InputUpAnalog.axis = true;
 	config.InputDownAnalog.id = GAMEPAD_AXIS_LEFT_Y;
 	config.InputDownAnalog.axis = true;
+	config.InputDownAnalog.positive = true;
 	config.InputLeftAnalog.id = GAMEPAD_AXIS_LEFT_X;
 	config.InputLeftAnalog.axis = true;
 	config.InputRightAnalog.id = GAMEPAD_AXIS_LEFT_X;
 	config.InputRightAnalog.axis = true;
+	config.InputRightAnalog.positive = true;
 	config.InputL.id = GAMEPAD_BUTTON_RIGHT_FACE_LEFT;
 	config.InputM.id = GAMEPAD_BUTTON_RIGHT_FACE_UP;
 	config.InputH.id = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT;
@@ -85,6 +87,11 @@ int KeyboardInputDevice::GetInputs() {
 	if(IsKeyDown(this->config.InputDown)) inputFlags |= InputDown;
 	if(IsKeyDown(this->config.InputLeft)) inputFlags |= InputLeft;
 	if(IsKeyDown(this->config.InputRight)) inputFlags |= InputRight;
+
+	// SOCD Cleaning
+	if (inputFlags & InputUp + InputDown) inputFlags &= InputDown;
+	if (inputFlags & InputLeft + InputRight) inputFlags &= InputLeft + InputRight;
+	
 	if(inputFlags == 0) inputFlags |= InputNeutral;
 
 	if(IsKeyDown(this->config.InputL)) inputFlags |= InputL;

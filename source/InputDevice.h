@@ -9,6 +9,7 @@ public:
 struct ButtonConfig {
 	int id = 0;
 	bool axis = false;
+	bool positive = false;
 };
 
 struct ControllerConfig {
@@ -35,7 +36,6 @@ class ControllerInputDevice : public InputDevice {
 	ControllerConfig config;
 
 	bool IsButtonDown(ButtonConfig button);
-	bool IsAxisDown(ButtonConfig button, bool positive);
 
 public:
 	ControllerInputDevice();

@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include <cstdlib>
 #include "BattleActor.h"
 #include "FighterGameState.h"
 #include "PlayerCharacter.h"
 #include "../State.h"
-#include "../Utilities/CreateSpriteList.h"
+#include "../../Utilities/CreateSpriteList.h"
 
 #define RRES_IMPLEMENTATION
 #include "../../../rres/src/rres.h"
