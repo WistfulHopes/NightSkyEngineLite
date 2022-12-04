@@ -312,7 +312,7 @@ public:
 	//updates the object. called every frame
 	virtual void Update();
 	//draws the object. called every frame
-	virtual void Draw(); 
+	void Draw(); 
 	
 	//script callable functions
 	
