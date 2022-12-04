@@ -2,15 +2,12 @@ function platform_defines()
     defines{"PLATFORM_DESKTOP"}
 
     filter {"system:linux"}
-        defines {"_GNU_SOURCE"}
--- This is necessary, otherwise compilation will fail since
--- there is no CLOCK_MONOTOMIC. ggpo claims to have a workaround
--- to compile under c99 without -D_GNU_SOURCE, but it didn't seem
--- to work. ggpo's Makefile also adds this flag, probably why it went
--- unnoticed for so long.
--- It compiles under c11 without -D_GNU_SOURCE, because c11 requires
--- to have CLOCK_MONOTOMIC
--- See: https://github.com/raysan5/ggpo/issues/2729
+        defines {"__GNUC__"}
+    
+    filter{}
+        
+    filter {"system:windows"}
+        defines {"_WINDOWS"}
 
     filter{}
 end
@@ -87,5 +84,15 @@ project "ggpo"
         ["Source Files/*"] = { ggpo_dir .. "/src/lib/ggpo/**.cpp", ggpo_dir .. "/src/lib/ggpo/network/**.cpp", ggpo_dir .. "/src/lib/ggpo/backends/**.cpp"}
     }
     files {ggpo_dir .. "/src/include/**.h", ggpo_dir .. "/src/lib/ggpo/include/**.h", ggpo_dir .. "/src/lib/ggpo/network/**.h", ggpo_dir .. "/src/lib/ggpo/backends/**.h", ggpo_dir .. "/src/lib/ggpo/**.cpp", ggpo_dir .. "/src/lib/ggpo/network/**.cpp", ggpo_dir .. "/src/lib/ggpo/backends/**.cpp"}
-
+       
+    filter{}
+ 
+    filter {"system:windows"}
+        removefiles { ggpo_dir .. "/src/lib/ggpo/platform_unix.h", ggpo_dir .. "/src/lib/ggpo/platform_unix.cpp" }
+    
+    filter{}
+        
+    filter {"system:linux"}
+        removefiles { ggpo_dir .. "/src/lib/ggpo/platform_windows.h", ggpo_dir .. "/src/lib/ggpo/platform_windows.cpp" }
+    
     filter{}

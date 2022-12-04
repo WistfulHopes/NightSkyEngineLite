@@ -35,7 +35,7 @@ ifeq ($(config),debug_x64)
 TARGETDIR = ../_bin/Debug
 TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
 OBJDIR = obj/x64/Debug/NightSkyEngineLite
-DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WIN32
+DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++11
 LIBS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
@@ -46,7 +46,7 @@ else ifeq ($(config),debug_x86)
 TARGETDIR = ../_bin/Debug
 TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
 OBJDIR = obj/x86/Debug/NightSkyEngineLite
-DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WIN32
+DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g -std=c++11
 LIBS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
@@ -57,7 +57,7 @@ else ifeq ($(config),release_x64)
 TARGETDIR = ../_bin/Release
 TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
 OBJDIR = obj/x64/Release/NightSkyEngineLite
-DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WIN32
+DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++11
 LIBS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
@@ -68,7 +68,7 @@ else ifeq ($(config),release_x86)
 TARGETDIR = ../_bin/Release
 TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
 OBJDIR = obj/x86/Release/NightSkyEngineLite
-DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WIN32
+DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -std=c++11
 LIBS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
