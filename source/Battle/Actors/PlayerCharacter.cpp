@@ -1376,8 +1376,8 @@ void PlayerCharacter::OnStateChange()
 	FAirDashCancel = false;
 	BAirDashCancel = false;
 	HasHit = false;
-	AnimTime = -1; //reset anim time
-	ActionTime = -1; //reset action time
+	AnimTime = 0; //reset anim time
+	ActionTime = 0; //reset action time
 	DefaultLandingAction = true;
 	DefaultCommonAction = true;
 	FarNormalForceEnable = false;
