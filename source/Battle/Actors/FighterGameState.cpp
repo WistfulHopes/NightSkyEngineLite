@@ -13,6 +13,7 @@ void FighterGameState::TickGameState()
 
 int FighterGameState::GetLocalInputs(int Index)
 {
+	if (Index > 1) return 0;
 	return InputDevices[Index]->GetInputs();
 }
 

@@ -60,7 +60,7 @@ ifneq (,$(ggpo_config))
 	@${MAKE} --no-print-directory -C _build -f ggpo.make config=$(ggpo_config)
 endif
 
-NightSkyEngineLite: raylib
+NightSkyEngineLite: raylib ggpo
 ifneq (,$(NightSkyEngineLite_config))
 	@echo "==== Building NightSkyEngineLite ($(NightSkyEngineLite_config)) ===="
 	@${MAKE} --no-print-directory -C _build -f NightSkyEngineLite.make config=$(NightSkyEngineLite_config)

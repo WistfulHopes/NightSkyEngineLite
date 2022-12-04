@@ -51,7 +51,10 @@ end
 
 function include_ggpo()
     ggpo_dir = get_ggpo_dir();
-    includedirs {"../" .. ggpo_dir .."/src" }
+    includedirs {"../" .. ggpo_dir .."/src/include" }
+    includedirs {"../" .. ggpo_dir .."/src/lib/ggpo" }
+    includedirs {"../" .. ggpo_dir .."/src/lib/ggpo/network" }
+    includedirs {"../" .. ggpo_dir .."/src/lib/ggpo/backends" }
     platform_defines()
 
     filter "action:vs*"
@@ -66,7 +69,7 @@ project "ggpo"
     platform_defines()
 
     location "_build"
-    language "C"
+    language "C++"
     targetdir "_bin/%{cfg.buildcfg}"
 
     filter "action:vs*"
@@ -77,12 +80,12 @@ project "ggpo"
 
     ggpo_dir = get_ggpo_dir();
     print ("Using ggpo dir " .. ggpo_dir);
-    includedirs {ggpo_dir .. "/src" }
+    includedirs {ggpo_dir .. "/src/include" , ggpo_dir .. "/src/lib/ggpo/", ggpo_dir .. "/src/lib/ggpo/network" , ggpo_dir .. "/src/lib/ggpo/backends"}
     vpaths
     {
-        ["Header Files"] = { ggpo_dir .. "/src/**.h"},
-        ["Source Files/*"] = { ggpo_dir .. "/src/**.c"},
+        ["Header Files"] = { ggpo_dir .. "/src/include/**.h", ggpo_dir .. "/src/lib/ggpo/include/**.h", ggpo_dir .. "/src/lib/ggpo/network/**.h", ggpo_dir .. "/src/lib/ggpo/backends/**.h",},
+        ["Source Files/*"] = { ggpo_dir .. "/src/lib/ggpo/**.cpp", ggpo_dir .. "/src/lib/ggpo/network/**.cpp", ggpo_dir .. "/src/lib/ggpo/backends/**.cpp"}
     }
-    files {ggpo_dir .. "/src/*.h", ggpo_dir .. "/src/*.c"}
+    files {ggpo_dir .. "/src/include/**.h", ggpo_dir .. "/src/lib/ggpo/include/**.h", ggpo_dir .. "/src/lib/ggpo/network/**.h", ggpo_dir .. "/src/lib/ggpo/backends/**.h", ggpo_dir .. "/src/lib/ggpo/**.cpp", ggpo_dir .. "/src/lib/ggpo/network/**.cpp", ggpo_dir .. "/src/lib/ggpo/backends/**.cpp"}
 
     filter{}

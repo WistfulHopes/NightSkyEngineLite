@@ -27,5 +27,8 @@ project (workspaceName)
 
 	includedirs { "./", "src", "include"}
 	link_raylib();
+	link_ggpo();
 	
 	-- To link to a lib use link_to("LIB_FOLDER_NAME")
+    
+    link_to("Ws2_32")

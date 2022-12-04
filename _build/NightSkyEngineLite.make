@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-INCLUDES += -I../source -I../source/src -I../source/include -I../raylib/src -I../raylib/src/external -I../raylib/src/external/glfw/include
+INCLUDES += -I../source -I../source/src -I../source/include -I../raylib/src -I../raylib/src/external -I../raylib/src/external/glfw/include -I../ggpo/src -I../Ws2_32/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
@@ -38,8 +38,8 @@ OBJDIR = obj/x64/Debug/NightSkyEngineLite
 DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++11
-LIBS += ../_bin/Debug/raylib.lib -lwinmm -lkernel32 -lopengl32 -lgdi32
-LDDEPS += ../_bin/Debug/raylib.lib
+LIBS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
+LDDEPS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib
 ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Debug -L/usr/lib64 -m64
 
 else ifeq ($(config),debug_x86)
@@ -49,8 +49,8 @@ OBJDIR = obj/x86/Debug/NightSkyEngineLite
 DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g -std=c++11
-LIBS += ../_bin/Debug/raylib.lib -lwinmm -lkernel32 -lopengl32 -lgdi32
-LDDEPS += ../_bin/Debug/raylib.lib
+LIBS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
+LDDEPS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib
 ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Debug -L/usr/lib32 -m32
 
 else ifeq ($(config),release_x64)
@@ -60,8 +60,8 @@ OBJDIR = obj/x64/Release/NightSkyEngineLite
 DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++11
-LIBS += ../_bin/Release/raylib.lib -lwinmm -lkernel32 -lopengl32 -lgdi32
-LDDEPS += ../_bin/Release/raylib.lib
+LIBS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
+LDDEPS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib
 ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Release -L/usr/lib64 -m64 -mwindows -s
 
 else ifeq ($(config),release_x86)
@@ -71,8 +71,8 @@ OBJDIR = obj/x86/Release/NightSkyEngineLite
 DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WIN32
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -std=c++11
-LIBS += ../_bin/Release/raylib.lib -lwinmm -lkernel32 -lopengl32 -lgdi32
-LDDEPS += ../_bin/Release/raylib.lib
+LIBS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
+LDDEPS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib
 ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Release -L/usr/lib32 -m32 -mwindows -s
 
 endif
@@ -92,6 +92,9 @@ GENERATED += $(OBJDIR)/BattleActor.o
 GENERATED += $(OBJDIR)/CString.o
 GENERATED += $(OBJDIR)/CreateSpriteList.o
 GENERATED += $(OBJDIR)/FighterGameState.o
+GENERATED += $(OBJDIR)/FighterLocalRunner.o
+GENERATED += $(OBJDIR)/FighterMultiplayerRunner.o
+GENERATED += $(OBJDIR)/FighterSynctestRunner.o
 GENERATED += $(OBJDIR)/InputBuffer.o
 GENERATED += $(OBJDIR)/InputDevice.o
 GENERATED += $(OBJDIR)/PlayerCharacter.o
@@ -105,6 +108,9 @@ OBJECTS += $(OBJDIR)/BattleActor.o
 OBJECTS += $(OBJDIR)/CString.o
 OBJECTS += $(OBJDIR)/CreateSpriteList.o
 OBJECTS += $(OBJDIR)/FighterGameState.o
+OBJECTS += $(OBJDIR)/FighterLocalRunner.o
+OBJECTS += $(OBJDIR)/FighterMultiplayerRunner.o
+OBJECTS += $(OBJDIR)/FighterSynctestRunner.o
 OBJECTS += $(OBJDIR)/InputBuffer.o
 OBJECTS += $(OBJDIR)/InputDevice.o
 OBJECTS += $(OBJDIR)/PlayerCharacter.o
@@ -183,6 +189,15 @@ $(OBJDIR)/BattleActor.o: ../source/Battle/Actors/BattleActor.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/FighterGameState.o: ../source/Battle/Actors/FighterGameState.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/FighterLocalRunner.o: ../source/Battle/Actors/FighterRunners/FighterLocalRunner.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/FighterMultiplayerRunner.o: ../source/Battle/Actors/FighterRunners/FighterMultiplayerRunner.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/FighterSynctestRunner.o: ../source/Battle/Actors/FighterRunners/FighterSynctestRunner.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/PlayerCharacter.o: ../source/Battle/Actors/PlayerCharacter.cpp
