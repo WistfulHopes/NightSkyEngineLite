@@ -37,8 +37,8 @@ PlayerCharacter::PlayerCharacter()
 	BSuperJumpSpeed = 5200;
 	SuperJumpGravity = 1900;
 	AirDashMinimumHeight = 165000;
-	FAirDashSpeed = 30000;
-	BAirDashSpeed = 24500;
+	FAirDashSpeed = 23000;
+	BAirDashSpeed = 17500;
 	FAirDashTime = 20;
 	BAirDashTime = 12;
 	FAirDashNoAttackTime = 5;

@@ -41,154 +41,28 @@ void ScriptAnalyzer::InitStateOffsets(char *Addr, uint32_t Size, ScriptState *St
     while (true)
     {
         OpCodes code = *reinterpret_cast<OpCodes *>(Addr);
-        switch (code)
-        {
-        case OnEnter:
+        if (code == OnEnter)
             State->Offsets.OnEnterOffset = Addr - ScriptAddress;
-            break;
-        case OnUpdate:
+        else if (code == OnUpdate)
             State->Offsets.OnUpdateOffset = Addr - ScriptAddress;
-            break;
-        case OnExit:
+        else if (code == OnExit)
             State->Offsets.OnExitOffset = Addr - ScriptAddress;
-            break;
-        case OnLanding:
-            State->Offsets.OnLandingOffset = Addr - ScriptAddress;
-            break;
-        case OnHit:
+        else if (code == OnLanding)
+            State->Offsets.OnLandingOffset = Addr - ScriptAddress;\
+        else if (code == OnHit)
             State->Offsets.OnHitOffset = Addr - ScriptAddress;
-            break;
-        case OnBlock:
+        else if (code == OnBlock)
             State->Offsets.OnBlockOffset = Addr - ScriptAddress;
-            break;
-        case OnHitOrBlock:
+        else if (code == OnHitOrBlock)
             State->Offsets.OnHitOrBlockOffset = Addr - ScriptAddress;
-            break;
-        case OnCounterHit:
+        else if (code == OnCounterHit)
             State->Offsets.OnCounterHitOffset = Addr - ScriptAddress;
-            break;
-        case OnSuperFreeze:
+        else if (code == OnSuperFreeze)
             State->Offsets.OnSuperFreezeOffset = Addr - ScriptAddress;
-            break;
-        case OnSuperFreezeEnd:
+        else if (code == OnSuperFreezeEnd)
             State->Offsets.OnSuperFreezeEndOffset = Addr - ScriptAddress;
-            break;
-        case BeginState:
-            break;
-        case EndState:
+        else if (code == EndState)
             return;
-        case SetCel:
-            break;
-        case BeginSubroutine:
-            break;
-        case EndSubroutine:
-            break;
-        case CallSubroutine:
-            break;
-        case CallSubroutineWithArgs:
-            break;
-        case ExitState:
-            break;
-        case EndBlock:
-            break;
-        case BeginLabel:
-            break;
-        case EndLabel:
-            break;
-        case GotoLabel:
-            break;
-        case If:
-            break;
-        case EndIf:
-            break;
-        case IfOperation:
-            break;
-        case IfNot:
-            break;
-        case Else:
-            break;
-        case EndElse:
-            break;
-        case GotoLabelIf:
-            break;
-        case GotoLabelIfOperation:
-            break;
-        case GotoLabelIfNot:
-            break;
-        case GetPlayerStats:
-            break;
-        case BeginStateDefine:
-            break;
-        case EndStateDefine:
-            break;
-        case SetStateType:
-            break;
-        case SetEntryState:
-            break;
-        case AddInputCondition:
-            break;
-        case AddStateCondition:
-            break;
-        case IsFollowupMove:
-            break;
-        case SetStateObjectID:
-            break;
-        case SetPosX:
-            break;
-        case AddPosX:
-            break;
-        case AddPosXRaw:
-            break;
-        case SetPosY:
-            break;
-        case AddPosY:
-            break;
-        case SetSpeedX:
-            break;
-        case AddSpeedX:
-            break;
-        case SetSpeedY:
-            break;
-        case AddSpeedY:
-            break;
-        case SetSpeedXPercent:
-            break;
-        case SetSpeedXPercentPerFrame:
-            break;
-        case EnableState:
-            break;
-        case DisableState:
-            break;
-        case EnableAll:
-            break;
-        case DisableAll:
-            break;
-        case EnableFlip:
-            break;
-        case ForceEnableFarNormal:
-            break;
-        case SetGravity: break;
-        case HaltMomentum: break;
-        case ClearInertia: break;
-        case SetActionFlags: break;
-        case CheckInput: break;
-        case CheckInputRaw: break;
-        case JumpToState: break;
-        case SetParentState: break;
-        case AddAirJump: break;
-        case AddAirDash: break;
-        case AddGravity: break;
-        case SetInertia: break;
-        case EnableInertia: break;
-        case DisableInertia: break;
-        case ModifyInternalValue: break;
-        case StoreInternalValue: break;
-        case ModifyInternalValueAndSave:
-            break;
-        case SetAirDashTimer: break;
-        default:
-            break;
-        }
         Addr += InstructionSizes[code];
     }
 }
