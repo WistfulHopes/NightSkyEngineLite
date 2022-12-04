@@ -4,6 +4,6 @@ A "lite" version of my Unreal Engine fighting game framework, the Night Sky Engi
 
 As Blueprints are an Unreal-only system, I made my own scripting system based on BBScript. In fact, it's so similar that I made a fork of super-continent's BBScript rebuilder and parser at https://github.com/WistfulHopes/bbscript/tree/night-sky-script. However, the actual bytecode interpreter is written from scratch.
 
-Trello here: https://trello.com/b/W2TPXwIW/night-sky-engine-lite
+Trello here: https://trello.com/invite/b/W2TPXwIW/ATTIbc53c61874bbc0a2ca661b9f375a75a2C713D441/night-sky-engine-lite
 
 For the Unreal Engine version, see here: https://github.com/WistfulHopes/NightSkyEngine/
