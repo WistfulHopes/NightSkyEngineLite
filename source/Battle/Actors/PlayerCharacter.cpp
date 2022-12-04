@@ -873,7 +873,7 @@ bool PlayerCharacter::HandleStateCondition(StateCondition StateCondition)
 	case StateCondition::AirDashMinimumHeight:
 		if (PosY > AirDashMinimumHeight && SpeedY > 0)
 			return true;
-		if (PosY > 70000 && SpeedY <= 0)
+		if (PosY > 100000 && SpeedY <= 0)
 			return true;
 		break;
 	case StateCondition::CloseNormal:
