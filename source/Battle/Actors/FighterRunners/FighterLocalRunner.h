@@ -2,7 +2,7 @@
 
 #pragma once
 
-constexpr int AccumulatorBreakerMax = 3;
+constexpr int AccumulatorBreakerMax = 15;
 constexpr float OneFrame = 1.f / 60.f;
 
 class FighterLocalRunner

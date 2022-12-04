@@ -32,10 +32,10 @@ void FighterSynctestRunner::Init()
 void FighterSynctestRunner::Update(float DeltaTime)
 {
 	ElapsedTime+=DeltaTime;
-	if(ElapsedTime > OneFrame)
+	while (ElapsedTime >= OneFrame)
 	{
 		GgpoUpdate();
-		ElapsedTime=0;
+		ElapsedTime -= OneFrame ;
 	}
 	ggpo_idle(ggpo,1);
 }
