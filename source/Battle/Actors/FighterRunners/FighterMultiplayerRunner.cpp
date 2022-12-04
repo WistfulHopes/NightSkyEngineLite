@@ -21,6 +21,10 @@ void FighterMultiplayerRunner::Init()
 	ggpo_start_session(&ggpo, &cb, "NightSkyEngineLite",2, sizeof(int), LocalPort);
 	ggpo_set_disconnect_timeout(ggpo, 45000);
 	ggpo_set_disconnect_notify_start(ggpo, 15000);
+	if (PlayerIndex == 0)
+		GameState->CurrentNetMode = Player1;
+	else
+		GameState->CurrentNetMode = Player2;
 	for (int i = 0; i < 2; i++)
 	{
 		GGPOPlayerHandle handle;

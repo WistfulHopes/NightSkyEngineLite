@@ -114,7 +114,7 @@ private:
 	int32_t LocalInputs[2] = {0, 0};
 	int32_t RemoteInputs[2] = {0, 0};
     Camera2D Cam = {};
-	InputDevice* InputDevices[2] = {};
+	InputDevice* InputDevices[3] = {};
 	
 	void UpdateLocalInput(); //updates local input
 	void HandleRoundWin();

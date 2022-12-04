@@ -13,25 +13,19 @@ void FighterGameState::TickGameState()
 
 int FighterGameState::GetLocalInputs(int Index)
 {
-	if (Index > 1) return 0;
-	return InputDevices[Index]->GetInputs();
+	if (Index > 2) return 0;
+	if (Index < 2)
+		if (IsGamepadAvailable(dynamic_cast<ControllerInputDevice*>(InputDevices[Index])->controller_id))
+			return InputDevices[Index]->GetInputs();
+	if (Index == 0)
+		return InputDevices[2]->GetInputs();
+	return 0;
 }
 
 void FighterGameState::UpdateLocalInput()
 {
-	if (CurrentNetMode == Offline)
-	{
-		LocalInputs[0] = GetLocalInputs(0);
-		LocalInputs[1] = GetLocalInputs(1);
-	}
-	else if (CurrentNetMode == Player1)
-	{
-		LocalInputs[0] = GetLocalInputs(0);
-	}
-	else
-	{
-		LocalInputs[1] = GetLocalInputs(0);
-	}
+	LocalInputs[0] = GetLocalInputs(0);
+	LocalInputs[1] = GetLocalInputs(1);
 }
 
 void FighterGameState::UpdateRemoteInput(int32_t RemoteInput, int32_t InFrame, int32_t InFrameAdvantage)
@@ -267,7 +261,8 @@ void FighterGameState::Init()
 	dynamic_cast<ControllerInputDevice*>(InputDevices[0])->controller_id = 0;
 	InputDevices[1] = new ControllerInputDevice;
 	dynamic_cast<ControllerInputDevice*>(InputDevices[1])->controller_id = 1;
-	
+	InputDevices[2] = new KeyboardInputDevice;
+
 	CommonScript = (char*)LoadFileData("Scripts/NSS_Common.nss", &CommonScriptLength);
 	for (int i = 0; i < 6; i++)
 	{

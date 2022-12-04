@@ -63,6 +63,7 @@ class KeyboardInputDevice : public InputDevice {
 	KeyboardConfig config = {};
 
 public:
-	int GetInputs() override;
+	KeyboardInputDevice();
 	~KeyboardInputDevice() override = default;
+	int GetInputs() override;
 };

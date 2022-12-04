@@ -16,8 +16,8 @@ int main(int argc, char* argv[])
 	}
     const int screenWidth = 320;
     const int screenHeight  = 240;
-	const int windowWidth = screenWidth * 2;
-    const int windowHeight  = screenHeight * 2;
+	const int windowWidth = screenWidth * 6;
+    const int windowHeight  = screenHeight * 6;
 
     InitWindow(windowWidth, windowHeight, "Night Sky Engine -Lite-");
 
@@ -38,11 +38,13 @@ int main(int argc, char* argv[])
 		{
 			strcpy(MultiplayerRunner->IpAddress, argv[3]);
 			MultiplayerRunner->RemotePort = (unsigned short)atoi(argv[4]);
+			MultiplayerRunner->PlayerIndex = 0;
 		}
 		else
 		{
 			strcpy(MultiplayerRunner->IpAddress, argv[2]);
 			MultiplayerRunner->RemotePort = (unsigned short)atoi(argv[3]);
+			MultiplayerRunner->PlayerIndex = 1;
 		}
 		MultiplayerRunner->Init();
 	}

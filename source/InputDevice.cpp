@@ -73,6 +73,18 @@ ControllerInputDevice::ControllerInputDevice()
 	config.InputS.id = GAMEPAD_BUTTON_RIGHT_FACE_DOWN;
 }
 
+KeyboardInputDevice::KeyboardInputDevice()
+{
+	config.InputUp = KEY_W;
+	config.InputDown = KEY_S;
+	config.InputLeft = KEY_A;
+	config.InputRight = KEY_D;
+	config.InputL = KEY_H;
+	config.InputM = KEY_J;
+	config.InputH = KEY_K;
+	config.InputS = KEY_L;
+}
+
 int KeyboardInputDevice::GetInputs() {
 	int inputFlags = 0;
 
