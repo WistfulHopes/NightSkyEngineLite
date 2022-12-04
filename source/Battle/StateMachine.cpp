@@ -54,7 +54,6 @@ bool StateMachine::SetState(CString<64> Name)
 	CurrentState = States[Index];
 
 	CurrentState->OnEnter();
-	CurrentState->OnUpdate(0);
 
 	return true;
 }
@@ -83,7 +82,6 @@ bool StateMachine::ForceSetState(CString<64> Name)
 	CurrentState = States[Index];
 
 	CurrentState->OnEnter();
-	CurrentState->OnUpdate(0);
 
 	return true;
 }

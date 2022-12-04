@@ -227,6 +227,11 @@ void PlayerCharacter::Update()
 		TotalProration = 10000;
 	}
 
+	if (PosY > 0) //set jumping if above ground
+	{
+		SetActionFlags(ACT_Jumping);
+	}
+	
 	Untech--;
 	if (Untech == 0 && !IsKnockedDown && !IsDead)
 		EnableState(ENB_Tech);
@@ -319,11 +324,6 @@ void PlayerCharacter::Update()
 	if (Hitstop != 0)
 		StateMachine.Tick(0.0166666); //update current state
 
-	if (PosY > 0) //set jumping if above ground
-	{
-		SetActionFlags(ACT_Jumping);
-	}
-	
 	HandleStateMachine(false); //handle state transitions
 }
 
@@ -1376,8 +1376,8 @@ void PlayerCharacter::OnStateChange()
 	FAirDashCancel = false;
 	BAirDashCancel = false;
 	HasHit = false;
-	AnimTime = 0; //reset anim time
-	ActionTime = 0; //reset action time
+	AnimTime = -1; //reset anim time
+	ActionTime = -1; //reset action time
 	DefaultLandingAction = true;
 	DefaultCommonAction = true;
 	FarNormalForceEnable = false;
