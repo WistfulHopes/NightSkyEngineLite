@@ -1,7 +1,7 @@
 #include "../raylib/src/raylib.h"
 #include "Battle/Actors/FighterGameState.h"
 
-int main(void)
+int main(int argc, char* argv[])
 {
     const int screenWidth = 320;
     const int screenHeight  = 240;

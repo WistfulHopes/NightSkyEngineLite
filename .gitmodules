@@ -7,3 +7,6 @@
 [submodule "source/Utilities/raygui"]
 	path = source/Utilities/raygui
 	url = https://github.com/raysan5/raygui.git
+[submodule "ggpo"]
+	path = ggpo
+	url = https://github.com/pond3r/ggpo.git
