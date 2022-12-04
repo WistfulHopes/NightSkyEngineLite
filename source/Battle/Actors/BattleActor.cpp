@@ -244,7 +244,7 @@ void BattleActor::Draw()
 	}
 	else
 	{
-		Origin.x = CurrentSprite.CurrentSprite.sourceWidth - (CurrentSprite.CurrentSprite.sourceWidth - CurrentSprite.CurrentSprite.trimX - CurrentSprite.CurrentSprite.trimWidth) - CurrentSprite.CurrentSprite.trimX - CurrentSprite.CurrentSprite.originX;
+		Origin.x = CurrentSprite.CurrentSprite.trimWidth - CurrentSprite.CurrentSprite.originX;
 	}
 	Origin.y = CurrentSprite.CurrentSprite.originY;
 	
