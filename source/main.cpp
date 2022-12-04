@@ -1,7 +1,8 @@
 #include <iostream>
 
-#include "../raylib/src/raylib.h"
+#include "raylib.h"
 #include "Battle/Actors/FighterGameState.h"
+#include "Render/RenderState.h"
 #include "Battle/Actors/FighterRunners/FighterSynctestRunner.h"
 
 #include "WindowsIncludeFix.h"
@@ -26,6 +27,9 @@ int main(int argc, char* argv[])
 
     FighterGameState* GameState = new FighterGameState();
     GameState->Init();
+    
+    RenderState* CurRenderState = new RenderState(GameState);
+    CurRenderState->Init();
 	
 	FighterMultiplayerRunner* MultiplayerRunner = new FighterMultiplayerRunner(GameState);
 
@@ -95,7 +99,7 @@ int main(int argc, char* argv[])
         BeginDrawing();
 			BeginTextureMode(renderTexture);
             	ClearBackground(RAYWHITE);
-            	GameState->Draw();
+            	CurRenderState->Draw();
 			EndTextureMode();
 
 			// TODO: Keep aspect ratio and draw borders

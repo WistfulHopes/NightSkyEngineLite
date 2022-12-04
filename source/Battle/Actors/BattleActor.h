@@ -2,11 +2,8 @@
 
 #include "../../CString.h"
 #include "../CollisionBox.h"
-#include "../../AtlasSprite.h"
 #include <cstdint>
 #include <vector>
-
-#include "../../../raylib/src/raylib.h"
 
 #pragma pack (push, 1)
 
@@ -175,13 +172,6 @@ struct Vector
 	int32_t Y;
 };
 
-struct Sprite
-{
-	Texture2D Atlas;
-	std::vector<AtlasSprite> Sprites;
-	AtlasSprite CurrentSprite;
-};
-
 class BattleActor
 {
 public:
@@ -277,9 +267,6 @@ public:
 
 	State* ObjectState; 
 
-	std::vector<Sprite> Sprites;
-	Sprite CurrentSprite;
-
 protected:
 	//move object based on speed and inertia
 	void Move();
@@ -287,10 +274,6 @@ protected:
 	void GetBoxes(); 
 
 public:
-	//updates current sprite
-	void SetSprite();
-	void LoadSprites(char* CharaName);
-	
 	void SaveForRollback(unsigned char* Buffer);
 	void LoadForRollback(unsigned char* Buffer);
 
@@ -311,8 +294,6 @@ public:
 	void InitObject();
 	//updates the object. called every frame
 	virtual void Update();
-	//draws the object. called every frame
-	void Draw(); 
 	
 	//script callable functions
 	

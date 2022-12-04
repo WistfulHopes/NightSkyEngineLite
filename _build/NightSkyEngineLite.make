@@ -98,6 +98,8 @@ GENERATED += $(OBJDIR)/FighterSynctestRunner.o
 GENERATED += $(OBJDIR)/InputBuffer.o
 GENERATED += $(OBJDIR)/InputDevice.o
 GENERATED += $(OBJDIR)/PlayerCharacter.o
+GENERATED += $(OBJDIR)/RenderActor.o
+GENERATED += $(OBJDIR)/RenderState.o
 GENERATED += $(OBJDIR)/ScriptAnalyzer.o
 GENERATED += $(OBJDIR)/State.o
 GENERATED += $(OBJDIR)/StateMachine.o
@@ -114,6 +116,8 @@ OBJECTS += $(OBJDIR)/FighterSynctestRunner.o
 OBJECTS += $(OBJDIR)/InputBuffer.o
 OBJECTS += $(OBJDIR)/InputDevice.o
 OBJECTS += $(OBJDIR)/PlayerCharacter.o
+OBJECTS += $(OBJDIR)/RenderActor.o
+OBJECTS += $(OBJDIR)/RenderState.o
 OBJECTS += $(OBJDIR)/ScriptAnalyzer.o
 OBJECTS += $(OBJDIR)/State.o
 OBJECTS += $(OBJDIR)/StateMachine.o
@@ -222,6 +226,12 @@ $(OBJDIR)/CString.o: ../source/CString.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/InputDevice.o: ../source/InputDevice.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/RenderActor.o: ../source/Render/RenderActor.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/RenderState.o: ../source/Render/RenderState.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/CreateSpriteList.o: ../source/Utilities/CreateSpriteList.cpp

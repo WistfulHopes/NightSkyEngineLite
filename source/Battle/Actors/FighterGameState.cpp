@@ -1,7 +1,5 @@
 #include "FighterGameState.h"
-
 #include "InputDevice.h"
-#include "../../../raylib/src/raymath.h"
 
 void FighterGameState::TickGameState()
 {
@@ -14,9 +12,11 @@ void FighterGameState::TickGameState()
 int FighterGameState::GetLocalInputs(int Index)
 {
 	if (Index > 2) return 0;
+#ifdef RAYLIB_H
 	if (Index < 2)
 		if (IsGamepadAvailable(dynamic_cast<ControllerInputDevice*>(InputDevices[Index])->controller_id))
 			return InputDevices[Index]->GetInputs();
+#endif
 	if (Index == 0)
 		return InputDevices[2]->GetInputs();
 	return 0;
@@ -257,13 +257,6 @@ void FighterGameState::SortObjects()
 
 void FighterGameState::Init()
 {
-	InputDevices[0] = new ControllerInputDevice;
-	dynamic_cast<ControllerInputDevice*>(InputDevices[0])->controller_id = 0;
-	InputDevices[1] = new ControllerInputDevice;
-	dynamic_cast<ControllerInputDevice*>(InputDevices[1])->controller_id = 1;
-	InputDevices[2] = new KeyboardInputDevice;
-
-	CommonScript = (char*)LoadFileData("Scripts/NSS_Common.nss", &CommonScriptLength);
 	for (int i = 0; i < 6; i++)
 	{
 		Players[i] = new PlayerCharacter();
@@ -274,15 +267,7 @@ void FighterGameState::Init()
 		Players[i]->ObjNumber = i + 400;
 		if (i % 3 == 0)
 		{
-			unsigned int CharaScriptBytes = 0;
-			Players[i]->CharaScript = (char*)LoadFileData("Scripts/NSS_Esther.nss", &CharaScriptBytes);
-			Players[i]->CharaScriptLength = CharaScriptBytes;
-			unsigned int ObjScriptBytes = 0;
-			Players[i]->ObjectScript = (char*)LoadFileData("Scripts/NSS_EstherObj.nss", &ObjScriptBytes);
-			Players[i]->ObjectScriptLength = ObjScriptBytes;
 			Players[i]->IsOnScreen = true;
-			Players[i]->InitStates();
-			Players[i]->LoadSprites("Esther");
 		}
 	}
 	for (int i = 0; i < 400; i++)
@@ -356,58 +341,6 @@ void FighterGameState::Update(int Input1, int Input2)
 	SetScreenBounds();
 	HandleRoundWin();
 	ManageAudio();
-}
-
-void FighterGameState::Draw()
-{
-	UpdateCamera();
-	for (int i = 0; i < 406; i++)
-	{
-		if (i == ActiveObjectCount)
-			break;
-		if (!SortedObjects[i]->IsPlayer || SortedObjects[i]->Player->IsOnScreen)
-		{
-			SortedObjects[i]->SetSprite();
-			SortedObjects[i]->Draw();
-		}
-	}
-	EndMode2D();
-}
-
-void FighterGameState::UpdateCamera()
-{
-    Vector2 Offset;
-    Offset.x = 160;
-    Offset.y = 200;
-    Cam.offset = Offset;
-
-    double TargetX = static_cast<double>(StoredBattleState.CurrentScreenPos) / COORD_SCALE;
-    double TargetY = -static_cast<double>(Players[0]->GetInternalValue(VAL_PosY) + Players[3]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
-    TargetX = Clamp(TargetX, -270, 270);
-    Vector2 Target;
-    Target.x = Lerp(Cam.target.x, TargetX, 0.5);
-    Target.y = Lerp(Cam.target.y, TargetY, 0.5);
-    Cam.target = Target;
-
-    Cam.rotation = 0;
-
-	float Distance;
-	if (Players[0]->GetInternalValue(VAL_PosX) > Players[3]->GetInternalValue(VAL_PosX))
-	{
-		Distance = Players[0]->GetInternalValue(VAL_PosX) - Players[3]->GetInternalValue(VAL_PosX);
-	}
-	else
-	{
-		Distance = Players[3]->GetInternalValue(VAL_PosX) - Players[0]->GetInternalValue(VAL_PosX);
-	}
-	Distance = (2160000 - Distance) / COORD_SCALE + 900;
-	Distance = Clamp(Distance, 1280, 1440);
-	Distance = Remap(Distance, 1280, 1440, 0.7f, 1);
-	if (Cam.zoom == 0)
-	    Cam.zoom = 1.5;
-    Cam.zoom = Lerp(Cam.zoom, Distance, 0.5);
-
-	BeginMode2D(Cam);
 }
 
 void FighterGameState::SaveGameState()

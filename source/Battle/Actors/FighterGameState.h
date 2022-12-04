@@ -101,20 +101,18 @@ public:
 
 	void Init(); //initializes game state
 	void Update(int32_t Input1, int32_t Input2); //updates game state
-	void Draw();
-	void UpdateCamera();
 	void SaveGameState(); //saves game state
 	void LoadGameState(); //loads game state
 	
 	int32_t LocalFrame;
 	int32_t RemoteFrame;
 	int32_t ActiveObjectCount;
+	
+	InputDevice* InputDevices[3] = {};
 
 private:
 	int32_t LocalInputs[2] = {0, 0};
 	int32_t RemoteInputs[2] = {0, 0};
-    Camera2D Cam = {};
-	InputDevice* InputDevices[3] = {};
 	
 	void UpdateLocalInput(); //updates local input
 	void HandleRoundWin();
