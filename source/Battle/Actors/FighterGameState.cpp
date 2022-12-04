@@ -406,7 +406,7 @@ void FighterGameState::UpdateCamera()
 	}
 	Distance = (2160000 - Distance) / COORD_SCALE + 900;
 	Distance = Clamp(Distance, 1280, 1440);
-	Distance = Remap(Distance, 1280, 1440, 0.7, 1);
+	Distance = Remap(Distance, 1280, 1440, 0.7f, 1);
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
     Cam.zoom = Lerp(Cam.zoom, Distance, 0.5);

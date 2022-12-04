@@ -29,7 +29,7 @@ struct ControllerConfig {
 	ButtonConfig InputA1;
 	ButtonConfig InputA2;
 
-	float deadzone = 0.2;
+	float deadzone = 0.2f;
 };
 
 class ControllerInputDevice : public InputDevice {
