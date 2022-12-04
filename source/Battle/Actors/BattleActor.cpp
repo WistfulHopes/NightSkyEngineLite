@@ -166,6 +166,7 @@ void BattleActor::LoadSprites(char* CharaName)
 	strcat(SpriteListName, ".spls");
 	int SpriteListID = rresGetResourceId(CentralDir, SpriteListName);
 	rresResourceChunk SpriteListChunk = rresLoadResourceChunk(SpriteListPath, SpriteListID);
+	UnpackResourceChunk(&SpriteListChunk);
 	unsigned char* SpriteListData = (unsigned char*)LoadDataFromResource(SpriteListChunk, &SpriteListLength);
 	SpriteList List;
 	List.SpriteCount = *reinterpret_cast<uint32_t*>(SpriteListData + 4);
@@ -185,6 +186,7 @@ void BattleActor::LoadSprites(char* CharaName)
 		strcat(PngName, ".png");
 		int PngID = rresGetResourceId(CentralDir, PngName);
 		rresResourceChunk PngChunk = rresLoadResourceChunk(SpriteListPath, PngID);
+		UnpackResourceChunk(&PngChunk);
 		Image Png = LoadImageFromResource(PngChunk);
 		Texture2D Tex = LoadTextureFromImage(Png);
 		
@@ -193,6 +195,7 @@ void BattleActor::LoadSprites(char* CharaName)
 		strcat(AtlasName, ".rtpb");
 		int AtlasID = rresGetResourceId(CentralDir, AtlasName);
 		rresResourceChunk AtlasChunk = rresLoadResourceChunk(SpriteListPath, AtlasID);
+		UnpackResourceChunk(&AtlasChunk);
 		int AtlasSize = 0;
 		unsigned char* Atlas = (unsigned char*)LoadDataFromResource(AtlasChunk, &AtlasSize);
 		int SpriteCount = 0;
