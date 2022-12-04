@@ -56,7 +56,7 @@ function check_rres()
     if(os.isdir("rres") == false and os.isdir("rres") == false) then
         if(not os.isfile("rres.zip")) then
             print("rres not found, downloading from github")
-            local result_str, response_code = http.download("https://github.com/raysan5/rres/archive/refs/heads/master.zip", "rres.zip", {
+            local result_str, response_code = http.download("https://github.com/WistfulHopes/rres/archive/refs/heads/master.zip", "rres.zip", {
                 progress = download_progress,
                 headers = { "From: Premake", "Referer: Premake" }
             })
@@ -71,7 +71,7 @@ function check_ggpo()
     if(os.isdir("ggpo") == false and os.isdir("ggpo") == false) then
         if(not os.isfile("ggpo.zip")) then
             print("ggpo not found, downloading from github")
-            local result_str, response_code = http.download("https://github.com/pond3r/ggpo/archive/refs/heads/master.zip", "ggpo.zip", {
+            local result_str, response_code = http.download("https://github.com/WistfulHopes/ggpo/archive/refs/heads/master.zip", "ggpo.zip", {
                 progress = download_progress,
                 headers = { "From: Premake", "Referer: Premake" }
             })
@@ -79,6 +79,21 @@ function check_ggpo()
         print("Unzipping to " ..  os.getcwd())
         zip.extract("ggpo.zip", os.getcwd())
         os.remove("ggpo.zip")
+    end
+end
+
+function check_NightSkyEngineCore()
+    if(os.isdir("NightSkyEngineCore") == false and os.isdir("NightSkyEngineCore") == false) then
+        if(not os.isfile("NightSkyEngineCore.zip")) then
+            print("NightSkyEngineCore not found, downloading from github")
+            local result_str, response_code = http.download("https://github.com/WistfulHopes/NightSkyEngineCore/archive/refs/heads/master.zip", "NightSkyEngineCore.zip", {
+                progress = download_progress,
+                headers = { "From: Premake", "Referer: Premake" }
+            })
+        end
+        print("Unzipping to " ..  os.getcwd())
+        zip.extract("NightSkyEngineCore.zip", os.getcwd())
+        os.remove("NightSkyEngineCore.zip")
     end
 end
 
@@ -98,6 +113,12 @@ end
 
 if (string.lower(workspaceName) == "ggpo") then
     print("ggpo is a reserved name. Name your project directory something else.")
+    -- Project generation will succeed, but compilation will definitely fail, so just abort here.
+    os.exit()
+end
+
+if (string.lower(workspaceName) == "NightSkyEngineCore") then
+    print("NightSkyEngineCore is a reserved name. Name your project directory something else.")
     -- Project generation will succeed, but compilation will definitely fail, so just abort here.
     os.exit()
 end
@@ -131,10 +152,12 @@ workspace (workspaceName)
 check_raylib();
 check_rres();
 check_ggpo();
+check_NightSkyEngineCore();
 
 include ("raylib_premake5.lua")
 include ("rres_premake5.lua")
 include ("ggpo_premake5.lua")
+include ("NightSkyEngineCore_premake5.lua")
 
 if(os.isdir("source")) then
     include ("source")
@@ -155,6 +178,12 @@ for _, folderName in ipairs(folders) do
         end
     end
     if (string.starts(folderName, "ggpo") == false and string.starts(folderName, "_") == false and string.starts(folderName, ".") == false) then
+        if (os.isfile(folderName .. "/premake5.lua")) then
+            print(folderName)
+            include (folderName)
+        end
+    end
+    if (string.starts(folderName, "NightSkyEngineCore") == false and string.starts(folderName, "_") == false and string.starts(folderName, ".") == false) then
         if (os.isfile(folderName .. "/premake5.lua")) then
             print(folderName)
             include (folderName)

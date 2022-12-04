@@ -1,6 +1,7 @@
 #include "RenderState.h"
 
 #include "InputDevice.h"
+#include "InputDeviceRaylib.h"
 #include "raymath.h"
 #include "Battle/Actors/FighterGameState.h"
 

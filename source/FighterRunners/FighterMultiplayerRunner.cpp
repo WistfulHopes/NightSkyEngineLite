@@ -1,11 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FighterMultiplayerRunner.h"
-
+#include "Battle/Actors/FighterGameState.h"
 #include <iostream>
 #include <string>
-
-#include "../FighterGameState.h"
 
 constexpr int MaxRollbackFrames = 10;
 

@@ -3,7 +3,7 @@
 #include "raylib.h"
 #include "Battle/Actors/FighterGameState.h"
 #include "Render/RenderState.h"
-#include "Battle/Actors/FighterRunners/FighterSynctestRunner.h"
+#include "FighterRunners/FighterSynctestRunner.h"
 
 #include "WindowsIncludeFix.h"
 

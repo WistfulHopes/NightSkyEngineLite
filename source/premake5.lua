@@ -27,7 +27,9 @@ project (workspaceName)
 
 	includedirs { "./", "src", "include"}
 	link_raylib();
+	include_rres();
 	link_ggpo();
+	link_NightSkyEngineCore();
 	
 	-- To link to a lib use link_to("LIB_FOLDER_NAME")
     

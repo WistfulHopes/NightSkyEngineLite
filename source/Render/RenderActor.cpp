@@ -1,7 +1,7 @@
 #include "RenderActor.h"
 
 #include "Battle/Actors/BattleActor.h"
-#include "Utilities/CreateSpriteList.h"
+#include "SpriteList.h"
 
 #define RRES_IMPLEMENTATION
 #include "../../rres/src/rres.h"

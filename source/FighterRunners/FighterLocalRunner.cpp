@@ -2,7 +2,7 @@
 
 
 #include "FighterLocalRunner.h"
-#include "../FighterGameState.h"
+#include "Battle/Actors/FighterGameState.h"
 
 void FighterLocalRunner::Update(float DeltaTime)
 {

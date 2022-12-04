@@ -10,3 +10,6 @@
 [submodule "ggpo"]
 	path = ggpo
 	url = https://github.com/pond3r/ggpo.git
+[submodule "NightSkyEngineCore"]
+	path = NightSkyEngineCore
+	url = https://github.com/WistfulHopes/NightSkyEngineCore.git

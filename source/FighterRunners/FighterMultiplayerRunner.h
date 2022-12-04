@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "FighterLocalRunner.h"
-#include "../../../../ggpo/src/include/ggponet.h"
+#include "include/ggponet.h"
 
 constexpr int TimesyncMultiplier =4;
 

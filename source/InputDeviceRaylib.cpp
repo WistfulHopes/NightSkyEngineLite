@@ -1,8 +1,7 @@
-#include "InputDevice.h"
-
+#include "InputDeviceRaylib.h"
 #include <iostream>
 
-#include "../raylib/src/raylib.h"
+#include "raylib.h"
 #include "Battle/Bitflags.h"
 int ControllerInputDevice::GetInputs() {
 	int inputFlags = 0;

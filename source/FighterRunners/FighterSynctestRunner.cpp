@@ -2,8 +2,7 @@
 
 
 #include "FighterSynctestRunner.h"
-
-#include "../FighterGameState.h"
+#include "Battle/Actors/FighterGameState.h"
 
 FighterSynctestRunner::FighterSynctestRunner(FighterGameState* InGameState): FighterMultiplayerRunner(InGameState)
 {

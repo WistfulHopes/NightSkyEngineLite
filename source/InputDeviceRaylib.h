@@ -1,10 +1,5 @@
 #pragma once
-
-class InputDevice {
-public:
-	virtual int GetInputs() = 0;
-	virtual ~InputDevice() = default;
-};
+#include "InputDevice.h"
 
 struct ButtonConfig {
 	int id = 0;

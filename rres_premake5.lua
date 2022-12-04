@@ -26,31 +26,6 @@ function get_rres_dir()
     return "rres"
 end
 
-function link_rres()
-    links {"rres"}
-
-    rres_dir = get_rres_dir();
-    includedirs {"../" .. rres_dir .. "/src" }
-    includedirs {"../" .. rres_dir .."/src/external" }
-    platform_defines()
-
-    filter "action:vs*"
-        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
-        dependson {"rres"}
-        links {"rres.lib"}
-        characterset ("MBCS")
-
-    filter "system:windows"
-        defines{"_WIN32"}
-        links {"winmm", "kernel32"}
-        libdirs {"../_bin/%{cfg.buildcfg}"}
-
-    filter "system:linux"
-        links {"pthread", "m", "dl", "rt", "X11"}
-        
-    filter{}
-end
-
 function include_rres()
     rres_dir = get_rres_dir();
     includedirs {"../" .. rres_dir .."/src" }
