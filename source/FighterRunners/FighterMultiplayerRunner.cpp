@@ -96,7 +96,6 @@ bool FighterMultiplayerRunner::LogGameState(const char* filename, unsigned char*
 	fopen_s(&fp, filename, "w");
 	if (fp)
 	{
-		int BackupFrame = GameState->LocalFrame % MaxRollbackFrames;
 		RollbackData* rollbackdata = (RollbackData*)malloc(sizeof(RollbackData));
 		memcpy(rollbackdata, buffer, sizeof(RollbackData));
 		fprintf(fp, "GameState:\n");
