@@ -66,9 +66,9 @@ void RenderState::UpdateCamera()
     Offset.y = 200;
     Cam.offset = Offset;
 
-    double TargetX = static_cast<double>(GameState->StoredBattleState.CurrentScreenPos) / COORD_SCALE;
+    double TargetX = static_cast<double>(GameState->Players[0]->GetInternalValue(VAL_PosX) + GameState->Players[3]->GetInternalValue(VAL_PosX)) / 2 / COORD_SCALE;
     double TargetY = -static_cast<double>(GameState->Players[0]->GetInternalValue(VAL_PosY) + GameState->Players[3]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
-    TargetX = Clamp(TargetX, -270, 270);
+    TargetX = Clamp(TargetX, -480, 480);
     Vector2 Target;
     Target.x = Lerp(Cam.target.x, TargetX, 0.5);
     Target.y = Lerp(Cam.target.y, TargetY, 0.5);
@@ -86,8 +86,8 @@ void RenderState::UpdateCamera()
 		Distance = GameState->Players[3]->GetInternalValue(VAL_PosX) - GameState->Players[0]->GetInternalValue(VAL_PosX);
 	}
 	Distance = (2160000 - Distance) / COORD_SCALE + 900;
-	Distance = Clamp(Distance, 1280, 1440);
-	Distance = Remap(Distance, 1280, 1440, 0.7f, 1);
+	Distance = Clamp(Distance, 1080, 1440);
+	Distance = Remap(Distance, 1080, 1440, 0.48f, 1);
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
     Cam.zoom = Lerp(Cam.zoom, Distance, 0.5);
