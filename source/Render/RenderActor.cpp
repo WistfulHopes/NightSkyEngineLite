@@ -11,10 +11,66 @@
 #define RRES_SUPPORT_ENCRYPTION_AES
 #define RRES_SUPPORT_ENCRYPTION_XCHACHA20
 #include "../../rres/src/rres-raylib.h"
+#include "Battle/Actors/PlayerCharacter.h"
 
 RenderActor::RenderActor(BattleActor* InActor)
 {
     Actor = InActor;
+	CreateCallbacks();
+}
+
+void RenderActor::CreateCommonParticleCallback(char* Name, PosType PosType, Vector Offset, int32_t Angle)
+{
+	
+}
+
+void RenderActor::CreateCharaParticleCallback(char* Name, PosType PosType, Vector Offset, int32_t Angle)
+{
+}
+
+void RenderActor::LinkCharaParticleCallback(char* Name)
+{
+}
+
+void RenderActor::PlayCommonSoundCallback(char* Name)
+{
+}
+
+void RenderActor::PlayCharaSoundCallback(char* Name)
+{
+}
+
+void RenderActor::PlayVoiceCallback(char* Name)
+{
+}
+
+void RenderActor::PlayCommonCameraAnimCallback(char* Name)
+{
+}
+
+void RenderActor::PlayCharaCameraAnimCallback(char* Name)
+{
+}
+
+void RenderActor::BattleHudVisibilityCallback(bool Visible)
+{
+}
+
+void RenderActor::CreateCallbacks()
+{
+	Actor->CreateCommonParticle = std::bind(&RenderActor::CreateCommonParticleCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+	Actor->CreateCharaParticle = std::bind(&RenderActor::CreateCharaParticleCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+	Actor->LinkCharaParticle = std::bind(&RenderActor::LinkCharaParticleCallback, this, std::placeholders::_1);
+	Actor->PlayCommonSound = std::bind(&RenderActor::PlayCommonSoundCallback, this, std::placeholders::_1);
+	Actor->PlayCharaSound = std::bind(&RenderActor::PlayCharaSoundCallback, this, std::placeholders::_1);
+
+	if (Actor->IsPlayer)
+	{
+		Actor->Player->PlayVoice = std::bind(&RenderActor::PlayVoiceCallback, this, std::placeholders::_1);
+		Actor->Player->PlayCommonCameraAnim = std::bind(&RenderActor::PlayCommonCameraAnimCallback, this, std::placeholders::_1);
+		Actor->Player->PlayCharaCameraAnim = std::bind(&RenderActor::PlayCharaCameraAnimCallback, this, std::placeholders::_1);
+		Actor->Player->BattleHudVisibility = std::bind(&RenderActor::BattleHudVisibilityCallback, this, std::placeholders::_1);
+	}
 }
 
 void RenderActor::SetSprite()

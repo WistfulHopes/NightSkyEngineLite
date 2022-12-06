@@ -7,10 +7,7 @@
 
 constexpr int MaxRollbackFrames = 10;
 
-FighterMultiplayerRunner::FighterMultiplayerRunner(FighterGameState* InGameState): FighterLocalRunner(InGameState)
-{
-	
-}
+FighterMultiplayerRunner::FighterMultiplayerRunner(FighterGameState* InGameState): FighterLocalRunner(InGameState) {}
 
 // Called when the game starts or when spawned
 void FighterMultiplayerRunner::Init()
