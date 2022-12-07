@@ -90,7 +90,7 @@ void RenderState::UpdateCamera()
 	Distance = Remap(Distance, 1080, 1440, 0.48f, 1);
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
-    Cam.zoom = Lerp(Cam.zoom, Distance, 0.25f);
+    Cam.zoom = Lerp(Cam.zoom, Distance, 0.5f);
 
 	BeginMode2D(Cam);
 }
