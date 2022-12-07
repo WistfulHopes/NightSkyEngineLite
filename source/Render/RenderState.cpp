@@ -46,16 +46,18 @@ void RenderState::Init()
 void RenderState::Draw()
 {
 	UpdateCamera();
-	for (int i = 0; i < 406; i++)
-	{
-		if (!RenderActors[i]->Actor->IsPlayer && !RenderActors[i]->Actor->IsActive || !RenderActors[i]->Actor->Player->IsOnScreen)
-			continue;
-		if (!GameState->SortedObjects[i]->IsPlayer || GameState->SortedObjects[i]->Player->IsOnScreen)
+
+	BeginMode2D(Cam);
+		for (int i = 0; i < 406; i++)
 		{
-			RenderActors[i]->SetSprite();
-			RenderActors[i]->Draw();
+			if (!RenderActors[i]->Actor->IsPlayer && !RenderActors[i]->Actor->IsActive || !RenderActors[i]->Actor->Player->IsOnScreen)
+				continue;
+			if (!GameState->SortedObjects[i]->IsPlayer || GameState->SortedObjects[i]->Player->IsOnScreen)
+			{
+				RenderActors[i]->SetSprite();
+				RenderActors[i]->Draw();
+			}
 		}
-	}
 	EndMode2D();
 }
 
@@ -91,6 +93,4 @@ void RenderState::UpdateCamera()
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
     Cam.zoom = Lerp(Cam.zoom, Distance, 0.5f);
-
-	BeginMode2D(Cam);
 }
