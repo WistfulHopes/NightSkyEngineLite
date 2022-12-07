@@ -70,8 +70,8 @@ void RenderState::UpdateCamera()
     double TargetY = -static_cast<double>(GameState->Players[0]->GetInternalValue(VAL_PosY) + GameState->Players[3]->GetInternalValue(VAL_PosY)) / 2 / COORD_SCALE;
     TargetX = Clamp(TargetX, -480, 480);
     Vector2 Target;
-    Target.x = Lerp(Cam.target.x, TargetX, 0.5);
-    Target.y = Lerp(Cam.target.y, TargetY, 0.5);
+    Target.x = Lerp(Cam.target.x, TargetX, 0.1);
+    Target.y = Lerp(Cam.target.y, TargetY, 0.1);
     Cam.target = Target;
 
     Cam.rotation = 0;
@@ -90,7 +90,7 @@ void RenderState::UpdateCamera()
 	Distance = Remap(Distance, 1080, 1440, 0.48f, 1);
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
-    Cam.zoom = Lerp(Cam.zoom, Distance, 0.5);
+    Cam.zoom = Lerp(Cam.zoom, Distance, 0.25f);
 
 	BeginMode2D(Cam);
 }
