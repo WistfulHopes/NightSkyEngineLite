@@ -41,11 +41,19 @@ void RenderState::Init()
 			GameState->Players[CurIndex]->InitStates();
 		}
 	}
+
+	Cam3D.up = {0, 1, 0};
+	Cam3D.fovy = 45;
+	Cam3D.projection = CAMERA_PERSPECTIVE;
 }
 
 void RenderState::Draw()
 {
 	UpdateCamera();
+
+	BeginMode3D(Cam3D);
+		DrawGrid(20, 50.0f);
+	EndMode3D();
 
 	BeginMode2D(Cam);
 		for (int i = 0; i < 406; i++)
@@ -59,6 +67,9 @@ void RenderState::Draw()
 			}
 		}
 	EndMode2D();
+
+	DrawText(TextFormat("Zoom: %F", Cam.zoom), 0, 0, 10, MAROON);
+	DrawText(TextFormat("CamZ: %F", Cam3D.position.z), 0, 10, 10, MAROON);
 }
 
 void RenderState::UpdateCamera()
@@ -93,4 +104,17 @@ void RenderState::UpdateCamera()
 	if (Cam.zoom == 0)
 	    Cam.zoom = 1.5;
     Cam.zoom = Lerp(Cam.zoom, Distance, 0.5f);
+
+	Vector3 Pos;
+	Pos.x = -Cam.target.x;
+	Pos.y = -Cam.target.y + YOFFSET;
+	Pos.z = -(1 - Cam.zoom) * 22.5f; // TODO: Fix Zoom
+
+	Vector3 Target3D;
+	Target3D.x = Pos.x;
+	Target3D.y = Pos.y;
+	Target3D.z = 100.0f; // TODO: Fix Zoom
+	
+	Cam3D.position = Pos;
+	Cam3D.target = Target3D;
 }
