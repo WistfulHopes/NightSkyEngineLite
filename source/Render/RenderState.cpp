@@ -53,6 +53,12 @@ void RenderState::Draw()
 
 	BeginMode3D(Cam3D);
 		DrawGrid(20, 50.0f);
+
+		DrawCubeV({0, 0, 0}, {10, 10, 10}, RED);
+		DrawCubeWiresV({0, 0, 0}, {10, 10, 10}, MAROON);
+
+		DrawCubeV({0, 50, 0}, {10, 10, 10}, RED);
+		DrawCubeWiresV({0, 50, 0}, {10, 10, 10}, MAROON);
 	EndMode3D();
 
 	BeginMode2D(Cam);
@@ -108,7 +114,7 @@ void RenderState::UpdateCamera()
 	Vector3 Pos;
 	Pos.x = -Cam.target.x;
 	Pos.y = -Cam.target.y + YOFFSET;
-	Pos.z = -(1 - Cam.zoom) * 22.5f; // TODO: Fix Zoom
+	Pos.z = -300.0f; // TODO: Fix Zoom
 
 	Vector3 Target3D;
 	Target3D.x = Pos.x;
