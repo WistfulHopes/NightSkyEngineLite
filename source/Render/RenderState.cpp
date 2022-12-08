@@ -52,7 +52,7 @@ void RenderState::Draw()
 	UpdateCamera();
 
 	BeginMode3D(Cam3D);
-		DrawGrid(20, 50.0f);
+		DrawGrid(20, 62.5f);
 
 		DrawCubeV({0, 0, 0}, {10, 10, 10}, RED);
 		DrawCubeWiresV({0, 0, 0}, {10, 10, 10}, MAROON);
@@ -111,15 +111,28 @@ void RenderState::UpdateCamera()
 	    Cam.zoom = 1.5;
     Cam.zoom = Lerp(Cam.zoom, Distance, 0.5f);
 
+	float Distance3D;
+	if (GameState->Players[0]->GetInternalValue(VAL_PosX) > GameState->Players[3]->GetInternalValue(VAL_PosX))
+	{
+		Distance3D = GameState->Players[0]->GetInternalValue(VAL_PosX) - GameState->Players[3]->GetInternalValue(VAL_PosX);
+	}
+	else
+	{
+		Distance3D = GameState->Players[3]->GetInternalValue(VAL_PosX) - GameState->Players[0]->GetInternalValue(VAL_PosX);
+	}
+	Distance3D = Distance3D / COORD_SCALE;
+	Distance3D = Clamp(Distance3D, 180, 540);
+	Distance3D = Remap(Distance3D, 180, 540, 1, 2.083333333333333f);
+	
 	Vector3 Pos;
 	Pos.x = -Cam.target.x;
-	Pos.y = -Cam.target.y + YOFFSET;
-	Pos.z = -300.0f; // TODO: Fix Zoom
+	Pos.y = -Cam.target.y + YOFFSET * Distance3D;
+	Pos.z = Lerp(Cam3D.position.z, Distance3D * -300, 0.5f);
 
 	Vector3 Target3D;
 	Target3D.x = Pos.x;
 	Target3D.y = Pos.y;
-	Target3D.z = 100.0f; // TODO: Fix Zoom
+	Target3D.z = Lerp(Cam3D.target.z, Distance3D * 100, 0.5f);
 	
 	Cam3D.position = Pos;
 	Cam3D.target = Target3D;
