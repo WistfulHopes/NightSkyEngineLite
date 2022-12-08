@@ -1,7 +1,7 @@
-//uncomment the following code to compile CreateSpriteList.
+#if __cplusplus >= 201703L
 
-/*
 #include "CreateSpriteList.h"
+#include "SpriteList.h"
 #include <filesystem>
 #include <vector>
 #include <fstream>
@@ -9,12 +9,11 @@
 #include <ostream>
 namespace fs = std::filesystem;
 
-int main(int argc, char* argv[])
+bool CreateSpriteList(std::string out_name, std::string path)
 {
     if (argc == 3)
     {
         SpriteList List;
-        std::string path = argv[2];
         for (const auto& entry : fs::directory_iterator(path))
         {
             std::string base_filename = entry.path().string().substr(entry.path().string().find_last_of("/\\") + 1);
@@ -30,10 +29,10 @@ int main(int argc, char* argv[])
 
         std::cout << "Total sprite count: " << List.SpriteCount << std::endl;
 
-        std::ofstream OutFile(argv[1], std::ios::out | std::ios::binary);
+        std::ofstream OutFile(out_name, std::ios::out | std::ios::binary);
         if (!OutFile)
         {
-            std::cout << "Cannot write to file " << argv[1] << std::endl;
+            std::cout << "Cannot write to file " << out_name << std::endl;
         }
         OutFile.write(List.Magic, 4);
         OutFile.write((char*)&List.SpriteCount, 4);
@@ -43,11 +42,11 @@ int main(int argc, char* argv[])
         }
         OutFile.close();
 
-        std::cout << "Wrote sprite list to file " << argv[1] << std::endl;
+        std::cout << "Wrote sprite list to file " << out_name << std::endl;
 
-        return 0;
+        return true;
     }
 
-    return 1;
+    return false;
 }
-*/
+#endif
