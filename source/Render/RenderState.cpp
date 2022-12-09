@@ -123,16 +123,18 @@ void RenderState::UpdateCamera()
 	Distance3D = Distance3D / COORD_SCALE;
 	Distance3D = Clamp(Distance3D, 180, 540);
 	Distance3D = Remap(Distance3D, 180, 540, 1, 2.083333333333333f);
-	
+	if (Cam3D.target.z == 0.f)
+		Cam3D.target.z = 66.666666666f;
+
 	Vector3 Pos;
 	Pos.x = -Cam.target.x;
-	Pos.y = -Cam.target.y + YOFFSET * Distance3D;
+	Pos.y = -Cam.target.y + YOFFSET * Lerp(Cam3D.position.z / -300, Distance3D, 0.1f);
 	Pos.z = Lerp(Cam3D.position.z, Distance3D * -300, 0.5f);
 
 	Vector3 Target3D;
 	Target3D.x = Pos.x;
 	Target3D.y = Pos.y;
-	Target3D.z = Lerp(Cam3D.target.z, Distance3D * 100, 0.5f);
+	Target3D.z = 100;
 	
 	Cam3D.position = Pos;
 	Cam3D.target = Target3D;
