@@ -33,47 +33,47 @@ endef
 
 ifeq ($(config),debug_x64)
 TARGETDIR = ../_bin/Debug
-TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
+TARGET = $(TARGETDIR)/NightSkyEngineLite
 OBJDIR = obj/x64/Debug/NightSkyEngineLite
-DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
+DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D__GNUC__
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++11
-LIBS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib ../_bin/Debug/NightSkyEngineCore.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
-LDDEPS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib ../_bin/Debug/NightSkyEngineCore.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Debug -L/usr/lib64 -m64
+LIBS += ../_bin/Debug/libraylib.a ../_bin/Debug/libggpo.a ../_bin/Debug/libNightSkyEngineCore.a -lGL -lpthread -lm -ldl -lrt -lX11 -lWs2_32
+LDDEPS += ../_bin/Debug/libraylib.a ../_bin/Debug/libggpo.a ../_bin/Debug/libNightSkyEngineCore.a
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),debug_x86)
 TARGETDIR = ../_bin/Debug
-TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
+TARGET = $(TARGETDIR)/NightSkyEngineLite
 OBJDIR = obj/x86/Debug/NightSkyEngineLite
-DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
+DEFINES += -DDEBUG -DPLATFORM_DESKTOP -D__GNUC__
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g -std=c++11
-LIBS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib ../_bin/Debug/NightSkyEngineCore.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
-LDDEPS += ../_bin/Debug/raylib.lib ../_bin/Debug/ggpo.lib ../_bin/Debug/NightSkyEngineCore.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Debug -L/usr/lib32 -m32
+LIBS += ../_bin/Debug/libraylib.a ../_bin/Debug/libggpo.a ../_bin/Debug/libNightSkyEngineCore.a -lGL -lpthread -lm -ldl -lrt -lX11 -lWs2_32
+LDDEPS += ../_bin/Debug/libraylib.a ../_bin/Debug/libggpo.a ../_bin/Debug/libNightSkyEngineCore.a
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32
 
 else ifeq ($(config),release_x64)
 TARGETDIR = ../_bin/Release
-TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
+TARGET = $(TARGETDIR)/NightSkyEngineLite
 OBJDIR = obj/x64/Release/NightSkyEngineLite
-DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
+DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D__GNUC__
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++11
-LIBS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib ../_bin/Release/NightSkyEngineCore.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
-LDDEPS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib ../_bin/Release/NightSkyEngineCore.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Release -L/usr/lib64 -m64 -mwindows -s
+LIBS += ../_bin/Release/libraylib.a ../_bin/Release/libggpo.a ../_bin/Release/libNightSkyEngineCore.a -lGL -lpthread -lm -ldl -lrt -lX11 -lWs2_32
+LDDEPS += ../_bin/Release/libraylib.a ../_bin/Release/libggpo.a ../_bin/Release/libNightSkyEngineCore.a
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 else ifeq ($(config),release_x86)
 TARGETDIR = ../_bin/Release
-TARGET = $(TARGETDIR)/NightSkyEngineLite.exe
+TARGET = $(TARGETDIR)/NightSkyEngineLite
 OBJDIR = obj/x86/Release/NightSkyEngineLite
-DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D_WINDOWS -D_WIN32
+DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -D__GNUC__
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -std=c99
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -std=c++11
-LIBS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib ../_bin/Release/NightSkyEngineCore.lib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lWs2_32
-LDDEPS += ../_bin/Release/raylib.lib ../_bin/Release/ggpo.lib ../_bin/Release/NightSkyEngineCore.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../_bin/Release -L/usr/lib32 -m32 -mwindows -s
+LIBS += ../_bin/Release/libraylib.a ../_bin/Release/libggpo.a ../_bin/Release/libNightSkyEngineCore.a -lGL -lpthread -lm -ldl -lrt -lX11 -lWs2_32
+LDDEPS += ../_bin/Release/libraylib.a ../_bin/Release/libggpo.a ../_bin/Release/libNightSkyEngineCore.a
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32 -s
 
 endif
 
