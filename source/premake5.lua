@@ -32,5 +32,6 @@ project (workspaceName)
 	link_NightSkyEngineCore();
 	
 	-- To link to a lib use link_to("LIB_FOLDER_NAME")
-    
-    link_to("Ws2_32")
+	filter "system:Windows"
+        link_to("Ws2_32")
+    filter {}
