@@ -95,16 +95,7 @@ GENERATED += $(OBJDIR)/FighterSynctestRunner.o
 GENERATED += $(OBJDIR)/InputDeviceRaylib.o
 GENERATED += $(OBJDIR)/RenderActor.o
 GENERATED += $(OBJDIR)/RenderState.o
-GENERATED += $(OBJDIR)/controls_test_suite.o
-GENERATED += $(OBJDIR)/custom_file_dialog.o
-GENERATED += $(OBJDIR)/image_exporter.o
-GENERATED += $(OBJDIR)/image_importer_raw.o
 GENERATED += $(OBJDIR)/main.o
-GENERATED += $(OBJDIR)/portable_window.o
-GENERATED += $(OBJDIR)/property_list.o
-GENERATED += $(OBJDIR)/raygui_standalone.o
-GENERATED += $(OBJDIR)/scroll_panel.o
-GENERATED += $(OBJDIR)/style_selector.o
 OBJECTS += $(OBJDIR)/AtlasSprite.o
 OBJECTS += $(OBJDIR)/CreateSpriteList.o
 OBJECTS += $(OBJDIR)/FighterLocalRunner.o
@@ -113,16 +104,7 @@ OBJECTS += $(OBJDIR)/FighterSynctestRunner.o
 OBJECTS += $(OBJDIR)/InputDeviceRaylib.o
 OBJECTS += $(OBJDIR)/RenderActor.o
 OBJECTS += $(OBJDIR)/RenderState.o
-OBJECTS += $(OBJDIR)/controls_test_suite.o
-OBJECTS += $(OBJDIR)/custom_file_dialog.o
-OBJECTS += $(OBJDIR)/image_exporter.o
-OBJECTS += $(OBJDIR)/image_importer_raw.o
 OBJECTS += $(OBJDIR)/main.o
-OBJECTS += $(OBJDIR)/portable_window.o
-OBJECTS += $(OBJDIR)/property_list.o
-OBJECTS += $(OBJDIR)/raygui_standalone.o
-OBJECTS += $(OBJDIR)/scroll_panel.o
-OBJECTS += $(OBJDIR)/style_selector.o
 
 # Rules
 # #############################################
@@ -210,33 +192,6 @@ $(OBJDIR)/RenderState.o: ../source/Render/RenderState.cpp
 $(OBJDIR)/CreateSpriteList.o: ../source/Utilities/CreateSpriteList.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/controls_test_suite.o: ../source/Utilities/raygui/examples/controls_test_suite/controls_test_suite.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/custom_file_dialog.o: ../source/Utilities/raygui/examples/custom_file_dialog/custom_file_dialog.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/image_exporter.o: ../source/Utilities/raygui/examples/image_exporter/image_exporter.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/image_importer_raw.o: ../source/Utilities/raygui/examples/image_importer_raw/image_importer_raw.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/portable_window.o: ../source/Utilities/raygui/examples/portable_window/portable_window.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/property_list.o: ../source/Utilities/raygui/examples/property_list/property_list.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/scroll_panel.o: ../source/Utilities/raygui/examples/scroll_panel/scroll_panel.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/raygui_standalone.o: ../source/Utilities/raygui/examples/standalone/raygui_standalone.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/style_selector.o: ../source/Utilities/raygui/examples/style_selector/style_selector.c
-	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/main.o: ../source/main.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
