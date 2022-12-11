@@ -6,6 +6,7 @@
 #include "FighterRunners/FighterSynctestRunner.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#define _WINDOWS_GGPO
 #include "WindowsIncludeFix.h"
 #endif
 
@@ -37,8 +38,10 @@ int main(int argc, char* argv[])
 
 	if (argc == 5)
 	{
+#ifdef _WINDOWS_GGPO
 		WSADATA wsaData;
 		WSAStartup(MAKEWORD(2,2), &wsaData);
+#endif
 		MultiplayerRunner->LocalPort = (unsigned short)atoi(argv[1]);
 		if (!strcmp(argv[2], "local"))
 		{
@@ -117,8 +120,11 @@ int main(int argc, char* argv[])
     }
 
     CloseWindow();
+
+#ifdef _WINDOWS_GGPO
 	if (argc == 5)
 		WSACleanup();
-	
+#endif
+        
     return 0;
 }

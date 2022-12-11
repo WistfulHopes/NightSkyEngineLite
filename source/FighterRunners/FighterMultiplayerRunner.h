@@ -45,5 +45,4 @@ protected:
 	
 public:	
 	void Update(float DeltaTime) override;
-	int	fletcher32_checksum(short* data, size_t len);
 };

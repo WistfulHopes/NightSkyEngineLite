@@ -7,6 +7,32 @@
 
 constexpr int MaxRollbackFrames = 10;
 
+
+//TODO refactor to a static libaray
+int fletcher32_checksum(short* data, size_t len)
+{
+  int sum1 = 0xffff, sum2 = 0xffff;
+
+  while (len)
+{
+    size_t tlen = len > 360 ? 360 : len;
+    len -= tlen;
+    do
+{
+      sum1 += *data++;
+      sum2 += sum1;
+    }
+while (--tlen);
+    sum1 = (sum1 & 0xffff) + (sum1 >> 16);
+    sum2 = (sum2 & 0xffff) + (sum2 >> 16);
+  }
+
+  /* Second reduction step to reduce sums to 16 bits */
+  sum1 = (sum1 & 0xffff) + (sum1 >> 16);
+  sum2 = (sum2 & 0xffff) + (sum2 >> 16);
+  return sum2 << 16 | sum1;
+}
+
 FighterMultiplayerRunner::FighterMultiplayerRunner(FighterGameState* InGameState): FighterLocalRunner(InGameState) {}
 
 // Called when the game starts or when spawned
@@ -89,8 +115,7 @@ bool FighterMultiplayerRunner::LoadGameStateCallback(unsigned char* buffer, int3
 
 bool FighterMultiplayerRunner::LogGameState(const char* filename, unsigned char* buffer, int len)
 {
-	FILE* fp = nullptr;
-	fopen_s(&fp, filename, "w");
+	FILE* fp = fopen(filename, "w");
 	if (fp)
 	{
 		RollbackData* rollbackdata = (RollbackData*)malloc(sizeof(RollbackData));
@@ -298,31 +323,4 @@ void FighterMultiplayerRunner::Update(float DeltaTime)
 		//
 	}
 	ggpo_idle(ggpo,1);
-}
-
-
-//TODO refactor to a static libaray
-int
-FighterMultiplayerRunner::fletcher32_checksum(short* data, size_t len)
-{
-	int sum1 = 0xffff, sum2 = 0xffff;
-
-	while (len)
-	{
-		size_t tlen = len > 360 ? 360 : len;
-		len -= tlen;
-		do
-		{
-			sum1 += *data++;
-			sum2 += sum1;
-		}
-		while (--tlen);
-		sum1 = (sum1 & 0xffff) + (sum1 >> 16);
-		sum2 = (sum2 & 0xffff) + (sum2 >> 16);
-	}
-
-	/* Second reduction step to reduce sums to 16 bits */
-	sum1 = (sum1 & 0xffff) + (sum1 >> 16);
-	sum2 = (sum2 & 0xffff) + (sum2 >> 16);
-	return sum2 << 16 | sum1;
 }
