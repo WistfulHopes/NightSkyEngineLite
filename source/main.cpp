@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
 	}
     const int screenWidth = 320;
     const int screenHeight  = 240;
-	const int windowWidth = screenWidth * 6;
-    const int windowHeight  = screenHeight * 6;
+	const int windowWidth = screenWidth * 3;
+    const int windowHeight  = screenHeight * 3;
 
     InitWindow(windowWidth, windowHeight, "Night Sky Engine -Lite-");
 
