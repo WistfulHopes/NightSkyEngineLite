@@ -9,9 +9,9 @@
 
 struct Sprite
 {
-	Texture2D Atlas;
+	Texture2D Atlas = {};
 	std::vector<AtlasSprite> Sprites;
-	AtlasSprite CurrentSprite;
+	AtlasSprite CurrentSprite = {};
 };
 
 class RenderActor 
@@ -35,6 +35,9 @@ public:
 
 	void CreateCallbacks();
 
+	//sets collision data
+	void LoadCollisionData(char* CharaName);
+	
 	//updates current sprite
 	void SetSprite();
     //loads sprites

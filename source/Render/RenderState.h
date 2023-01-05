@@ -10,7 +10,7 @@ class RenderState
 {
     Camera2D Cam = {};
 	Camera Cam3D = {};
-    RenderActor* RenderActors[406];
+    RenderActor* RenderActors[406] = {};
 public:
     RenderState(FighterGameState* InGameState);
 

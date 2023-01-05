@@ -73,9 +73,46 @@ void RenderActor::CreateCallbacks()
 	}
 }
 
+void RenderActor::LoadCollisionData(char* CharaName)
+{
+	int CollisionListLength;
+	char CollisionPath[256] = "Collision/";
+	strcat(CollisionPath, CharaName);
+	strcat(CollisionPath, ".rres");
+	rresCentralDir CentralDir = rresLoadCentralDirectory(CollisionPath);
+	char CollisionListName[32];
+	strcpy(CollisionListName, CharaName);
+	strcat(CollisionListName, ".spls");
+	int CollisionListID = rresGetResourceId(CentralDir, CollisionListName);
+	rresResourceChunk CollisionListChunk = rresLoadResourceChunk(CollisionPath, CollisionListID);
+	UnpackResourceChunk(&CollisionListChunk);
+	unsigned char* CollisionListData = (unsigned char*)LoadDataFromResource(CollisionListChunk, &CollisionListLength);
+	SpriteList List;
+	List.SpriteCount = *reinterpret_cast<uint32_t*>(CollisionListData + 4);
+	for (uint32_t i = 0; i < List.SpriteCount; i++)
+	{
+		char* CollisionName = (char*)malloc(64);
+		memcpy(CollisionName, CollisionListData + 8 + i * 64, 64);
+		CString<64> FinalCollisionName;
+		FinalCollisionName.SetString(CollisionName);
+		List.NameList.push_back(FinalCollisionName);
+	}
+	for (uint32_t i = 0; i < List.SpriteCount; i++)
+	{
+		char ColName[68];
+		strcpy(ColName, List.NameList[i].GetString());
+		strcat(ColName, ".col");
+		int ColID = rresGetResourceId(CentralDir, ColName);
+		rresResourceChunk ColChunk = rresLoadResourceChunk(CollisionPath, ColID);
+		UnpackResourceChunk(&ColChunk);
+		CollisionData* FinalColData = static_cast<CollisionData*>(LoadDataFromResource(ColChunk, &CollisionListLength));
+		Actor->Player->ColData.push_back(FinalColData);
+	}
+}
+
 void RenderActor::SetSprite()
 {
-	if (strcmp(Actor->CelNameInternal.GetString(), ""))
+	if (strcmp(Actor->CelNameInternal.GetString(), "") != 0)
 	{
 		for (int i = 0; i < Sprites.size(); i++)
 		{

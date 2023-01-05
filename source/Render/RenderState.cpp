@@ -29,7 +29,7 @@ void RenderState::Init()
 	{
 		int CurIndex = i - 400;
 		RenderActors[i] = new RenderActor(GameState->Players[CurIndex]);
-		if ((CurIndex) % 3 == 0)
+		if (CurIndex % 3 == 0)
 		{
 			unsigned int CharaScriptBytes = 0;
 			GameState->Players[CurIndex]->CharaScript = (char*)LoadFileData("Scripts/NSS_Esther.nss", &CharaScriptBytes);
@@ -38,6 +38,7 @@ void RenderState::Init()
 			GameState->Players[CurIndex]->ObjectScript = (char*)LoadFileData("Scripts/NSS_EstherObj.nss", &ObjScriptBytes);
 			GameState->Players[CurIndex]->ObjectScriptLength = ObjScriptBytes;
 			RenderActors[i]->LoadSprites("Esther");
+			//RenderActors[i]->LoadCollisionData("Esther");
 			GameState->Players[CurIndex]->InitStates();
 		}
 	}
