@@ -29,6 +29,7 @@ int ControllerInputDevice::GetInputs() {
 	if(this->IsButtonDown(this->config.InputS)) inputFlags |= InputS;
 	if(this->IsButtonDown(this->config.InputA1)) inputFlags |= InputA1;
 	if(this->IsButtonDown(this->config.InputA2)) inputFlags |= InputA2;
+	if(this->IsButtonDown(this->config.InputDash)) inputFlags |= InputDash;
 	
 	return inputFlags;
 }
@@ -70,6 +71,9 @@ ControllerInputDevice::ControllerInputDevice()
 	config.InputM.id = GAMEPAD_BUTTON_RIGHT_FACE_UP;
 	config.InputH.id = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT;
 	config.InputS.id = GAMEPAD_BUTTON_RIGHT_FACE_DOWN;
+	config.InputDash.id = GAMEPAD_AXIS_RIGHT_TRIGGER;
+	config.InputDash.axis = true;
+	config.InputDash.positive = true;
 }
 
 KeyboardInputDevice::KeyboardInputDevice()

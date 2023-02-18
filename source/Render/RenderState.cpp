@@ -19,6 +19,7 @@ void RenderState::Init()
 	GameState->InputDevices[2] = new KeyboardInputDevice;
 	
 	GameState->CommonScript = (char*)LoadFileData("Scripts/NSS_Common.nss", &GameState->CommonScriptLength);
+	GameState->CommonObjScript = (char*)LoadFileData("Scripts/NSS_CommonObj.nss", &GameState->CommonObjScriptLength);
     
     for (int i = 0; i < 400; i++)
     {

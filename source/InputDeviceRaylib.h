@@ -23,6 +23,7 @@ struct ControllerConfig {
 	ButtonConfig InputS;
 	ButtonConfig InputA1;
 	ButtonConfig InputA2;
+	ButtonConfig InputDash;
 
 	float deadzone = 0.2f;
 };
